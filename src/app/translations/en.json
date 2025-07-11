@@ -87,11 +87,11 @@
     "CALCULATE": "Calculate"
   },
   "SIDEBAR": {
-    "DASHBOARD": "Dashboard",
-    "ACCOUNT": "Account",
-    "COURSES": "Courses",
-    "RECIPES": "Recipes",
-    "NOTIFICATIONS": "Notifications"
+    "LEADS": "Leads",
+    "STATISTICS": "Statistics",
+    "OFFERS": "Offers",
+    "BALANCE": "Balance",
+    "POSTBACKS": "Postbacks"
   },
   "ERRORS": {
     "ADMIN_ALREADY_EXIST": "Admin already exists",

@@ -6,19 +6,22 @@
   gap: 16px;
 
   .logo {
-    width: 35px;
-    height: 40px;
-    background-image: url('/union.png');
+    width: 42px;
+    height: 42px;
+    background-image: url('https://aff.siteforex.work/v3/menu/newLogo.svg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
   }
 
   .logo_full {
-    width: 83px;
-    height: 40px;
-    background-image: url('/logo.png');
-    background-size: cover;
+    width: 70px;
+    height: 70px;
+    background-image: url('https://aff.siteforex.work/v3/menu/newLogo.svg');
+    color: black;
+
+    // background-size: cover;
+
     background-repeat: no-repeat;
     background-position: center;
   }

@@ -2,7 +2,7 @@ import { FC } from 'react'
 import Icon from '@ant-design/icons'
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon'
 
-const CoursesSvg = () => {
+const LeadsSvg = () => {
   return (
     <svg
       width='1em'
@@ -26,6 +26,6 @@ const CoursesSvg = () => {
   )
 }
 
-export const CoursesIcon: FC<Partial<CustomIconComponentProps>> = (props) => {
-  return <Icon component={CoursesSvg} {...props} />
+export const LeadsIcon: FC<Partial<CustomIconComponentProps>> = (props) => {
+  return <Icon component={LeadsSvg} {...props} />
 }

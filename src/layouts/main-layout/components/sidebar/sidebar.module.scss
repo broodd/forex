@@ -9,6 +9,8 @@
 
   .logoWrapper {
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
   }
 
@@ -82,7 +84,7 @@
   }
 
   .logo {
-    margin-bottom: 24px;
+    color: var(--logo);
   }
 
   .menu {
