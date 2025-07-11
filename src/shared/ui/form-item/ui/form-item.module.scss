@@ -1,0 +1,15 @@
+@use 'src/app/styles/typography';
+
+.field {
+  width: 100%;
+
+  :global {
+    .ant-form-item-label > label {
+      font-weight: 600;
+    }
+
+    .ant-form-item-explain-error {
+      @extend %service-fields-small;
+    }
+  }
+}

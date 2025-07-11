@@ -1,0 +1,8 @@
+@use 'src/app/styles/typography';
+
+.checkbox {
+  align-items: center;
+  width: 100%;
+
+  @extend %paragraph-general-semibold;
+}

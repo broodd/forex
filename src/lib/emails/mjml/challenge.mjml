@@ -1,0 +1,182 @@
+<mjml>
+  <mj-head>
+    <mj-font
+      name="Open Sans"
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    />
+    <mj-attributes>
+      <mj-all font-family="Open Sans, sans-serif" color="#212529" />
+    </mj-attributes>
+    <mj-style inline="inline">
+      .block { display: block !important; } .title > div{ font-size: 16px !important; font-weight:
+      600 !important; line-height: 1.5 !important; } .label > div{ font-size: 14px !important;
+      font-weight: 500 !important; line-height: 1.5 !important; } .wrapper { padding: 48px
+      !important; } .logo> table> tbody> tr> td> img{ width: 96px !important; height: 46px
+      !important; } .full-width-button { cursor: pointer;}
+    </mj-style>
+    <mj-style>
+      @media (max-width:480px) { .wrapper { padding: 16px !important; border-radius: 0 !important; }
+      .logo > table> tbody> tr> td> img{ width: 96px !important; height: 46px !important; } .title >
+      div{ font-size: 16px !important; } .label > div{ font-size: 14px !important; }
+      .full-width-button { width: 100% !important; display: block !important; cursor: pointer;}}
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-raw>
+      <!-- Header -->
+    </mj-raw>
+    <mj-wrapper css-class="wrapper" background-color="#FBFBFB">
+      <mj-section padding="0" text-align="center">
+        <mj-column padding-bottom="32px" width="96px">
+          <mj-image
+            align="center"
+            src="{{DOMIAN}}//logo.png"
+            padding="0"
+            css-class="logo"
+          ></mj-image>
+        </mj-column>
+      </mj-section>
+      <mj-raw>
+        <!-- Main -->
+      </mj-raw>
+      <mj-section background-color="#FBFBFB" padding="32px 32px 0" text-align="center">
+        <mj-column padding="0">
+          <mj-text css-class="label" padding="0">Hallo {{NAME}},</mj-text>
+          <mj-text css-class="label" padding="0"
+            >vielen Dank für das Vertrauen in mich und meiner 11 Tages Challenge. In den kommenden
+            Tagen werden wir gemeinsam viel lernen und am Ende wirst du richtig stolz auf dich
+            sein.</mj-text
+          >
+          <mj-text css-class="label" padding="24px 0 24px 0"
+            >In den kommenden Wochen werden wir gemeinsam viel lernen und am Ende wirst du richtig
+            stolz auf dich sein.</mj-text
+          >
+
+          <mj-text css-class="label" padding="0 0 24px"
+            >In dieser E-Mail findest du deine Zugangsdaten, damit du mit der Challenge losgehen
+            kann! Jeden Tag wird neuer Inhalt freigeschaltet,</mj-text
+          >
+
+          <mj-text css-class="label" padding="0 0 24px"
+            >Zugang zum Mitgliederbereich und Kurs:</mj-text
+          >
+        </mj-column>
+      </mj-section>
+      <mj-section padding="0">
+        <mj-group>
+          <mj-column width="33%" css-class="full-width-button">
+            <mj-button
+              background-color="#C1A492"
+              border-radius="30px"
+              align="center"
+              color="#212529"
+              font-size="14px"
+              font-weight="600"
+              inner-padding="12px 16px"
+              width="100%"
+              href="{{WEB_APP_URL}}"
+            >
+              Web App
+            </mj-button>
+          </mj-column>
+          <mj-column width="33%" css-class="full-width-button">
+            <mj-button
+              background-color="#C1A492"
+              border-radius="30px"
+              align="center"
+              color="#212529"
+              font-size="14px"
+              font-weight="600"
+              inner-padding="12px 16px"
+              width="100%"
+              href="{{ANDROID_APP_URL}}"
+            >
+              Android App
+            </mj-button>
+          </mj-column>
+          <mj-column width="33%" css-class="full-width-button">
+            <mj-button
+              background-color="#C1A492"
+              border-radius="30px"
+              align="center"
+              color="#212529"
+              font-size="14px"
+              font-weight="600"
+              inner-padding="12px 16px"
+              width="100%"
+              href="{{IOS_APP_URL}}"
+            >
+              iOS App
+            </mj-button>
+          </mj-column>
+        </mj-group>
+      </mj-section>
+      <mj-section background-color="#FBFBFB" padding="24px 32px 32px" text-align="center">
+        <mj-column padding="0">
+          <mj-text css-class="title" padding="0">Dein Benutzername: </mj-text>
+          <mj-text css-class="title" padding="0 0 24px">{{USER_NAME}}</mj-text>
+          <mj-text css-class="title" padding="0">Dein Kennwort:</mj-text>
+          <mj-text css-class="title" padding="0 0 24px">{{PASSWORD}}</mj-text>
+
+          <mj-text css-class="label" padding="0 0 24px">
+            Lass uns gemeinsam für ein gesünderes Leben starten!<br />Aylin 🥰
+          </mj-text>
+          <mj-text css-class="title" padding="0">BONUS:</mj-text>
+          <mj-text css-class="label" padding="0">
+            Außerdem gibt es eine Telegram Gruppe, der du gerne<br />
+            beitreten darfst!
+          </mj-text>
+          <mj-text css-class="label" padding="0 0 24px">
+            <mj-raw
+              ><a
+                href="https://t.me/+sqc3TV6ZtrxmNDhiIch"
+                target="_blank"
+                data-saferedirecturl="{{URL}}"
+                style="color: #212529"
+                >https://t.me/+sqc3TV6ZtrxmNDhiIch</a
+              ></mj-raw
+            >
+            habe schon heute ein wichtiges Video für dich. Schau es dir unbedingt bis zum Ende an!
+          </mj-text>
+          <mj-button
+            padding="0 0 24px 0"
+            background-color="#C1A492"
+            border-radius="60px"
+            align="left"
+            color="#212529"
+            font-size="14px"
+            font-weight="600"
+            inner-padding="12px 16px"
+            width="100%"
+            href="{{BONUS_URL}}"
+          >
+            BONUS
+          </mj-button>
+
+          <mj-text css-class="label" padding="0">
+            Für maximalen Erfolg musst du jedes Video bis zum Ende anschauen, damit du wirklich
+            nichts verpasst. Manchmal ist ein einziger Satz ausschlaggebend für dich!<br />Achte
+            auch auf das downloadbare Workbook unter jedem Video.
+          </mj-text>
+          <mj-text css-class="label" padding="0">
+            ACHTUNG: Die Videos schalten sich Tag für Tag automatisch frei. Solltest du die
+            Challenge erst später beginnen, sei fair zu dir selbst und schaue nicht alle Videos auf
+            einmal :)
+          </mj-text>
+          <mj-text css-class="label" padding="0"
+            >Für Fragen stehe ich dir unter <mj-raw
+              ><a
+                href="mailto:info@aylinhontas.com"
+                target="_blank"
+                data-saferedirecturl="{{URL}}"
+                style="color: #212529"
+                >info@aylinhontas.com</a
+              ></mj-raw
+            >
+            zur Verfügung.</mj-text
+          >
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+  </mj-body>
+</mjml>

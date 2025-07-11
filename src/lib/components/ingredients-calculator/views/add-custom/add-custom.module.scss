@@ -1,0 +1,52 @@
+.wrapper {
+  .fieldsWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .item {
+    border-radius: 8px;
+    border: 1px solid var(--text-secondary);
+    display: flex;
+    padding: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    align-self: stretch;
+  }
+
+  .flex {
+    width: 100%;
+  }
+
+  .text {
+    white-space: nowrap;
+  }
+
+  .input {
+    width: 50%;
+  }
+
+  .inputNumber {
+    width: 100%;
+
+    :global {
+      .ant-input-number-input {
+        padding: 6px 11px;
+      }
+    }
+  }
+
+  .label {
+    display: flex;
+    width: 100%;
+    height: 32px;
+    padding: 0 8px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    background: var(--grey-2);
+    margin-bottom: 24px;
+  }
+}

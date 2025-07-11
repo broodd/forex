@@ -1,0 +1,13 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 8px;
+
+  :global {
+    .ant-card-cover > * {
+      border-radius: 10px;
+    }
+  }
+}

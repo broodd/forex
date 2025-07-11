@@ -1,0 +1,22 @@
+.wrapper {
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--bg-default);
+
+  .dividerBox {
+    position: relative;
+  }
+
+  .aside {
+    padding: 24px 16px;
+    height: 100vh;
+    overflow: hidden;
+    border-right: 1px solid var(--border-white);
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+  }
+}

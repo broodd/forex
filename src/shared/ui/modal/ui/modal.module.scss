@@ -1,0 +1,39 @@
+.modal {
+  :global {
+    .ant-modal-header {
+      padding: 40px;
+      border-bottom: none;
+    }
+
+    .ant-modal-body {
+      padding: 0 40px;
+    }
+
+    .ant-modal-footer {
+      padding: 40px;
+      border-top: none;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .ant-btn.ant-btn-lg {
+        height: 45px;
+      }
+    }
+
+    .ant-modal-close {
+      top: 40px;
+      inset-inline-end: 40px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .ant-modal-title.ant-typography {
+      margin-bottom: 12px;
+    }
+
+    .ant-modal-title div {
+      margin-bottom: 0;
+    }
+  }
+}

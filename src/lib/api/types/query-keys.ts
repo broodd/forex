@@ -1,0 +1,15 @@
+export enum QueryKeys {
+  GET_PROFILE = 'getProfile',
+  GET_COURSES = 'getCourses',
+  GET_COURSE_DETAILS = 'getCourseDetails',
+  GET_WEEKS = 'getWeeks',
+  GET_WEEKS_DETAILS = 'getWeeksDetails',
+  GET_LESSONS = 'getLessons',
+  GET_LESSON_DETAILS = 'getLessonDetails',
+  GET_RECIPES = 'getRecipes',
+  GET_RECIPE_DETAILS = 'getRecipeDetails',
+  GET_INGREDIENTS = 'getIngredients',
+  GET_NUTRIENTS = 'getNutrients',
+  GET_NOTIFICATIONS = 'getNotifications',
+  GET_NOTIFICATION = 'getNotification',
+}

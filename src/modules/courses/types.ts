@@ -1,0 +1,5 @@
+export enum EDrawerKeys {
+  COURSE_VIEW = 'COURSE_VIEW',
+  COURSE_EDIT = 'COURSE_EDIT',
+  COURSE_CREATION = 'COURSE_CREATION',
+}

@@ -1,0 +1,496 @@
+{
+  "ACTIONS": {
+    "ADD_CUSTOM_INGR": "Add Custom Ingredient",
+    "CUSTOM_INGR": "Custom Ingredient",
+    "EDIT_WATER": "Edit Water",
+    "EDIT_STEPS": "Edit Steps",
+    "CREATE_NEW_NOTIFICATION": "Create New Notification",
+    "ADD_IMAGE_OR_VIDEO": "Add content",
+    "PREPARATION_STEPS": "Preparation Steps",
+    "INGREDIENTS": "Ingredients",
+    "ADD_TITLE": "Add title",
+    "ADD_IMAGE": "Add image",
+    "ADD_TEXT": "Add text",
+    "MEASURE": {
+      "GRAMS": "Gram",
+      "PIECES": "Pieces",
+      "MILLILITERS": "Milliliters",
+      "TABLESPOON": "Tablespoon",
+      "WHOLE": "Whole",
+      "KILOGRAMS": "Kilogram",
+      "MILLIGRAMS": "Milligram",
+      "SLICES": "Slices",
+      "STICKS": "Sticks",
+      "CLOVES": "Cloves",
+      "LITERS": "Liters",
+      "CUPS": "Cups",
+      "TEASPOON": "Teaspoon",
+      "BAR": "Bar",
+      "KCAL": "Kilocalories"
+    },
+    "PROTEIN": "Protein",
+    "CARBS": "Carbs",
+    "KCAL": "Kcal",
+    "FAT": "Fat",
+    "IS_VISIBLE": "Visible",
+    "IS_NOT_VISIBLE": "Not visible",
+    "FORGOT_PASSWORD": "Forgot Password",
+    "APPLY": "Apply",
+    "BACK": "Back",
+    "CANCEL": "Cancel",
+    "COMPLETE": "Complete",
+    "CONFIRM": "Confirm",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "LANGUAGES": {
+      "EN": "English"
+    },
+    "LOADING_MORE": "Loading more",
+    "LOG_OUT": "Logout",
+    "NEXT": "Next",
+    "PAGE": "page",
+    "REFRESH": "Refresh",
+    "REMAKE": "Remake",
+    "REPLY": "Reply",
+    "RESEND": "Resend",
+    "RESET": "Reset",
+    "SAVE": "Save",
+    "SAVE_CHANGES": "Save changes",
+    "SEARCH": "Search",
+    "SEND": "Send",
+    "TABLE_PAGINATION": "Showing {{firstRange}} to {{secondRange}} of {{total}} entries",
+    "EXPORT": "Export",
+    "SIGN_IN": "Sign In",
+    "RESET_PASSWORD": "Reset Password",
+    "NOTIFICATION_TYPE": {
+      "PROMOTION": "Promotion",
+      "MOTIVATION": "Motivation",
+      "ALERT": "Alert"
+    },
+    "COURSE_TYPE": {
+      "COURSE": "Course",
+      "CHALLENGE": "Challenge",
+      "BONUS": "Bonus",
+      "WEEK": "Week"
+    },
+    "COURSE_STATUS": {
+      "DONE": "Done",
+      "IN_PROGRESS": "In progress",
+      "NOT_AVAILABLE": "Not available",
+      "WAITING_TO_START": "Waiting to start"
+    },
+    "WEEK_TYPE": {
+      "WEEK": "Week",
+      "BONUS": "Bonus"
+    },
+    "ADD_QUESTION": "Add Question",
+    "CALCULATE": "Calculate"
+  },
+  "SIDEBAR": {
+    "DASHBOARD": "Dashboard",
+    "ACCOUNT": "Account",
+    "COURSES": "Courses",
+    "RECIPES": "Recipes",
+    "NOTIFICATIONS": "Notifications"
+  },
+  "ERRORS": {
+    "ADMIN_ALREADY_EXIST": "Admin already exists",
+    "ADMIN_BLOCKED": "Admin blocked",
+    "ADMIN_CANNOT_BE_DELETED": "Admin cannot be deleted",
+    "ADMIN_NOT_FOUND": "Admin not found",
+    "ADMIN_REFRESH_TOKEN_ALREADY_EXIST": "Admin refresh token already exists",
+    "ADMIN_REFRESH_TOKEN_NOT_FOUND": "Admin refresh token not found",
+    "ADMIN_REFRESH_TOKENS_NOT_FOUND": "Admin refresh tokens not found",
+    "ADMINS_NOT_FOUND": "Admins not found",
+    "AUTH_FORBIDDEN": "Forbidden",
+    "AUTH_INCORRECT_CREDENTIALS": "Incorrect credentials",
+    "AUTH_INVALID_REFRESH_TOKEN": "Invalid refresh token",
+    "AUTH_INVALID_TOKEN": "Invalid token",
+    "AUTH_PASSWORDS_DO_NOT_MATCH": "Incorrect password",
+    "AUTH_UNAUTHORIZED": "Unauthorized",
+    "COMPLAINT_ALREADY_EXIST": "Complaint already exist",
+    "COMPLAINT_NOT_FOUND": "Complaint not found",
+    "COMPLAINT_TOO_LARGE": "Complaint too large",
+    "COMPLAINT_VOTE_ALREADY_EXIST": "Complaint vote already exist",
+    "COMPLAINT_VOTE_NOT_FOUND": "Complaint vote not found",
+    "COMPLAINT_VOTE_TOO_LARGE": "Complaint vote too large",
+    "COMPLAINT_VOTES_NOT_FOUND": "Complaint votes not found",
+    "COMPLAINTS_NOT_FOUND": "Complaints not found",
+    "FILE_ALREADY_EXIST": "File already exist",
+    "FILE_NOT_FOUND": "File not found",
+    "FILE_TOO_LARGE": "The uploaded file is too large",
+    "FILE_UNSUPPORTED_TYPE": "Unsupported file type",
+    "FILES_NOT_FOUND": "Files not found",
+    "INTERNAL_SERVER_ERROR": "Internal server error",
+    "USER_ALREADY_EXIST": "User already exists",
+    "USER_BLOCKED": "User blocked",
+    "USER_NOT_FOUND": "User not found",
+    "USERS_NOT_FOUND": "Users not found"
+  },
+  "FORM": {
+    "BANNER_COVER": {
+      "LABEL": "Banner cover"
+    },
+    "PROTEINS": {
+      "LABEL": "proteins, g"
+    },
+    "FAT": {
+      "LABEL": "fat, g"
+    },
+    "CARBS": {
+      "LABEL": "carbs, g"
+    },
+    "CKAL": {
+      "LABEL": "kcal"
+    },
+    "MEASURE": {
+      "LABEL": "Measure"
+    },
+    "NAME_INGR": {
+      "LABEL": "Name"
+    },
+    "PRICE": {
+      "LABEL": "Price"
+    },
+    "SECTION": {
+      "LABEL": "Section {{num}}"
+    },
+    "ACCESS_CODE": {
+      "LABEL": "Access code",
+      "PLACEHOLDER": "Enter code"
+    },
+    "CURRENT_PASSWORD": {
+      "LABEL": "Current password",
+      "PLACEHOLDER": "Enter current password"
+    },
+    "DATE_PICKER": {
+      "PLACEHOLDER": {
+        "DATE": "Date",
+        "END": "End date",
+        "START": "Start date"
+      }
+    },
+    "EMAIL": {
+      "LABEL": "E-mail",
+      "PLACEHOLDER": "Enter your e-mail"
+    },
+    "HEX": {
+      "LABEL": "HEX"
+    },
+    "LANGUAGE": {
+      "LABEL": "Language"
+    },
+    "NAME": {
+      "LABEL": "Full Name",
+      "PLACEHOLDER": "Enter your name"
+    },
+    "NEW_PASSWORD": {
+      "LABEL": "New password",
+      "PLACEHOLDER": "Enter password"
+    },
+    "CONFIRM_PASSWORD": {
+      "LABEL": "Confirm New Password",
+      "PLACEHOLDER": "Enter password"
+    },
+    "PASSWORD": {
+      "LABEL": "Password",
+      "PLACEHOLDER": "Enter your password"
+    },
+    "COURSE_NAME": {
+      "LABEL": "Name",
+      "PLACEHOLDER": "Course name"
+    },
+    "SALE_PRICE": {
+      "LABEL": "Sale price"
+    },
+    "ORIGINAL_PRICE": {
+      "LABEL": "Original price"
+    },
+    "TITLE_IMAGE": {
+      "LABEL": "Title Image"
+    },
+    "TITLE_IMAGE_OR_VIDEO": {
+      "LABEL": "Title Image or Video"
+    },
+    "TITLE_VIDEO_PLACEHOLDER": {
+      "LABEL": "Title Video Placeholder"
+    },
+    "IMAGE": {
+      "LABEL": "Image"
+    },
+    "IMAGE_OR_VIDEO": {
+      "LABEL": "Image or Video"
+    },
+    "VIDEO_PLACEHOLDER": {
+      "LABEL": "Video placeholder"
+    },
+    "VISIBLE_FOR_CUSTOMERS": {
+      "LABEL": "Visible for customers"
+    },
+    "SELECT_DATE": {
+      "LABEL": "Select Date"
+    },
+    "TIME": {
+      "LABEL": "Time",
+      "PLACEHOLDER": "Select time"
+    },
+    "TEXT": {
+      "LABEL": "Text",
+      "PLACEHOLDER": "Enter some text"
+    },
+    "TYPE": {
+      "LABEL": "Type",
+      "PLACEHOLDER": "Select type"
+    },
+    "DESCRIPTION": {
+      "LABEL": "Description",
+      "PLACEHOLDER": "Enter some text about course"
+    },
+    "UPLOADER": {
+      "PLACEHOLDER": "<p>Browse or<br/> drag and drop your files.<br/> Supported formats: .JPEG, .JPG, .PNG, .PDF, .MP4, .WEBM</p>"
+    },
+    "UPLOADER_ONLY_IMAGES": {
+      "PLACEHOLDER": "<p>Browse or<br/> drag and drop your files.<br/> Supported formats: .JPEG, .JPG, .PNG</p>"
+    },
+    "FILE_PDF": {
+      "LABEL": "File PDF",
+      "PLACEHOLDER": "<p>Browse or<br/> drag and drop your files.<br/> Supported formats: .PDF</p>"
+    },
+    "QUESTIONS": {
+      "QUESTION": {
+        "LABEL": "Question {{num}}",
+        "PLACEHOLDER": "Question {{num}}"
+      },
+      "ANSWER_CORRECT": {
+        "LABEL": "Answer Correct Question {{num}}",
+        "PLACEHOLDER": "Answer Correct Question {{num}}"
+      },
+      "ANSWER_FALSE": {
+        "LABEL": "Answer False Question {{num}}",
+        "PLACEHOLDER": "Answer False Question {{num}}"
+      },
+      "DESCRIPTION": {
+        "LABEL": "Answer explanation text",
+        "PLACEHOLDER": "Question {{num}}"
+      }
+    },
+    "TITLE": {
+      "LABEL": "Title",
+      "PLACEHOLDER": "Enter title"
+    },
+    "ONLY_ONE_SERVING": {
+      "LABEL": "Only one serving"
+    },
+    "CATEGORY": {
+      "LABEL": "Kategorien"
+    },
+    "PROPERTY": {
+      "LABEL": "Eigenschaften"
+    },
+    "TIME_FOR_PREPARE": {
+      "LABEL": "Time for Prepare"
+    },
+    "INGREDIENTS": {
+      "LABEL": "Ingredients"
+    },
+    "VALIDATE_MESSAGES": {
+      "HEX": "The string must be in the HEX format",
+      "PASSWORD_PATTERN": "Password should contain 8-64 characters, including 1 number, 1 uppercase letter, 1 lowercase letter",
+      "REQUIRED": "This field is required",
+      "STRING": {
+        "MIN": "At least ${min} characters"
+      },
+      "TYPES": {
+        "EMAIL": "Value should be a correct email address",
+        "NUMBER": "Value should be a number",
+        "STRING": "Value should be a string"
+      },
+      "INCORRECT_PASSWORD": "Password does not match"
+    }
+  },
+  "MODALS": {
+    "DELETE_COURSE": {
+      "TITLE": "Course deletion",
+      "DESCRIPTION": "Are you sure you want to delete this course?"
+    },
+    "DELETE_WEEK": {
+      "TITLE": "Week deletion",
+      "DESCRIPTION": "Are you sure you want to delete this week?"
+    },
+    "DELETE_LESSON": {
+      "TITLE": "Lesson deletion",
+      "DESCRIPTION": "Are you sure you want to delete this lesson?"
+    },
+    "DELETE_BONUS": {
+      "TITLE": "Workout deletion",
+      "DESCRIPTION": "Are you sure you want to delete this workout?"
+    },
+    "DELETE_DAY": {
+      "TITLE": "Day deletion",
+      "DESCRIPTION": "Are you sure you want to delete this day?"
+    },
+    "DELETE_RECIPE": {
+      "TITLE": "Recipe deletion",
+      "DESCRIPTION": "Are you sure you want to delete this recipe?"
+    },
+    "DELETE_NOTIFICATION": {
+      "TITLE": "Delete Notification",
+      "DESCRIPTION": "Are you sure you want to delete this notification?"
+    }
+  },
+  "NOTIFICATION": {
+    "NOTIFICATION_DELETED": "Notification successfully deleted",
+    "NOTIFICATION_UPDATED": "Notification successfully updated",
+    "EMAIL_WAS_SENT": "The email was sent",
+    "PASSWORD_CHANGED": "Password was successfully change",
+    "IMAGE_REQUIRED": "Image is required",
+    "NOTIFICATION_CREATED": "Notification successfully created",
+    "COURSE_CREATED": "Course successfully created",
+    "COURSE_DELETED": "Course successfully deleted",
+    "COURSE_UPDATED": "Course successfully updated",
+    "WEEK_DELETED": "Week successfully deleted",
+    "WEEK_UPDATED": "Week successfully updated",
+    "WEEK_CREATED": "Week successfully created",
+    "LESSON_DELETED": "Lesson successfully deleted",
+    "LESSON_UPDATED": "Lesson successfully updated",
+    "LESSON_CREATED": "Lesson successfully created",
+    "BONUS_DELETED": "Workout successfully deleted",
+    "BONUS_UPDATED": "Workout successfully updated",
+    "BONUS_CREATED": "Workout successfully created",
+    "DAY_DELETED": "Day successfully deleted",
+    "DAY_UPDATED": "Day successfully updated",
+    "DAY_CREATED": "Day successfully created",
+    "RECIPE_DELETED": "Recipe successfully deleted",
+    "RECIPE_UPDATED": "Recipe successfully updated",
+    "RECIPE_CREATED": "Recipe successfully created",
+    "INGR_REQUIRED": "Ingredients are required",
+    "INGR_ERROR": "We cannot calculate the nutrition for this ingredient. Please check the ingredient spelling or if you have entered a quantities for the ingredients."
+  },
+  "PAGES": {
+    "ERROR": {
+      "TITLE": "404",
+      "DESCRIPTION": "Oops..something went wrong",
+      "BTN": "Back to Home"
+    },
+    "DASHBOARD": {
+      "TITLE": "Dashboard"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "EMPTY": "You have no notifications",
+      "CREATE_NOTIFICATION": "Create Notification",
+      "EDIT_NOTIFICATION": {
+        "WATER": "Edit Water Notification",
+        "STEPS": "Edit Steps Notification",
+        "BTN": "Update Notification"
+      }
+    },
+    "ACCOUNT": {
+      "TITLE": "Settings"
+    },
+    "SIGN_IN": {
+      "TITLE": "Sign In"
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Reset Password",
+      "DESCRIPTION": "Type your Email",
+      "BACK": "Back to Login"
+    },
+    "ACCESS_CODE": {
+      "TITLE": "Access code"
+    },
+    "CREATE_NEW_PASSWORD": {
+      "TITLE": "Create new password"
+    },
+    "COURSES": {
+      "TITLE": "Courses",
+      "BTN_ADD": "Create New Course",
+      "EMPTY": "You have no courses yet",
+      "CREATE_COURSE": "Create Course",
+      "EDIT_COURSE": "Edit Course",
+      "DETAILS": {
+        "TITLE_COURSE": "Course Details",
+        "TITLE_CHALLENGE": "Challenge Details"
+      }
+    },
+    "WEEKS": {
+      "BTN_ADD": "Create New Week",
+      "EMPTY": "You have no weeks yet",
+      "CREATE_WEEK": "Create Week",
+      "EDIT_WEEK": "Edit Week",
+      "DETAILS": {
+        "TITLE_WEEK": "Week Details",
+        "TITLE_BONUS": "Bonus Details"
+      }
+    },
+    "LESSONS": {
+      "BTN_ADD": "Create New Lesson",
+      "EMPTY": "You have no lessons yet",
+      "CREATE_LESSON": "Create Lesson",
+      "EDIT_LESSON": "Edit Lesson",
+      "DETAILS": {
+        "TITLE_LESSON": "Lesson Details"
+      }
+    },
+    "BONUSES": {
+      "BTN_ADD": "Add Bonus Content",
+      "EMPTY": "You have no workouts yet",
+      "CREATE_BONUS": "Create New Workout",
+      "EDIT_BONUS": "Edit Workout",
+      "DETAILS": {
+        "TITLE_BONUS": "Workout Details"
+      }
+    },
+    "DAYS": {
+      "BTN_ADD": "Create New Day",
+      "EMPTY": "You have no days yet",
+      "CREATE_DAY": "Create New Day",
+      "EDIT_DAY": "Edit Day",
+      "DETAILS": {
+        "TITLE_DAY": "Day Details"
+      }
+    },
+    "RECIPES": {
+      "TITLE": "Recipes",
+      "BTN_ADD": "Create New Recipe",
+      "EMPTY": "You have no recipes yet",
+      "CREATE_RECIPE": "Create New Recipe",
+      "EDIT_RECIPE": "Edit Recipe",
+      "DETAILS": {
+        "TITLE_RECIPE": "Recipe Details"
+      }
+    }
+  },
+  "TABLE": {
+    "COLUMNS": {
+      "TEXT": "Text",
+      "COURSE_NAME": "Group Name",
+      "STATUS": "Status",
+      "TYPE": "Type",
+      "SETTINGS": "Settings",
+      "SUBSCRIBERS": "Subscribers",
+      "VISIBLE_FOR_CUSTOMERS": "Visible for customers",
+      "TITLE": "Title",
+      "WEEK_TITLE": "Week Title",
+      "POST_DATE": "Post Date",
+      "COURSE": "Course",
+      "DATE": "Date",
+      "FILES": "Files",
+      "NAME": "Name",
+      "LESSON_TITLE": "Lesson Title",
+      "BONUS_TITLE": "Workout Title",
+      "DAY_TITLE": "Day Title",
+      "WEEK": "Week",
+      "ID": "ID #",
+      "CATEGORY": "Category",
+      "VIEWS": "Views",
+      "COURSE_PREVIEW": "Course Preview",
+      "CHALLENGE_PREVIEW": "Challenge Preview",
+      "WEEK_PREVIEW": "Week Preview",
+      "BONUS_PREVIEW": "Bonus Preview",
+      "LESSON_PREVIEW": "Lesson Preview",
+      "WORKOUT_PREVIEW": "Workout Preview",
+      "RECIPE_PREVIEW": "Recipe Preview"
+    }
+  }
+}

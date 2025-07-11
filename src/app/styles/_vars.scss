@@ -1,0 +1,172 @@
+:root {
+  /* ==================== */
+
+  /*        FONTS         */
+
+  /* ==================== */
+
+  --primary-font-family: 'Open Sans', sans-serif;
+  --secondary-font-family: 'Playfair Display', serif;
+
+  /* ==================== */
+
+  /*         SIZES        */
+
+  /* ==================== */
+
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 56px;
+  --space-11: 64px;
+
+  /* ==================== */
+
+  /*       COLORS        */
+
+  /* ==================== */
+  --grey-alpha: #fff;
+  --grey-0: #fbfbfb;
+  --grey-1: #f7f7f7;
+  --grey-2: #f1f1f1;
+  --grey-3: #e5e5e5;
+  --grey-4: #d9d9d9;
+  --grey-5: #ccc;
+  --grey-6: #bfbfbf;
+  --grey-7: #939393;
+  --grey-8: #6a6a6a;
+  --grey-9: #515151;
+  --grey-10: #333;
+  --brand-100: #c1a492;
+  --brand-101: #4e423b;
+  --brand-102: #c1a492;
+  --brand-103: #a58571;
+  --brand-104: #212529;
+  --brand-105: #15181a;
+  --brand-106: #ebd3c5;
+  --positive-200: #32cd32;
+  --positive-201: #2cb22c;
+  --negative-300: #e93636;
+  --negative-301: #b41515;
+  --support-400: #c1a492;
+  --support-401: #a58571;
+  --support-402: #212529;
+  --support-403: #15181a;
+  --support-404: #15181a;
+  --support-405: #3b4044;
+  --support-406: #16181a;
+  --label-1: #c2ffd0;
+  --label-2: #28a745;
+  --label-3: #e5e5e5;
+  --label-4: #d9d9d9;
+  --label-5: #ffeaaa;
+  --label-6: #ffcf41;
+  --label-7: #e1ebff;
+  --label-8: #528bff;
+  --label-9: #f2e9e3;
+  --label-10: #82c2d7;
+
+  /* ==================== */
+
+  /*        TOKENS        */
+
+  /* ==================== */
+  --bg-default: var(--grey-0);
+  --bg-secondary: var(--grey-2);
+  --bg-dark: var(--support-406);
+  --title-secondary: var(--grey-9);
+  --text-primary: var(--brand-104);
+  --text-secondary: var(--grey-8);
+  --text-disable: var(--grey-7);
+  --text-invert: var(--grey-1);
+  --link-default: var(--support-405);
+  --link-hover: var(--support-402);
+  --link-active: var(--support-403);
+  --link-used: var(--support-404);
+  --btn-primary-default: var(--brand-100);
+  --btn-primary-hover: var(--brand-103);
+  --btn-primary-active: var(--brand-100);
+  --btn-primary-disabled: var(--grey-5);
+  --btn-secondary-default: var(--brand-104);
+  --btn-secondary-hover: var(--brand-104);
+  --btn-secondary-active: var(--brand-105);
+  --btn-secondary-disabled: var(--grey-5);
+  --btn-tertiary-default: var(--grey-0);
+  --btn-tertiary-hover: var(--grey-1);
+  --btn-tertiary-active: var(--grey-3);
+  --btn-tertiary-disabled: var(--grey-alpha);
+  --btn-negative-default: var(--negative-300);
+  --btn-negative-hover: var(--negative-301);
+  --btn-negative-active: var(--negative-300);
+  --btn-negative-disabled: var(--grey-5);
+  --btn-text-primary-default: var(--brand-104);
+  --btn-text-primary-hover: var(--brand-105);
+  --btn-text-primary-active: var(--brand-104);
+  --btn-text-primary-disabled: var(--grey-7);
+  --btn-text-negative-default: var(--grey-0);
+  --btn-text-negative-hover: var(--grey-0);
+  --btn-text-negative-active: var(--grey-0);
+  --btn-text-negative-disabled: var(--grey-7);
+  --btn-text-secondary-default: var(--grey-0);
+  --btn-text-secondary-hover: var(--grey-0);
+  --btn-text-secondary-active: var(--grey-2);
+  --btn-text-secondary-disabled: var(--grey-7);
+  --outline-btn-primary-default: var(--brand-102);
+  --outline-btn-primary-hover: var(--brand-103);
+  --outline-btn-primary-active: var(--brand-102);
+  --outline-btn-primary-disable: var(--btn-text-primary-disabled);
+  --outline-btn-negative-default: var(--negative-300);
+  --outline-btn-negative-hover: var(--negative-301);
+  --headline-default: var(--grey-8);
+  --headline-hover: var(--brand-100);
+  --headline-active: var(--brand-101);
+  --row-primary: var(--text-primary);
+  --table-positive: var(--positive-200);
+  --table-negative: var(--negative-300);
+  --table-secondary: var(--text-secondary);
+  --table-row-default: var(--grey-alpha);
+  --table-row-hover: var(--grey-1);
+  --table-row-active: var(--grey-2);
+  --table-head-default: var(--grey-alpha);
+  --table-head-hover: var(--grey-2);
+  --table-head-active: var(--grey-3);
+  --border-white: var(--grey-3);
+  --border-dark: var(--grey-4);
+  --border-blue: var(--label-10);
+  --icon-default: var(--brand-104);
+  --icon-hover: var(--brand-102);
+  --icon-inverse: var(--grey-1);
+  --icon-active: var(--brand-103);
+  --input-title-default: var(--text-secondary);
+  --input-placeholder-default: var(--grey-7);
+  --icon-unactive: var(--btn-text-negative-disabled);
+  --icon-negative-default: var(--negative-300);
+  --icon-negative-hover: var(--negative-301);
+  --input-helper-default: var(--grey-7);
+  --input-bg-default: var(--grey-0);
+  --input-outline-default: var(--grey-3);
+  --input-title-hover: var(--text-secondary);
+  --input-title-active: var(--text-secondary);
+  --input-title-disabled: var(--text-disable);
+  --input-placeholder-hover: var(--text-secondary);
+  --input-placeholder-active: var(--brand-104);
+  --input-placeholder-disabled: var(--grey-7);
+  --input-helper-hover: var(--grey-7);
+  --input-helper-active: var(--grey-7);
+  --input-helper-disabled: var(--text-disable);
+  --input-helper-positive: var(--positive-200);
+  --input-helper-negative: var(--negative-300);
+  --input-bg-hover: var(--grey-0);
+  --input-bg-active: var(--grey-0);
+  --input-bg-disabled: var(--grey-2);
+  --input-outline-hover: var(--brand-102);
+  --input-outline-active: var(--brand-103);
+  --input-outline-disabled: var(--grey-2);
+}

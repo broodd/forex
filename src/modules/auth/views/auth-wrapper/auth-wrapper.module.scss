@@ -1,0 +1,11 @@
+.wrapper {
+  display: inline-flex;
+  padding: var(--space-9) var(--space-10) var(--space-11) var(--space-10);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-11);
+  border-radius: 16px;
+  border: 1px solid var(--border-blue);
+  background: var(--bg-secondary);
+}

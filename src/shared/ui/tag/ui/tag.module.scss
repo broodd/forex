@@ -1,0 +1,11 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  color: var(--title-secondary) !important;
+  font-weight: 600;
+  padding: 4px 16px;
+}
+
+.round {
+  border-radius: 16px;
+}

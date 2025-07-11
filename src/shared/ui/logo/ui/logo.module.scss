@@ -1,0 +1,25 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 16px;
+
+  .logo {
+    width: 35px;
+    height: 40px;
+    background-image: url('/union.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .logo_full {
+    width: 83px;
+    height: 40px;
+    background-image: url('/logo.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}

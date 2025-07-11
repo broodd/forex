@@ -1,0 +1,20 @@
+:global {
+  .ant-progress-circle .ant-progress-text {
+    inset-block-start: 49.5% !important;
+    inset-inline-start: 12.5% !important;
+    display: flex;
+    width: 50px !important;
+    height: 50px !important;
+    background: #fff;
+    border-radius: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ant-progress-text {
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: 500 !important;
+    line-height: 1.42 !important;
+  }
+}

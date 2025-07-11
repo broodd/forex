@@ -1,0 +1,43 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px;
+  align-items: center;
+  gap: 16px;
+  align-self: stretch;
+
+  .title {
+    font-family: var(--primary-font-family);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 !important;
+  }
+
+  .description {
+    font-family: var(--primary-font-family);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .files {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 100%;
+
+    .fileItem {
+      display: flex;
+      padding: 12px;
+      justify-content: space-between;
+      align-items: center;
+      align-self: stretch;
+    }
+
+    .fileDescription {
+      font-family: var(--primary-font-family);
+      font-size: 16px;
+      font-weight: 500;
+      max-width: 244px;
+    }
+  }
+}

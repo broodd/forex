@@ -1,0 +1,33 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+
+  &:not(:global(.ant-btn-icon-only)) {
+    min-width: 100px;
+    height: 40px;
+  }
+
+  &.inverted {
+    background-color: var(--btn-tertiary-default);
+    border-color: var(--btn-tertiary-default);
+    color: var(--text-primary);
+  }
+
+  :global {
+    .ant-btn-circle.ant-btn {
+      border-radius: 30px;
+    }
+  }
+}
+
+:global {
+  .ant-btn.ant-btn-circle.ant-btn {
+    border-radius: 30px;
+    padding: 4px 8px;
+    height: auto;
+    border: 1px solid var(--btn-primary-default);
+    background-color: transparent;
+  }
+}

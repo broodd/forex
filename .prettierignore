@@ -1,0 +1,11 @@
+/dist
+.eslintrc.cjs
+.eslintignore
+.prettierrc.cjs
+.stylelintrc.json
+.stylelintcache
+package-lock.json
+package.json
+index.html
+.eslintrc.json
+/src/mails

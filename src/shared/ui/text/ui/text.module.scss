@@ -1,0 +1,51 @@
+@use 'src/app/styles/typography';
+
+.text {
+  &.font-h7 {
+    @extend %font-h7;
+  }
+
+  &.paragraph-general-semibold {
+    @extend %paragraph-general-semibold;
+  }
+
+  &.paragraph-general-regular {
+    @extend %paragraph-general-regular;
+  }
+
+  &.paragraph-small-semibold {
+    @extend %paragraph-small-semibold;
+  }
+
+  &.paragraph-small-regular {
+    @extend %paragraph-small-regular;
+  }
+
+  &.service-button {
+    @extend %service-button;
+  }
+
+  &.service-notification {
+    @extend %service-notification;
+  }
+
+  &.service-status {
+    @extend %service-status;
+  }
+
+  &.service-dialog-buttons {
+    @extend %service-dialog-buttons;
+  }
+
+  &.service-fields-small {
+    @extend %service-fields-small;
+  }
+
+  &.service-fields-regular {
+    @extend %service-fields-regular;
+  }
+
+  &.service-input-primary {
+    @extend %service-input-primary;
+  }
+}

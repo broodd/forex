@@ -1,0 +1,5 @@
+export enum EDrawerRecipesKeys {
+  RECIPE_VIEW = 'RECIPE_VIEW',
+  RECIPE_EDIT = 'RECIPE_EDIT',
+  RECIPE_CREATION = 'RECIPE_CREATION',
+}

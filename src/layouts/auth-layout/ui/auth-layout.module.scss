@@ -1,0 +1,12 @@
+.wrapper {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  background-image: url('/public/splash-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}

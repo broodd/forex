@@ -1,0 +1,42 @@
+@use 'src/app/styles/typography';
+
+.wrapper {
+  &.custom {
+    :global {
+      .ant-radio-wrapper {
+        margin: 0;
+        display: block;
+
+        .ant-radio {
+          width: 0;
+          height: 0;
+          position: absolute;
+          left: -9999px;
+          overflow: hidden;
+        }
+
+        .ant-radio + * {
+          display: block;
+          padding: 0;
+          overflow: hidden;
+          height: 100%;
+        }
+
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &.vertical {
+    display: flex;
+    flex-direction: column;
+
+    :global {
+      .ant-radio-wrapper {
+        margin: 8px 0;
+      }
+    }
+  }
+}

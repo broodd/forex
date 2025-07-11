@@ -1,0 +1,45 @@
+.wrapper {
+  min-height: 100vh;
+  background-color: var(--grey-0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+
+  .backgroundImage {
+    width: 482px;
+    height: 232px;
+    flex-shrink: 0;
+    background-image: url('../../../../public/background-logo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .title {
+    font-size: 128px;
+    font-weight: 700;
+    line-height: 152px;
+    font-family: var(--primary-font-family);
+    text-align: center;
+  }
+
+  .description {
+    font-family: var(--primary-font-family);
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+  }
+
+  .textContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -60px;
+  }
+
+  .btn {
+    margin-top: 50px;
+  }
+}

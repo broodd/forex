@@ -1,0 +1,22 @@
+.wrapper li:nth-child(2n) {
+  background-color: var(--bg-secondary);
+}
+
+.wrapper {
+  .item {
+    padding: 12px 24px;
+  }
+
+  .left {
+    max-width: 50%;
+  }
+
+  .right {
+    max-width: 50%;
+    text-align: right;
+  }
+
+  .row {
+    width: 100%;
+  }
+}

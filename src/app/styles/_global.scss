@@ -1,0 +1,8 @@
+body {
+  font-family: var(--primary-font-family);
+}
+
+::selection {
+  color: var(--grey-alpha);
+  background: var(--brand-101);
+}

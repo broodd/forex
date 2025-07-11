@@ -1,0 +1,133 @@
+h1,
+.h1 {
+  font-family: var(--secondary-font-family);
+  font-size: 40px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+h2,
+.h2 {
+  font-family: var(--secondary-font-family);
+  font-size: 36px;
+  line-height: 1.19;
+  font-weight: 500;
+}
+
+h3,
+.h3 {
+  font-family: var(--secondary-font-family);
+  font-size: 32px;
+  line-height: 1.18;
+  font-weight: 500;
+}
+
+h4,
+.h4 {
+  font-family: var(--secondary-font-family);
+  font-size: 28px;
+  line-height: 1.21;
+  font-weight: 600;
+}
+
+h5,
+.h5 {
+  font-family: var(--secondary-font-family);
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+h6,
+.h6 {
+  font-family: var(--secondary-font-family);
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+%font-h7 {
+  font-family: var(--secondary-font-family);
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+%paragraph-general-semibold {
+  font-family: var(--primary-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+%paragraph-general-regular {
+  font-family: var(--primary-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+%paragraph-small-semibold {
+  font-family: var(--primary-font-family);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+%paragraph-small-regular {
+  font-family: var(--primary-font-family);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+%service-button {
+  font-family: var(--primary-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+%service-notification {
+  font-family: var(--primary-font-family);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+%service-status {
+  font-family: var(--primary-font-family);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+%service-dialog-buttons {
+  font-family: var(--primary-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+%service-fields-small {
+  font-family: var(--primary-font-family);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+%service-fields-regular {
+  font-family: var(--primary-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+%service-input-primary {
+  font-family: var(--primary-font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}

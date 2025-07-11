@@ -1,0 +1,1 @@
+export { useCreateNewPassword } from './useCreateNewPassword'

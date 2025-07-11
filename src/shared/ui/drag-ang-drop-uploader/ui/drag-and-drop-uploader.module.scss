@@ -1,0 +1,43 @@
+.dragger {
+  width: 100%;
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+  }
+
+  .description {
+    opacity: 0.5;
+  }
+
+  :global {
+    .ant-upload-list-item {
+      height: auto !important;
+
+      .ant-upload-list-item-name {
+        display: flex;
+        flex-direction: column;
+        font-weight: 600;
+      }
+
+      .ant-upload-list-item-thumbnail {
+        height: 59px !important;
+        width: 59px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        background-color: var(--btn-primary-disabled);
+        color: var(--btn-primary-hover);
+
+        .anticon-file {
+          font-size: 24px !important;
+          color: var(--btn-primary-hover) !important;
+        }
+      }
+    }
+  }
+}
