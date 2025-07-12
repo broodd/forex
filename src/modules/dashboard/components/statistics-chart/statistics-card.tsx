@@ -1,5 +1,4 @@
-// src/components/StatisticsChart.js
-import { Card, Typography, Dropdown, Menu, Button } from 'antd'
+import { Dropdown, Menu, Button, Col } from 'antd'
 import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -13,8 +12,7 @@ import {
   ChartOptions,
 } from 'chart.js'
 import { DownOutlined } from '@ant-design/icons'
-
-const { Title: AntdTitle } = Typography
+import cls from './statistics-card.module.scss'
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
@@ -65,10 +63,12 @@ const StatisticsChart = () => {
       legend: {
         display: true,
         position: 'bottom',
+        align: 'start',
         labels: {
           color: 'white', // Legend text color
           usePointStyle: true, // Use circular points for legend items
-          boxWidth: 8, // Size of the color box
+          boxHeight: 5,
+          boxWidth: 3, // Size of the color box
           padding: 20, // Padding between legend items
         },
       },
@@ -88,8 +88,7 @@ const StatisticsChart = () => {
     scales: {
       x: {
         grid: {
-          color: '#3a3a3a', // Darker grid lines
-          // drawBorder: false,
+          color: 'rgba(0, 0, 0, 0)',
         },
         ticks: {
           color: '#aaaaaa', // X-axis label color
@@ -101,7 +100,8 @@ const StatisticsChart = () => {
       y: {
         beginAtZero: true,
         grid: {
-          color: '#3a3a3a', // Darker grid lines
+          // color: 'rgba(0, 0, 0, 0)',
+          // color: '#3a3a3a', // Darker grid lines
           // drawBorder: false,
         },
         ticks: {
@@ -126,30 +126,26 @@ const StatisticsChart = () => {
   )
 
   return (
-    <Card bordered={false} style={{ background: '#2a2a2a', color: 'white', height: '100%' }}>
+    <Col span={24} className={cls.metricCard}>
       <div
         style={{
-          display: 'flex',
+          // display: 'flex',
+          display: 'none',
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: 20,
         }}
       >
-        <AntdTitle level={5} style={{ color: '#f3c75d', margin: 0 }}>
-          Statistics
-        </AntdTitle>
         <Dropdown overlay={dropdownMenu} trigger={['click']}>
           <Button type='link' style={{ color: 'white', display: 'flex', alignItems: 'center' }}>
             3 selected <DownOutlined style={{ marginLeft: 5 }} />
           </Button>
         </Dropdown>
       </div>
-      <div style={{ height: 300 }}>
-        {' '}
-        {/* Fixed height for the chart container */}
+      <div style={{ height: 200 }}>
         <Line data={chartData} options={chartOptions} />
       </div>
-    </Card>
+    </Col>
   )
 }
 

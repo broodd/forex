@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next'
 
-import { PageLayout } from '~/layouts'
-import cls from './dashboard-page.module.scss'
 import { Card, Col, Row } from 'antd'
-import { Title } from '~/shared/ui/title'
+import { PageLayout } from '~/layouts'
+import { MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
+import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
+import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
 import { Button } from '~/shared/ui/button'
 import { Dropdown } from '~/shared/ui/dropdown'
 import { Menu } from '~/shared/ui/menu'
-import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
-import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
-import { ConversionMetrics, TrafficMetrics } from '~/modules/dashboard/components/metric-card'
+import { Title } from '~/shared/ui/title'
+import cls from './dashboard-page.module.scss'
 
 const menu = (
   <Menu
@@ -45,11 +45,66 @@ const DashboardPage = () => {
     >
       <div className={cls.wrapper}>
         <Row>
-          <Col span={11}>
-            {/* Metrics Row 1 */}
-            <TrafficMetrics />
+          <Col span={10}>
+            <MetricBox title='Traffic'>
+              <MetricCard
+                title='Impressions'
+                value='131'
+                today='11'
+                yesterday='19'
+                percentage='100%'
+                trendLine={true}
+              />
 
-            <ConversionMetrics />
+              {/* Clicks Card */}
+              <MetricCard
+                title='Clicks'
+                value='94'
+                today='10'
+                yesterday='13'
+                percentage='100%'
+                trendLine={true}
+              />
+
+              {/* CTL Card */}
+              <MetricCard
+                title='CTL'
+                value='100%'
+                today='100%'
+                yesterday='100%'
+                percentage='100%'
+                trendLine={true}
+              />
+            </MetricBox>
+
+            <MetricBox title='Conversion'>
+              <MetricCard
+                title='Leads'
+                value='2'
+                today='1'
+                yesterday='19'
+                percentage='90%'
+                trendLine={true}
+              />
+
+              <MetricCard
+                title='FTDs'
+                value='0'
+                today='10'
+                yesterday='90'
+                percentage='0%'
+                trendLine={false}
+              />
+
+              <MetricCard
+                title='CR'
+                value='0%'
+                today='0%'
+                yesterday='4%'
+                percentage='0%'
+                trendLine={false}
+              />
+            </MetricBox>
 
             {/* Top 10 Affiliates Table */}
             <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
@@ -152,12 +207,39 @@ const DashboardPage = () => {
           </Col>
 
           {/* Right Section: Finance, Balance, Statistics Chart */}
-          <Col span={13}>
-            <Row style={{ marginBottom: 20 }}>
-              <Col span={24}>
-                <StatisticsChart />
+          <Col span={14}>
+            <Row>
+              <Col span={12}>
+                <MetricBox title='Finance'>
+                  <MetricCard
+                    span={24}
+                    title='Payout'
+                    value='131'
+                    today='11'
+                    yesterday='19'
+                    percentage='100%'
+                    trendLine={true}
+                  />
+                </MetricBox>
+              </Col>
+              <Col span={12}>
+                <MetricBox title='Balance'>
+                  <MetricCard
+                    span={24}
+                    title='Total Balance'
+                    value='131'
+                    today='11'
+                    yesterday='19'
+                    percentage='100%'
+                    trendLine={true}
+                  />
+                </MetricBox>
               </Col>
             </Row>
+
+            <MetricBox title='Statistics'>
+              <StatisticsChart />
+            </MetricBox>
           </Col>
         </Row>
 

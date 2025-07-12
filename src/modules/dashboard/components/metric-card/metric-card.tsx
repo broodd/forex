@@ -1,10 +1,11 @@
 import { Card, Col, Row, Typography } from 'antd'
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import cls from './metric-card.module.scss'
 
 const { Text } = Typography
 
 interface IMetricCardProps {
+  span?: number
   className?: string
   title: string
   value: string
@@ -15,7 +16,8 @@ interface IMetricCardProps {
 }
 
 // Component for a single metric card
-const MetricCard: FC<IMetricCardProps> = ({
+export const MetricCard: FC<IMetricCardProps> = ({
+  span = 8,
   title,
   value,
   today,
@@ -24,7 +26,7 @@ const MetricCard: FC<IMetricCardProps> = ({
   trendLine,
 }) => {
   return (
-    <Col span={8}>
+    <Col span={span}>
       <Card className={cls.metricCard} bordered={false}>
         <div>
           {/* Metric Title (e.g., Impressions, Clicks, CTL) */}
@@ -50,84 +52,15 @@ const MetricCard: FC<IMetricCardProps> = ({
   )
 }
 
-export const TrafficMetrics = () => {
+export const MetricBox = ({ title, children }: { title: string; children?: ReactNode }) => {
   return (
     <Row className={cls.wrapper}>
       {/* Traffic Section Title (Styled in Ant Design yellow/orange) */}
       <Col span={24}>
-        <Text className={cls.metricTitle}>Traffic</Text>
+        <Text className={cls.metricTitle}>{title}</Text>
       </Col>
 
-      {/* Impressions Card */}
-      <MetricCard
-        title='Impressions'
-        value='131'
-        today='11'
-        yesterday='19'
-        percentage='100%'
-        trendLine={true}
-      />
-
-      {/* Clicks Card */}
-      <MetricCard
-        title='Clicks'
-        value='94'
-        today='10'
-        yesterday='13'
-        percentage='100%'
-        trendLine={true}
-      />
-
-      {/* CTL Card */}
-      <MetricCard
-        title='CTL'
-        value='100%'
-        today='100%'
-        yesterday='100%'
-        percentage='100%'
-        trendLine={true}
-      />
-    </Row>
-  )
-}
-
-export const ConversionMetrics = () => {
-  return (
-    <Row className={cls.wrapper}>
-      {/* Traffic Section Title (Styled in Ant Design yellow/orange) */}
-      <Col span={24}>
-        <Text className={cls.metricTitle}>Conversion</Text>
-      </Col>
-
-      {/* Impressions Card */}
-      <MetricCard
-        title='Leads'
-        value='2'
-        today='1'
-        yesterday='19'
-        percentage='90%'
-        trendLine={true}
-      />
-
-      {/* Clicks Card */}
-      <MetricCard
-        title='FTDs'
-        value='0'
-        today='10'
-        yesterday='90'
-        percentage='0%'
-        trendLine={false}
-      />
-
-      {/* CTL Card */}
-      <MetricCard
-        title='CR'
-        value='0%'
-        today='0%'
-        yesterday='4%'
-        percentage='0%'
-        trendLine={false}
-      />
+      {children}
     </Row>
   )
 }
