@@ -12,7 +12,7 @@ import { Title } from '~/shared/ui/title'
 import cls from './recipe-preview.module.scss'
 import React from 'react'
 
-interface IRecipePreviewProps {
+export interface IRecipePreviewProps {
   className?: string
   recipe: IRecipe
 }

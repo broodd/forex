@@ -19,6 +19,16 @@
       width: 100%;
     }
 
+    .ant-menu-item {
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .ant-menu-title-content {
+      margin-inline-start: 0 !important;
+      margin-left: 0;
+    }
+
     .ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon {
       font-size: 24px;
       line-height: 0;
@@ -45,6 +55,7 @@
       margin-inline: 8px;
       margin-block: 8px;
       width: calc(100% - 16px);
+      height: auto !important;
     }
 
     .ant-menu-inline-collapsed {
@@ -79,7 +90,7 @@
     }
 
     .ant-menu .ant-menu-item .anticon {
-      min-width: 24px;
+      min-width: 28px;
     }
   }
 

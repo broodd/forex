@@ -19,6 +19,9 @@ export default defineConfig({
     alias: {
       src: '/src',
       [`~`]: '/src',
+      // This tells Vite to resolve 'prop-types' to its actual CommonJS entry point
+      // if it's having trouble with the default ESM import.
+      'prop-types': 'prop-types/index.js',
     },
   },
 })

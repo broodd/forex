@@ -1,0 +1,12 @@
+.trendLine {
+  width: 45px;
+  height: 45px;
+
+  .line {
+    width: 45px;
+    height: 45px;
+    background-image: url('/public/upscale.svg');
+    transform: scaleY(-1);
+    background-position: center bottom;
+  }
+}

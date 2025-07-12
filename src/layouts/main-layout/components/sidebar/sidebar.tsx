@@ -1,17 +1,20 @@
 import classNames from 'classnames'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-import { AccountIcon, LogoIcon, NotificationIcon } from '~/shared/ui/icon'
+import { AccountIcon, LogoIcon } from '~/shared/ui/icon'
 
 import { Menu } from '~/shared/ui/menu'
 
 import { ERoutes, ROUTES } from '~/lib/constants/routes'
+import { BalanceIcon } from '~/shared/ui/icon/ui/balance-icon'
 import { LeadsIcon } from '~/shared/ui/icon/ui/leads-icon'
+import { OffersIcon } from '~/shared/ui/icon/ui/offers-icon'
+import { PostbacksIcon } from '~/shared/ui/icon/ui/postbacks-icon'
 import { StatisticsIcon } from '~/shared/ui/icon/ui/statistics-icon'
 import cls from './sidebar.module.scss'
-import { Image } from '~/shared/ui/image'
+import { ItemsIcon } from '~/shared/ui/icon/ui/items-icon'
 
 interface ISidebarProps {
   className?: string
@@ -20,47 +23,51 @@ interface ISidebarProps {
 
 export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
   const { t } = useTranslation()
-  const location = useLocation()
 
   const menuItemsTop = [
     {
       label: t('SIDEBAR.LEADS'),
       key: ROUTES[ERoutes.COURSES].route,
-      icon: (
-        // <Link to={ROUTES[ERoutes.LEADS].getPath()}>
-        <LeadsIcon style={{ fontSize: 24 }} />
-        // </Link>
-      ),
+      icon: <LeadsIcon style={{ fontSize: 28 }} />,
     },
     {
       label: t('SIDEBAR.STATISTICS'),
       key: ROUTES[ERoutes.RECIPES].route,
-      icon: <StatisticsIcon style={{ fontSize: 24 }} />,
+      icon: <StatisticsIcon style={{ fontSize: 28 }} />,
     },
     {
       label: t('SIDEBAR.OFFERS'),
       key: ROUTES[ERoutes.NOTIFICATIONS].route,
-      icon: <Image src='https://aff.siteforex.work/v3/menu/group/marketing.webp' />,
+      icon: <OffersIcon style={{ fontSize: 28 }} />,
     },
     {
       label: t('SIDEBAR.BALANCE'),
       key: ROUTES[ERoutes.NOTIFICATIONS].route,
-      icon: <NotificationIcon style={{ fontSize: 24 }} />,
+      icon: <BalanceIcon style={{ fontSize: 28 }} />,
     },
     {
       label: t('SIDEBAR.POSTBACKS'),
       key: ROUTES[ERoutes.NOTIFICATIONS].route,
-      icon: <NotificationIcon style={{ fontSize: 24 }} />,
+      icon: <PostbacksIcon style={{ fontSize: 28 }} />,
     },
   ]
 
   const menuItemsBottom = [
     {
+      label: '',
+      key: ROUTES[ERoutes.ACCOUNT].route,
+      icon: (
+        <Link to={ROUTES[ERoutes.ACCOUNT].getPath()}>
+          <ItemsIcon style={{ fontSize: 28 }} />
+        </Link>
+      ),
+    },
+    {
       label: t('SIDEBAR.ACCOUNT'),
       key: ROUTES[ERoutes.ACCOUNT].route,
       icon: (
         <Link to={ROUTES[ERoutes.ACCOUNT].getPath()}>
-          <AccountIcon style={{ fontSize: 24 }} />
+          <AccountIcon style={{ fontSize: 28 }} />
         </Link>
       ),
     },
@@ -78,6 +85,12 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
       </div>
 
       <div className={cls.menuItems}>
+        {/* {menuItemsTop.map((item) => (
+          <Flex vertical justify='center' align='center' key={item.key}>
+            {item.icon}
+            <span>{item.label}</span>
+          </Flex>
+        ))} */}
         <Menu
           className={cls.menu}
           items={menuItemsTop}
@@ -87,7 +100,12 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
               : []
           }
         />
-        <Menu className={cls.menu} items={menuItemsBottom} />
+        <div>
+          <Menu className={cls.menu} items={menuItemsBottom} />
+          <div style={{ fontSize: '12px' }}>
+            <b>08:10</b> UTC
+          </div>
+        </div>
       </div>
     </div>
   )
