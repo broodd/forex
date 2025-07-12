@@ -66,10 +66,13 @@ const StatisticsChart = () => {
         align: 'start',
         labels: {
           color: 'white', // Legend text color
+          font: {
+            size: 14,
+          },
           usePointStyle: true, // Use circular points for legend items
           boxHeight: 5,
           boxWidth: 3, // Size of the color box
-          padding: 20, // Padding between legend items
+          padding: 30, // Padding between legend items
         },
       },
       tooltip: {

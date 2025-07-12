@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DownOutlined } from '@ant-design/icons'
-import { Button, Card, Dropdown, Menu, Typography } from 'antd'
-import { useMemo, useState } from 'react'
+import { Col } from 'antd'
+import { useMemo } from 'react'
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
 import { geoPatterson } from 'd3-geo-projection'
-
-const { Title: AntdTitle } = Typography
+import cls from './traffic-map.module.scss'
 
 // TopoJSON data for a low-resolution world map (needed by react-simple-maps)
 // You might need to download this file and place it in your public folder or src
@@ -31,30 +29,30 @@ const mapData = [
 ]
 
 const TrafficMap = () => {
-  const [selectedMetric, setSelectedMetric] = useState('Impressions') // State for dropdown
+  // const [selectedMetric, setSelectedMetric] = useState('Impressions') // State for dropdown
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleMenuClick = (e: any) => {
-    setSelectedMetric(e.key)
-  }
+  // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // const handleMenuClick = (e: any) => {
+  //   setSelectedMetric(e.key)
+  // }
 
-  const metricMenu = (
-    <Menu onClick={handleMenuClick}>
-      <Menu.Item key='Impressions'>Impressions</Menu.Item>
-      <Menu.Item key='Clicks'>Clicks</Menu.Item>
-      <Menu.Item key='Leads'>Leads</Menu.Item>
-    </Menu>
-  )
+  // const metricMenu = (
+  //   <Menu onClick={handleMenuClick}>
+  //     <Menu.Item key='Impressions'>Impressions</Menu.Item>
+  //     <Menu.Item key='Clicks'>Clicks</Menu.Item>
+  //     <Menu.Item key='Leads'>Leads</Menu.Item>
+  //   </Menu>
+  // )
 
   const customProjection = useMemo(() => {
     return geoPatterson()
-      .scale(200) // <-- Apply scale directly to the projection instance
-      .center([10, 30]) // <-- Apply center directly to the projection instance
+      .scale(190) // <-- Apply scale directly to the projection instance
+      .center([40, 30]) // <-- Apply center directly to the projection instance
   }, [])
 
   return (
-    <Card bordered={false} style={{ background: '#2a2a2a', color: 'white', height: '100%' }}>
-      <div
+    <Col span={24} className={cls.trafficCard}>
+      {/* <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -70,15 +68,12 @@ const TrafficMap = () => {
             {selectedMetric} <DownOutlined style={{ marginLeft: 5 }} />
           </Button>
         </Dropdown>
-      </div>
+      </div> */}
 
-      {/* Map Container */}
       <div
         style={{
           width: '100%',
           height: '170px',
-          background: '#3a3a3a',
-          borderRadius: '8px',
           overflow: 'hidden',
         }}
       >
@@ -128,37 +123,27 @@ const TrafficMap = () => {
                 stroke-opacity='0.2'
                 cursor='pointer'
               />
-              {/* Optional: Add text label or tooltip on hover */}
-              {/* <text textAnchor="middle" y="5" fill="#FFF" fontSize="10">{name}</text> */}
             </Marker>
           ))}
         </ComposableMap>
       </div>
 
-      {/* Traffic Data List */}
-      <div style={{ marginTop: 20 }}>
+      <div className={cls.trafficMapList}>
         {mapData.map((country, index) => (
           <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
             <span
+              className={cls.point}
               style={{
-                width: 10,
-                height: 10,
-                borderRadius: '50%',
                 background: country.color,
-                marginRight: 10,
               }}
             ></span>
-            <span style={{ color: 'white', flexGrow: 1 }}>{country.name}</span>
-            <span style={{ color: 'white', width: '50px', textAlign: 'right' }}>
-              {country.value}
-            </span>
-            <span style={{ color: 'white', width: '60px', textAlign: 'right', fontWeight: 'bold' }}>
-              {country.percentage}
-            </span>
+            <span className={cls.country}>{country.name}</span>
+            <span className={cls.countryValue}>{country.value}</span>
+            <span className={cls.percentage}>{country.percentage}</span>
           </div>
         ))}
       </div>
-    </Card>
+    </Col>
   )
 }
 

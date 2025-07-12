@@ -45,7 +45,7 @@ const DashboardPage = () => {
     >
       <div className={cls.wrapper}>
         <Row>
-          <Col span={10}>
+          <Col span={11}>
             <MetricBox title='Traffic'>
               <MetricCard
                 title='Impressions'
@@ -207,7 +207,7 @@ const DashboardPage = () => {
           </Col>
 
           {/* Right Section: Finance, Balance, Statistics Chart */}
-          <Col span={14}>
+          <Col span={13}>
             <Row>
               <Col span={12}>
                 <MetricBox title='Finance'>
@@ -240,98 +240,105 @@ const DashboardPage = () => {
             <MetricBox title='Statistics'>
               <StatisticsChart />
             </MetricBox>
-          </Col>
-        </Row>
 
-        {/* Traffic Map and Insights */}
-        <Row gutter={[16, 16]}>
-          <Col span={12}>
-            {/* Replace the old Card with TrafficMap */}
-            <TrafficMap />
-          </Col>
-          <Col span={12}>
-            <Card
-              bordered={false}
-              style={{ background: '#2a2a2a', color: 'white', height: '100%' }}
-            >
-              <Title
-                level={5}
-                style={{
-                  color: 'white',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                Insights
-                <Dropdown overlay={menu} trigger={['click']}>
-                  <Button type='link' style={{ color: 'white' }}>
-                    Impressions
-                    {/* <DownOutlined /> */}
-                  </Button>
-                </Dropdown>
-              </Title>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
-                  <thead>
-                    <tr>
-                      <th
-                        style={{
-                          padding: '8px',
-                          borderBottom: '1px solid #4a4a4a',
-                          textAlign: 'left',
-                        }}
-                      >
-                        Showing 2 items
-                      </th>
-                      <th
-                        style={{
-                          padding: '8px',
-                          borderBottom: '1px solid #4a4a4a',
-                          textAlign: 'left',
-                        }}
-                      >
-                        Day
-                      </th>
-                      <th
-                        style={{
-                          padding: '8px',
-                          borderBottom: '1px solid #4a4a4a',
-                          textAlign: 'left',
-                        }}
-                      >
-                        Value
-                      </th>
-                      <th
-                        style={{
-                          padding: '8px',
-                          borderBottom: '1px solid #4a4a4a',
-                          textAlign: 'left',
-                        }}
-                      >
-                        Percentage
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}></td>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
-                        Wednesday
-                      </td>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>1</td>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>50.0%</td>
-                    </tr>
-                    <tr>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}></td>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>Monday</td>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>1</td>
-                      <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>50.0%</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+            <Row>
+              <Col span={12}>
+                <MetricBox title='Traffic Map'>
+                  <TrafficMap />
+                </MetricBox>
+              </Col>
+
+              <Col span={12}>
+                <Card
+                  bordered={false}
+                  style={{ background: '#2a2a2a', color: 'white', height: '100%' }}
+                >
+                  <Title
+                    level={5}
+                    style={{
+                      color: 'white',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    Insights
+                    <Dropdown overlay={menu} trigger={['click']}>
+                      <Button type='link' style={{ color: 'white' }}>
+                        Impressions
+                        {/* <DownOutlined /> */}
+                      </Button>
+                    </Dropdown>
+                  </Title>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
+                      <thead>
+                        <tr>
+                          <th
+                            style={{
+                              padding: '8px',
+                              borderBottom: '1px solid #4a4a4a',
+                              textAlign: 'left',
+                            }}
+                          >
+                            Showing 2 items
+                          </th>
+                          <th
+                            style={{
+                              padding: '8px',
+                              borderBottom: '1px solid #4a4a4a',
+                              textAlign: 'left',
+                            }}
+                          >
+                            Day
+                          </th>
+                          <th
+                            style={{
+                              padding: '8px',
+                              borderBottom: '1px solid #4a4a4a',
+                              textAlign: 'left',
+                            }}
+                          >
+                            Value
+                          </th>
+                          <th
+                            style={{
+                              padding: '8px',
+                              borderBottom: '1px solid #4a4a4a',
+                              textAlign: 'left',
+                            }}
+                          >
+                            Percentage
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}></td>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
+                            Wednesday
+                          </td>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>1</td>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
+                            50.0%
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}></td>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
+                            Monday
+                          </td>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>1</td>
+                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
+                            50.0%
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </div>

@@ -1,8 +1,10 @@
 .wrapper {
   background: rgb(36, 38, 44);
   color: white;
+  overflow: hidden;
   border-radius: 8px;
   margin-bottom: 1rem;
+  margin-right: 1rem;
 
   .metricTitle {
     display: block;

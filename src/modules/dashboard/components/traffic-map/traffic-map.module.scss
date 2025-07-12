@@ -1,0 +1,34 @@
+.trafficCard {
+  padding: 0;
+}
+
+.trafficMapList {
+  margin-top: 1.4rem;
+  padding: 0 0.8rem;
+
+  .point {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 30px;
+  }
+
+  .country {
+    color: white;
+    flex-grow: 1;
+  }
+
+  .countryValue {
+    font-weight: 700;
+    color: white;
+    width: 50px;
+    text-align: right;
+  }
+
+  .percentage {
+    color: white;
+    width: 60px;
+    text-align: right;
+    font-weight: bold;
+  }
+}
