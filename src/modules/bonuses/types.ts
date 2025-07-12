@@ -1,5 +1,0 @@
-export enum EDrawerBonusKeys {
-  BONUS_CREATION = 'BONUS_CREATION',
-  BONUS_EDIT = 'BONUS_EDIT',
-  BONUS_VIEW = 'BONUS_VIEW',
-}

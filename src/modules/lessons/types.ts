@@ -1,5 +1,0 @@
-export enum EDrawerLessonKeys {
-  LESSON_CREATION = 'LESSON_CREATION',
-  LESSON_EDIT = 'LESSON_EDIT',
-  LESSON_VIEW = 'LESSON_VIEW',
-}

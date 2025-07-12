@@ -1,5 +1,0 @@
-export { LessonsTable } from './lessons-table/lessons-table'
-export { LessonView } from './lesson-view'
-export { LessonCreation } from './lesson-creation'
-export { LessonEdit } from './lesson-edit'
-export { LessonPreview } from './lesson-preview/lesson-preview'

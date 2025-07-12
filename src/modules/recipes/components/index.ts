@@ -1,5 +1,0 @@
-export { RecipesTable } from './recipes-table/recipes-table'
-export { RecipeView } from './recipe-view'
-export { RecipeCreation } from './recipe-creation/recipe-creation'
-export { RecipeEdit } from './recipe-edit/recipe-edit'
-export { RecipePreview } from './recipe-preview/recipe-preview'
