@@ -1,12 +1,67 @@
+.wrapper {
+  background: rgb(36, 38, 44);
+  color: white;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+
+  .metricTitle {
+    display: block;
+    padding: 0.5rem 0 0 0.7rem;
+    color: var(--brand-100);
+  }
+}
+
 .trendLine {
   width: 45px;
   height: 45px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   .line {
-    width: 45px;
-    height: 45px;
+    width: 100%;
+    height: 30px;
     background-image: url('/public/upscale.svg');
-    transform: scaleY(-1);
-    background-position: center bottom;
+    transform: scaleY(-1) scale(0.7);
+    background-position: -9px -6px;
+  }
+
+  .trendLineText {
+    color: #52c41a;
+    font-size: 0.9rem;
+  }
+}
+
+.metricCard {
+  padding: 0 3rem 1rem 1rem;
+  background: rgb(36, 38, 44);
+
+  .title {
+    font-weight: 600;
+    color: white;
+  }
+
+  .name {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-right: 10px;
+    color: white;
+  }
+
+  .trend {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .details {
+    color: rgb(99, 101, 110);
+    font-size: 0.8rem;
+  }
+}
+
+:global {
+  .ant-card-body {
+    padding: 0 !important;
   }
 }

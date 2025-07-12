@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { FC } from 'react'
 import { Button } from '~/shared/ui/button'
-import { MenuUnfoldArrowIcon } from '~/shared/ui/icon'
+import { MenuFoldArrowIcon, MenuUnfoldArrowIcon } from '~/shared/ui/icon'
 import cls from './collapse-btn.module.scss'
 
 interface ICollapseBtnProps {
@@ -16,12 +16,12 @@ export const CollapseBtn: FC<ICollapseBtnProps> = ({ className, collapsed, setCo
       <Button
         type='link'
         onClick={() => setCollapsed(!collapsed)}
-        className='trigger'
+        className={classNames(cls.trigger, [collapsed ? '' : 'collapsed'])}
         icon={
           collapsed ? (
             <MenuUnfoldArrowIcon style={{ fontSize: '24px' }} />
           ) : (
-            <MenuUnfoldArrowIcon style={{ fontSize: '24px' }} />
+            <MenuFoldArrowIcon style={{ fontSize: '24px' }} />
           )
         }
       />

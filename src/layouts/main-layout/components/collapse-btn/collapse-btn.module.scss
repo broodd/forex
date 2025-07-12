@@ -2,13 +2,19 @@
   :global {
     .ant-btn {
       position: absolute;
-      right: -12px;
-      top: 29px;
+      left: 10px;
+      top: 2px;
       width: 24px;
       height: 22px;
       border: 1px solid transparent;
       border-radius: 4px;
       padding: 0;
+      color: white;
+
+      &.collapsed {
+        left: auto;
+        right: 0;
+      }
     }
   }
 }

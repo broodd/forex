@@ -16,8 +16,8 @@ export const MainLayout: FC<IMainLayoutProps> = ({ className, children }) => {
   return (
     <Layout className={classNames(cls.wrapper, [className])}>
       <Sider
-        width={168}
-        collapsedWidth={86}
+        width={166}
+        collapsedWidth={83}
         theme='light'
         className={cls.aside}
         collapsible

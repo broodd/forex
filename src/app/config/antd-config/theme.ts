@@ -111,11 +111,8 @@ export const theme: ThemeConfig = {
       fontSizeIcon: 20,
     },
     Menu: {
-      itemHoverBg: 'rgb(241,241,241)',
-      itemHoverColor: 'rgb(193,164,146)',
-      itemSelectedBg: 'rgb(193,164,146)',
-      itemSelectedColor: 'rgb(247,247,247)',
-      itemActiveBg: 'rgb(229,229,229)',
+      itemBg: 'rgb(255,179,0)',
+      itemColor: 'rgb(42,46,52)',
     },
     Drawer: {
       colorBgMask: 'rgba(21,24,26,0.19)',
@@ -212,6 +209,9 @@ export const theme: ThemeConfig = {
       circleTextColor: 'rgb(33,37,41)',
       remainingColor: 'rgb(255,255,255)',
       colorBgContainer: 'rgb(255,255,255)',
+    },
+    Card: {
+      borderRadiusLG: 0,
     },
   },
 }

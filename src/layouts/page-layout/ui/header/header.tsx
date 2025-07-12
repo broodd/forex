@@ -18,9 +18,10 @@ export const Header: FC<IHeaderProps> = ({ className, title, backBtn, extra, cus
     <div className={classNames(cls.wrapper, [className])}>
       <div className={cls.content}>
         <div className={cls.headingContent}>
-          <div style={{ color: 'white', background: 'black' }}>
-            Share your feedback or switch back here. Heads up! V2 will reach end of life on Oct 1st,
-            2025.
+          <div className={cls.headingAttention}>
+            <span className={cls.feedback}>Share your feedback</span>
+            or switch back here. Heads up! V2 will reach
+            <b>end of life on Oct 1st, 2025.</b>
           </div>
           {title && (
             <Heading

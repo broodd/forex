@@ -2,7 +2,7 @@ import { Card, Col, Row, Typography } from 'antd'
 import { FC } from 'react'
 import cls from './metric-card.module.scss'
 
-const { Title } = Typography
+const { Text } = Typography
 
 interface IMetricCardProps {
   className?: string
@@ -23,47 +23,24 @@ const MetricCard: FC<IMetricCardProps> = ({
   percentage,
   trendLine,
 }) => {
-  // Determine the color for the percentage based on the provided prop
-  const percentageStyle = {
-    color: '#52c41a', // Default to green
-    // color: percentageColor || '#52c41a', // Default to green
-    fontWeight: 'bold',
-    fontSize: '14px',
-    display: 'flex',
-    alignItems: 'center',
-  }
-
   return (
     <Col span={8}>
-      <Card bordered={false} style={{ background: '#2a2a2a', color: 'white', padding: '10px 0' }}>
-        <div style={{ padding: '0 20px' }}>
+      <Card className={cls.metricCard} bordered={false}>
+        <div>
           {/* Metric Title (e.g., Impressions, Clicks, CTL) */}
-          <div
-            style={{ color: 'white', fontSize: '18px', fontWeight: 'normal', marginBottom: '10px' }}
-          >
-            {title}
-          </div>
+          <div className={cls.title}>{title}</div>
 
           {/* Value, Trendline, and Percentage */}
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <div
-              style={{
-                fontSize: '36px',
-                fontWeight: 'bold',
-                color: '#fff',
-                marginRight: '10px',
-              }}
-            >
-              {value}
-            </div>
+          <div className={cls.trend}>
+            <div className={cls.name}>{value}</div>
             <div className={cls.trendLine}>
               {trendLine && <div className={cls.line}></div>}
-              <span style={percentageStyle}>{percentage}</span>
+              <span className={cls.trendLineText}>{percentage}</span>
             </div>
           </div>
 
           {/* Today and Yesterday data */}
-          <div style={{ fontSize: '14px', color: '#aaaaaa' }}>
+          <div className={cls.details}>
             <div>Today: {today}</div>
             <div>Yesterday: {yesterday}</div>
           </div>
@@ -73,15 +50,12 @@ const MetricCard: FC<IMetricCardProps> = ({
   )
 }
 
-// The main Traffic Metrics Row component
-const TrafficMetrics = () => {
+export const TrafficMetrics = () => {
   return (
-    <Row style={{ marginBottom: 20 }}>
+    <Row className={cls.wrapper}>
       {/* Traffic Section Title (Styled in Ant Design yellow/orange) */}
       <Col span={24}>
-        <Title level={4} style={{ color: '#f3c75d', marginBottom: 20 }}>
-          Traffic
-        </Title>
+        <Text className={cls.metricTitle}>Traffic</Text>
       </Col>
 
       {/* Impressions Card */}
@@ -117,4 +91,43 @@ const TrafficMetrics = () => {
   )
 }
 
-export default TrafficMetrics
+export const ConversionMetrics = () => {
+  return (
+    <Row className={cls.wrapper}>
+      {/* Traffic Section Title (Styled in Ant Design yellow/orange) */}
+      <Col span={24}>
+        <Text className={cls.metricTitle}>Conversion</Text>
+      </Col>
+
+      {/* Impressions Card */}
+      <MetricCard
+        title='Leads'
+        value='2'
+        today='1'
+        yesterday='19'
+        percentage='90%'
+        trendLine={true}
+      />
+
+      {/* Clicks Card */}
+      <MetricCard
+        title='FTDs'
+        value='0'
+        today='10'
+        yesterday='90'
+        percentage='0%'
+        trendLine={false}
+      />
+
+      {/* CTL Card */}
+      <MetricCard
+        title='CR'
+        value='0%'
+        today='0%'
+        yesterday='4%'
+        percentage='0%'
+        trendLine={false}
+      />
+    </Row>
+  )
+}

@@ -2,14 +2,14 @@ import { useTranslation } from 'react-i18next'
 
 import { PageLayout } from '~/layouts'
 import cls from './dashboard-page.module.scss'
-import { Card, Col, Row, Statistic } from 'antd'
+import { Card, Col, Row } from 'antd'
 import { Title } from '~/shared/ui/title'
 import { Button } from '~/shared/ui/button'
 import { Dropdown } from '~/shared/ui/dropdown'
 import { Menu } from '~/shared/ui/menu'
-import TrafficMetrics from '~/modules/dashboard/components/metric-card/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
 import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
+import { ConversionMetrics, TrafficMetrics } from '~/modules/dashboard/components/metric-card'
 
 const menu = (
   <Menu
@@ -49,36 +49,7 @@ const DashboardPage = () => {
             {/* Metrics Row 1 */}
             <TrafficMetrics />
 
-            {/* Metrics Row 2 */}
-            <Row style={{ marginBottom: 20 }}>
-              <Col span={8}>
-                <Card bordered={false} style={{ background: '#2a2a2a', color: 'white' }}>
-                  <Title level={5} style={{ color: 'white' }}>
-                    Conversion
-                  </Title>
-                  <Statistic title='Leads' value={2} precision={0} valueStyle={{ color: '#fff' }} />
-                  <div style={{ color: '#ff4d4f' }}>-98.25%</div>
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card bordered={false} style={{ background: '#2a2a2a', color: 'white' }}>
-                  <Title level={5} style={{ color: 'white' }}>
-                    &nbsp;
-                  </Title>
-                  <Statistic title='FTDs' value={0} precision={0} valueStyle={{ color: '#fff' }} />
-                  <div style={{ color: '#fff' }}>0%</div>
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card bordered={false} style={{ background: '#2a2a2a', color: 'white' }}>
-                  <Title level={5} style={{ color: 'white' }}>
-                    &nbsp;
-                  </Title>
-                  <Statistic title='CR' value={0} suffix='%' valueStyle={{ color: '#fff' }} />
-                  <div style={{ color: '#fff' }}>0%</div>
-                </Card>
-              </Col>
-            </Row>
+            <ConversionMetrics />
 
             {/* Top 10 Affiliates Table */}
             <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
