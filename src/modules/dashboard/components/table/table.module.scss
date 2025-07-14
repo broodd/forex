@@ -1,0 +1,46 @@
+:global {
+  .ant-table,
+  .ant-table-wrapper {
+    background-color: transparent !important;
+  }
+
+  .ant-table-wrapper table {
+    border-spacing: 0 0.3rem !important;
+  }
+
+  .ant-table-row {
+    background-color: rgb(28, 29, 37);
+    margin-bottom: 0.3rem;
+  }
+
+  .ant-table-thead {
+    background-color: transparent;
+
+    .ant-table-cell {
+      color: #b3b3b3 !important;
+      font-size: 0.8em !important;
+      padding: 0.3rem 0.1rem !important;
+    }
+  }
+}
+
+.wrapper {
+  padding: 1rem;
+
+  .title {
+    margin-bottom: 0.8rem;
+    font-size: 0.8rem;
+    color: #b3b3b3;
+  }
+}
+
+.customTable {
+  // padding: 20px;
+  color: #fff;
+  width: 100%;
+}
+
+.customRow {
+  background-color: #1e1e1e !important;
+  color: white;
+}

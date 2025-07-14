@@ -1,38 +1,125 @@
 import { useTranslation } from 'react-i18next'
 
-import { Card, Col, Row } from 'antd'
+import { Col, Row } from 'antd'
 import { PageLayout } from '~/layouts'
 import { MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
+import CustomTable from '~/modules/dashboard/components/table/table'
 import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
-import { Button } from '~/shared/ui/button'
-import { Dropdown } from '~/shared/ui/dropdown'
-import { Menu } from '~/shared/ui/menu'
-import { Title } from '~/shared/ui/title'
+// import { Menu } from '~/shared/ui/menu'
 import cls from './dashboard-page.module.scss'
 
-const menu = (
-  <Menu
-    items={[
-      {
-        key: '1',
-        label: (
-          <a target='_blank' rel='noopener noreferrer' href='http://www.alipay.com/'>
-            Option 1
-          </a>
-        ),
-      },
-      {
-        key: '2',
-        label: (
-          <a target='_blank' rel='noopener noreferrer' href='http://www.taobao.com/'>
-            Option 2
-          </a>
-        ),
-      },
-    ]}
-  />
-)
+// const menu = (
+//   <Menu
+//     items={[
+//       {
+//         key: '1',
+//         label: (
+//           <a target='_blank' rel='noopener noreferrer' href='http://www.alipay.com/'>
+//             Option 1
+//           </a>
+//         ),
+//       },
+//       {
+//         key: '2',
+//         label: (
+//           <a target='_blank' rel='noopener noreferrer' href='http://www.taobao.com/'>
+//             Option 2
+//           </a>
+//         ),
+//       },
+//     ]}
+//   />
+// )
+
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Impressions',
+    dataIndex: 'impressions',
+    key: 'impressions',
+  },
+  {
+    title: 'Leads',
+    dataIndex: 'leads',
+    key: 'leads',
+  },
+  {
+    title: 'FTDs',
+    dataIndex: 'ftds',
+    key: 'ftds',
+  },
+  {
+    title: 'Conversion Rate',
+    dataIndex: 'conversionRate',
+    key: 'conversionRate',
+    render: (value: number) => `${value}%`,
+  },
+  {
+    title: 'Clicks',
+    dataIndex: 'clicks',
+    key: 'clicks',
+  },
+]
+
+const data = [
+  {
+    key: '1',
+    name: '2958032',
+    impressions: 18,
+    leads: 0,
+    ftds: 0,
+    conversionRate: 0,
+    clicks: 0,
+  },
+  {
+    key: '2',
+    name: '2958154',
+    impressions: 97,
+    leads: 81,
+    ftds: 0,
+    conversionRate: 0,
+    clicks: 81,
+  },
+]
+
+const columnsInsights = [
+  {
+    title: 'Day',
+    dataIndex: 'day',
+    key: 'day',
+  },
+  {
+    title: 'Value',
+    dataIndex: 'value',
+    key: 'value',
+  },
+  {
+    title: 'Percentage',
+    dataIndex: 'percentage',
+    key: 'percentage',
+    render: (value: number) => `${value}%`,
+  },
+]
+
+const dataInsights = [
+  {
+    key: '1',
+    day: 'Monday',
+    value: 18,
+    percentage: 0,
+  },
+  {
+    key: '2',
+    day: 'Wednesday',
+    value: 12,
+    percentage: 0,
+  },
+]
 
 const DashboardPage = () => {
   const { t } = useTranslation()
@@ -45,7 +132,7 @@ const DashboardPage = () => {
     >
       <div className={cls.wrapper}>
         <Row>
-          <Col span={11}>
+          <Col span={11} className={cls.leftSide}>
             <MetricBox title='Traffic'>
               <MetricCard
                 title='Impressions'
@@ -106,104 +193,9 @@ const DashboardPage = () => {
               />
             </MetricBox>
 
-            {/* Top 10 Affiliates Table */}
-            <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
-              <Col span={24}>
-                <Card bordered={false} style={{ background: '#2a2a2a', color: 'white' }}>
-                  <Title
-                    level={5}
-                    style={{
-                      color: 'white',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    Top 10 Affiliates
-                    <Dropdown overlay={menu} trigger={['click']}>
-                      <Button type='link' style={{ color: 'white' }}>
-                        Affiliate
-                        {/* <DownOutlined /> */}
-                      </Button>
-                    </Dropdown>
-                  </Title>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
-                      <thead>
-                        <tr>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Showing 1 items
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Impressions
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Leads
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            FTDs
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Conversion rate
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Clicks
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
-                            295854
-                          </td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>2</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>0</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>0</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>0%</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>2</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
-              </Col>
-            </Row>
+            <MetricBox title='Top 10 Affiliates' className={cls.flexContentStart}>
+              <CustomTable title={`Showing ${data.length} Items`} columns={columns} data={data} />
+            </MetricBox>
           </Col>
 
           {/* Right Section: Finance, Balance, Statistics Chart */}
@@ -248,95 +240,14 @@ const DashboardPage = () => {
                 </MetricBox>
               </Col>
 
-              <Col span={12}>
-                <Card
-                  bordered={false}
-                  style={{ background: '#2a2a2a', color: 'white', height: '100%' }}
-                >
-                  <Title
-                    level={5}
-                    style={{
-                      color: 'white',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    Insights
-                    <Dropdown overlay={menu} trigger={['click']}>
-                      <Button type='link' style={{ color: 'white' }}>
-                        Impressions
-                        {/* <DownOutlined /> */}
-                      </Button>
-                    </Dropdown>
-                  </Title>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
-                      <thead>
-                        <tr>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Showing 2 items
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Day
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Value
-                          </th>
-                          <th
-                            style={{
-                              padding: '8px',
-                              borderBottom: '1px solid #4a4a4a',
-                              textAlign: 'left',
-                            }}
-                          >
-                            Percentage
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}></td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
-                            Wednesday
-                          </td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>1</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
-                            50.0%
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}></td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
-                            Monday
-                          </td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>1</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #4a4a4a' }}>
-                            50.0%
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
+              <Col span={12} className={cls.dFlex}>
+                <MetricBox title='Insights' className={cls.flexContentStart}>
+                  <CustomTable
+                    title={`Showing ${data.length} Items`}
+                    columns={columnsInsights}
+                    data={dataInsights}
+                  />
+                </MetricBox>
               </Col>
             </Row>
           </Col>

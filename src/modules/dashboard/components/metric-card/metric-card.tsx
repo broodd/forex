@@ -1,6 +1,7 @@
 import { Card, Col, Row, Typography } from 'antd'
 import { FC, ReactNode } from 'react'
 import cls from './metric-card.module.scss'
+import classNames from 'classnames'
 
 const { Text } = Typography
 
@@ -52,9 +53,17 @@ export const MetricCard: FC<IMetricCardProps> = ({
   )
 }
 
-export const MetricBox = ({ title, children }: { title: string; children?: ReactNode }) => {
+export const MetricBox = ({
+  title,
+  children,
+  className,
+}: {
+  title: string
+  className?: string
+  children?: ReactNode
+}) => {
   return (
-    <Row className={cls.wrapper}>
+    <Row className={classNames(cls.wrapper, [className])}>
       {/* Traffic Section Title (Styled in Ant Design yellow/orange) */}
       <Col span={24}>
         <Text className={cls.metricTitle}>{title}</Text>
