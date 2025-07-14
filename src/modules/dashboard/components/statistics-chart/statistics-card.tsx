@@ -18,7 +18,6 @@ import cls from './statistics-card.module.scss'
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
 const StatisticsChart = () => {
-  // Dummy data for the chart, mimicking the trend in the image
   const chartData = {
     labels: ['04 Jul', '05 Jul', '06 Jul', '07 Jul', '08 Jul', '09 Jul', '10 Jul', '11 Jul'],
     datasets: [
@@ -67,7 +66,7 @@ const StatisticsChart = () => {
         labels: {
           color: 'white', // Legend text color
           font: {
-            size: 14,
+            size: 11,
           },
           usePointStyle: true, // Use circular points for legend items
           boxHeight: 5,

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { Col, Row } from 'antd'
+import { Col, Row, Typography } from 'antd'
 import { PageLayout } from '~/layouts'
 import { MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
@@ -8,6 +8,8 @@ import CustomTable from '~/modules/dashboard/components/table/table'
 import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
 // import { Menu } from '~/shared/ui/menu'
 import cls from './dashboard-page.module.scss'
+import { FilterIcon } from '~/shared/ui/icon'
+import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 
 // const menu = (
 //   <Menu
@@ -121,6 +123,19 @@ const dataInsights = [
   },
 ]
 
+const { Text } = Typography
+
+const formatDate = (date: Date): string => {
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-indexed
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
+}
+
+const today = new Date()
+const lastWeek = new Date()
+lastWeek.setDate(today.getDate() - 7)
+
 const DashboardPage = () => {
   const { t } = useTranslation()
 
@@ -132,7 +147,28 @@ const DashboardPage = () => {
     >
       <div className={cls.wrapper}>
         <Row>
-          <Col span={11} className={cls.leftSide}>
+          <Col lg={9} className={cls.filters}>
+            <FilterIcon className={cls.filterIcon} />
+            <Text>Filter</Text>
+            <Text className={cls.filtersDate}>
+              {formatDate(lastWeek)} - {formatDate(today)}
+            </Text>
+            <RefreshIcon className={cls.refhreshIcon} />
+          </Col>
+
+          <Col className={cls.periodFilter}>
+            <Text className={cls.periodItem}>Today</Text>
+            <Text className={cls.periodItem}>Yesterday</Text>
+            <Text className={cls.periodItem}>Last 7 Days</Text>
+            <Text className={cls.periodItem}>This Week</Text>
+            <Text className={cls.periodItem}>This Month</Text>
+            <Text className={cls.periodItem}>Last Month</Text>
+            <Text className={cls.periodItem}>Custom</Text>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col span={11} lg={11} md={11} className={cls.leftSide}>
             <MetricBox title='Traffic'>
               <MetricCard
                 title='Impressions'
@@ -199,7 +235,7 @@ const DashboardPage = () => {
           </Col>
 
           {/* Right Section: Finance, Balance, Statistics Chart */}
-          <Col span={13}>
+          <Col span={13} lg={13} md={13}>
             <Row>
               <Col span={12}>
                 <MetricBox title='Finance'>

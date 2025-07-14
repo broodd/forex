@@ -2,11 +2,11 @@ import { FC, MouseEventHandler } from 'react'
 import Icon from '@ant-design/icons'
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon'
 
-interface IFilterIconProps extends Partial<CustomIconComponentProps> {
+interface IRefreshIconProps extends Partial<CustomIconComponentProps> {
   onClick?: MouseEventHandler<HTMLSpanElement>
 }
 
-const FilterSvg = () => {
+const RefreshSvg = () => {
   return (
     <svg width='1em' height='1em' viewBox='0 0 24 24'>
       <path
@@ -15,12 +15,12 @@ const FilterSvg = () => {
         stroke-linecap='round'
         stroke-linejoin='round'
         stroke-width='2'
-        d='M4 4h16v2.172a2 2 0 0 1-.586 1.414L15 12v7l-6 2v-8.5L4.52 7.572A2 2 0 0 1 4 6.227z'
+        d='M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4m-4 4a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4'
       ></path>
     </svg>
   )
 }
 
-export const FilterIcon: FC<IFilterIconProps> = (props) => {
-  return <Icon component={FilterSvg} onClick={props.onClick} {...props} />
+export const RefreshIcon: FC<IRefreshIconProps> = (props) => {
+  return <Icon component={RefreshSvg} onClick={props.onClick} {...props} />
 }

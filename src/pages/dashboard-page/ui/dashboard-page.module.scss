@@ -15,3 +15,52 @@
   display: flex;
   flex-direction: column;
 }
+
+:global {
+  .ant-typography {
+    color: white;
+  }
+}
+
+.filters {
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.filterIcon {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.refhreshIcon {
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
+  background-color: var(--brand-100);
+  border-radius: 50%;
+  padding: 3px;
+}
+
+.filtersDate {
+  background-color: #151622;
+  padding: 0.6rem 0.9rem;
+  margin-left: 10px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.periodFilter {
+  display: flex;
+  border: 2px solid rgb(21, 22, 34);
+  border-radius: 6px;
+  margin-left: auto;
+  background-color: #24262c;
+  margin-bottom: 0.7rem;
+
+  .periodItem {
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.8rem 1.3rem;
+  }
+}
