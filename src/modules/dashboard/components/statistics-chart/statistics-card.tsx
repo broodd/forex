@@ -131,8 +131,8 @@ const StatisticsChart = () => {
     <Col span={24} className={cls.metricCard}>
       <div
         style={{
-          // display: 'flex',
-          display: 'none',
+          display: 'flex',
+          // display: 'none',
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: 20,

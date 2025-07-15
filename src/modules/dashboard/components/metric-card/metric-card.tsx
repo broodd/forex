@@ -1,7 +1,9 @@
-import { Card, Col, Row, Typography } from 'antd'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Button, Card, Col, Dropdown, Menu, Row, Typography } from 'antd'
 import { FC, ReactNode } from 'react'
 import cls from './metric-card.module.scss'
 import classNames from 'classnames'
+import { DownOutlined } from '@ant-design/icons'
 
 const { Text } = Typography
 
@@ -9,11 +11,12 @@ interface IMetricCardProps {
   span?: number
   className?: string
   title: string
-  value: string
-  today: string
-  yesterday: string
+  value: string | number
+  today: string | number
+  yesterday: string | number
   percentage: string
   trendLine: boolean
+  onTitleClick?: any
 }
 
 // Component for a single metric card
@@ -25,13 +28,16 @@ export const MetricCard: FC<IMetricCardProps> = ({
   yesterday,
   percentage,
   trendLine,
+  onTitleClick,
 }) => {
   return (
     <Col span={span}>
       <Card className={cls.metricCard} bordered={false}>
         <div>
           {/* Metric Title (e.g., Impressions, Clicks, CTL) */}
-          <div className={cls.title}>{title}</div>
+          <div className={cls.title} onClick={onTitleClick}>
+            {title}
+          </div>
 
           {/* Value, Trendline, and Percentage */}
           <div
@@ -61,21 +67,52 @@ export const MetricCard: FC<IMetricCardProps> = ({
   )
 }
 
+const dropdownMenu = (
+  <Menu
+    items={[
+      { key: '1', label: 'Option 1' },
+      { key: '2', label: 'Option 2' },
+      { key: '3', label: 'Option 3' },
+    ]}
+  />
+)
+
 export const MetricBox = ({
   title,
+  dropDownTitle,
   children,
   className,
 }: {
   title: string
+  dropDownTitle?: string
   className?: string
   children?: ReactNode
 }) => {
   return (
     <Row className={classNames(cls.wrapper, [className])}>
-      {/* Traffic Section Title (Styled in Ant Design yellow/orange) */}
-      <Col span={24}>
+      <Col span={dropDownTitle ? 12 : 24}>
         <Text className={cls.metricTitle}>{title}</Text>
       </Col>
+
+      {dropDownTitle && (
+        <Col className={cls.dropdown}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 20,
+            }}
+          >
+            <Dropdown overlay={dropdownMenu} trigger={['click']}>
+              <Button type='link' style={{ color: 'white', display: 'flex', alignItems: 'center' }}>
+                {dropDownTitle}
+                <DownOutlined style={{ marginLeft: 5 }} />
+              </Button>
+            </Dropdown>
+          </div>
+        </Col>
+      )}
 
       {children}
     </Row>

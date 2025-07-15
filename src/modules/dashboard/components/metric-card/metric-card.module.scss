@@ -13,6 +13,18 @@
   }
 }
 
+.dropdown {
+  margin-left: auto;
+  min-width: 140px;
+
+  :global {
+    .ant-btn {
+      justify-content: space-between;
+      flex: 1;
+    }
+  }
+}
+
 .trendLine {
   width: 45px;
   height: 50px;
