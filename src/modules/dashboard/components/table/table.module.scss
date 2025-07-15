@@ -11,6 +11,10 @@
   .ant-table-row {
     background-color: rgb(28, 29, 37);
     margin-bottom: 0.3rem;
+
+    .ant-table-cell {
+      padding: 1rem 0.8rem !important;
+    }
   }
 
   .ant-table-thead {
@@ -18,14 +22,13 @@
 
     .ant-table-cell {
       color: #b3b3b3 !important;
-      font-size: 0.8em !important;
-      padding: 0.3rem 0.1rem !important;
+      font-size: 1em !important;
     }
   }
 }
 
 .wrapper {
-  padding: 1rem;
+  padding: 0.7rem;
 
   .title {
     margin-bottom: 0.8rem;
@@ -43,4 +46,5 @@
 .customRow {
   background-color: #1e1e1e !important;
   color: white;
+  padding: 0.8rem 0;
 }

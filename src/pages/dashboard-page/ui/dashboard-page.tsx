@@ -14,6 +14,7 @@ import { FilterIcon } from '~/shared/ui/icon'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 import cls from './dashboard-page.module.scss'
 import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
+import { EditTrafficMapModal } from '~/modules/dashboard/components/metric-card/edit-map-modal'
 
 const { Text } = Typography
 
@@ -278,6 +279,62 @@ const DashboardPage = () => {
     setIsEditChartModalVisible(false)
   }
 
+  // --- NEW STATE FOR TRAFFIC MAP DATA ---
+  const [trafficMapData, setTrafficMapData] = useState([
+    {
+      name: 'Spain',
+      value: 116,
+      percentage: '88.5%',
+      coordinates: [-3.7038, 40.4168],
+      color: 'red',
+    },
+    {
+      name: 'Italy',
+      value: 6,
+      percentage: '4.6%',
+      coordinates: [12.5674, 41.9028],
+      color: 'orange',
+    },
+    {
+      name: 'Ukraine',
+      value: 4,
+      percentage: '3.1%',
+      coordinates: [30.5234, 50.4501],
+      color: 'gold',
+    },
+    {
+      name: 'Czech Republic',
+      value: 3,
+      percentage: '2.3%',
+      coordinates: [14.4378, 50.0755],
+      color: 'green',
+    },
+    {
+      name: 'Canada',
+      value: 2,
+      percentage: '1.5%',
+      coordinates: [-75.6972, 45.4215],
+      color: 'blue',
+    },
+  ])
+
+  // --- NEW STATE FOR TRAFFIC MAP MODAL ---
+  const [isEditTrafficMapModalVisible, setIsEditTrafficMapModalVisible] = useState(false)
+
+  // --- NEW TRAFFIC MAP MODAL HANDLERS ---
+  const handleTrafficMapTitleClick = () => {
+    setIsEditTrafficMapModalVisible(true)
+  }
+
+  const handleTrafficMapModalSave = (newData: any) => {
+    setTrafficMapData(newData)
+    setIsEditTrafficMapModalVisible(false)
+  }
+
+  const handleTrafficMapModalCancel = () => {
+    setIsEditTrafficMapModalVisible(false)
+  }
+
   return (
     <PageLayout
       header={{
@@ -431,8 +488,12 @@ const DashboardPage = () => {
 
             <Row>
               <Col span={12}>
-                <MetricBox title='Traffic Map' dropDownTitle='Impressions'>
-                  <TrafficMap />
+                <MetricBox
+                  title='Traffic Map'
+                  dropDownTitle='Impressions'
+                  onTitleClick={handleTrafficMapTitleClick}
+                >
+                  <TrafficMap mapData={trafficMapData} />
                 </MetricBox>
               </Col>
 
@@ -475,6 +536,13 @@ const DashboardPage = () => {
         onCancel={handleChartModalCancel}
         onSave={handleChartModalSave}
         initialChartData={chartData} // Pass the chartData in Chart.js format
+      />
+
+      <EditTrafficMapModal
+        visible={isEditTrafficMapModalVisible}
+        onCancel={handleTrafficMapModalCancel}
+        onSave={handleTrafficMapModalSave}
+        initialTrafficMapData={trafficMapData}
       />
     </PageLayout>
   )
