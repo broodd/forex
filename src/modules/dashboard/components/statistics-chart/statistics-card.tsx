@@ -1,58 +1,58 @@
-import { Dropdown, Menu, Button, Col } from 'antd'
-import { Line } from 'react-chartjs-2'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Col } from 'antd'
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  ChartOptions,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  ChartOptions,
 } from 'chart.js'
-import { DownOutlined } from '@ant-design/icons'
+import { Line } from 'react-chartjs-2'
 import cls from './statistics-card.module.scss'
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-const StatisticsChart = () => {
-  const chartData = {
-    labels: ['04 Jul', '05 Jul', '06 Jul', '07 Jul', '08 Jul', '09 Jul', '10 Jul', '11 Jul'],
-    datasets: [
-      {
-        label: 'Impressions 131',
-        data: [18, 0, 4, 28, 22, 29, 18, 10], // Data points mimicking the orange line
-        borderColor: '#f3c75d', // Orange color from the image
-        backgroundColor: 'rgba(243, 199, 93, 0.2)', // Light orange fill
-        pointBackgroundColor: '#f3c75d',
-        pointBorderColor: '#f3c75d',
-        pointRadius: 4,
-        tension: 0.4, // Smooth curves
-      },
-      {
-        label: 'Leads 94',
-        data: [15, 0, 2, 23, 16, 19, 13, 10], // Data points mimicking the green line
-        borderColor: '#52c41a', // Green color from the image
-        backgroundColor: 'rgba(82, 196, 26, 0.2)', // Light green fill
-        pointBackgroundColor: '#52c41a',
-        pointBorderColor: '#52c41a',
-        pointRadius: 4,
-        tension: 0.4, // Smooth curves
-      },
-      {
-        label: 'FTDs 0',
-        data: [0, 0, 0, 0, 0, 0, 0, 0], // Data points for FTDs (appears flat at 0)
-        borderColor: '#ffffff', // White color from the image
-        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Very light white fill
-        pointBackgroundColor: '#ffffff',
-        pointBorderColor: '#ffffff',
-        pointRadius: 4,
-        tension: 0.4, // Smooth curves
-      },
-    ],
-  }
+const StatisticsChart = ({ chartData }: { chartData: any }) => {
+  // const chartData = {
+  //   labels: ['04 Jul', '05 Jul', '06 Jul', '07 Jul', '08 Jul', '09 Jul', '10 Jul', '11 Jul'],
+  //   datasets: [
+  //     {
+  //       label: 'Impressions 131',
+  //       data: [18, 0, 4, 28, 22, 29, 18, 10], // Data points mimicking the orange line
+  //       borderColor: '#f3c75d', // Orange color from the image
+  //       backgroundColor: 'rgba(243, 199, 93, 0.2)', // Light orange fill
+  //       pointBackgroundColor: '#f3c75d',
+  //       pointBorderColor: '#f3c75d',
+  //       pointRadius: 4,
+  //       tension: 0.4, // Smooth curves
+  //     },
+  //     {
+  //       label: 'Leads 94',
+  //       data: [15, 0, 2, 23, 16, 19, 13, 10], // Data points mimicking the green line
+  //       borderColor: '#52c41a', // Green color from the image
+  //       backgroundColor: 'rgba(82, 196, 26, 0.2)', // Light green fill
+  //       pointBackgroundColor: '#52c41a',
+  //       pointBorderColor: '#52c41a',
+  //       pointRadius: 4,
+  //       tension: 0.4, // Smooth curves
+  //     },
+  //     {
+  //       label: 'FTDs 0',
+  //       data: [0, 0, 0, 0, 0, 0, 0, 0], // Data points for FTDs (appears flat at 0)
+  //       borderColor: '#ffffff', // White color from the image
+  //       backgroundColor: 'rgba(255, 255, 255, 0.1)', // Very light white fill
+  //       pointBackgroundColor: '#ffffff',
+  //       pointBorderColor: '#ffffff',
+  //       pointRadius: 4,
+  //       tension: 0.4, // Smooth curves
+  //     },
+  //   ],
+  // }
 
   // Chart options to match the visual style in the image
   const chartOptions: ChartOptions<'line'> = {
@@ -117,33 +117,8 @@ const StatisticsChart = () => {
     },
   }
 
-  const dropdownMenu = (
-    <Menu
-      items={[
-        { key: '1', label: 'Option 1' },
-        { key: '2', label: 'Option 2' },
-        { key: '3', label: 'Option 3' },
-      ]}
-    />
-  )
-
   return (
     <Col span={24} className={cls.metricCard}>
-      <div
-        style={{
-          display: 'flex',
-          // display: 'none',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 20,
-        }}
-      >
-        <Dropdown overlay={dropdownMenu} trigger={['click']}>
-          <Button type='link' style={{ color: 'white', display: 'flex', alignItems: 'center' }}>
-            3 selected <DownOutlined style={{ marginLeft: 5 }} />
-          </Button>
-        </Dropdown>
-      </div>
       <div style={{ height: 200 }}>
         <Line data={chartData} options={chartOptions} />
       </div>
