@@ -8,100 +8,11 @@ import StatisticsChart from '~/modules/dashboard/components/statistics-chart/sta
 import CustomTable from '~/modules/dashboard/components/table/table'
 import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
 // import { Menu } from '~/shared/ui/menu'
-import cls from './dashboard-page.module.scss'
+import { useState } from 'react'
+import { EditMetricModal } from '~/modules/dashboard/components/metric-card/edit-metric-modal'
 import { FilterIcon } from '~/shared/ui/icon'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
-import { SetStateAction, SetStateAction, SetStateAction, useState } from 'react'
-import { EditMetricModal } from '~/modules/dashboard/components/metric-card/edit-metric-modal'
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Impressions',
-    dataIndex: 'impressions',
-    key: 'impressions',
-  },
-  {
-    title: 'Leads',
-    dataIndex: 'leads',
-    key: 'leads',
-  },
-  {
-    title: 'FTDs',
-    dataIndex: 'ftds',
-    key: 'ftds',
-  },
-  {
-    title: 'Conversion Rate',
-    dataIndex: 'conversionRate',
-    key: 'conversionRate',
-    render: (value: number) => `${value}%`,
-  },
-  {
-    title: 'Clicks',
-    dataIndex: 'clicks',
-    key: 'clicks',
-  },
-]
-
-const data = [
-  {
-    key: '1',
-    name: '2958032',
-    impressions: 18,
-    leads: 0,
-    ftds: 0,
-    conversionRate: 0,
-    clicks: 0,
-  },
-  {
-    key: '2',
-    name: '2958154',
-    impressions: 97,
-    leads: 81,
-    ftds: 0,
-    conversionRate: 0,
-    clicks: 81,
-  },
-]
-
-const columnsInsights = [
-  {
-    title: 'Day',
-    dataIndex: 'day',
-    key: 'day',
-  },
-  {
-    title: 'Value',
-    dataIndex: 'value',
-    key: 'value',
-  },
-  {
-    title: 'Percentage',
-    dataIndex: 'percentage',
-    key: 'percentage',
-    render: (value: number) => `${value}%`,
-  },
-]
-
-const dataInsights = [
-  {
-    key: '1',
-    day: 'Monday',
-    value: 18,
-    percentage: 0,
-  },
-  {
-    key: '2',
-    day: 'Wednesday',
-    value: 12,
-    percentage: 0,
-  },
-]
+import cls from './dashboard-page.module.scss'
 
 const { Text } = Typography
 
@@ -235,14 +146,8 @@ const DashboardPage = () => {
     setCurrentEditingMetricName(null)
   }
 
-  const [isAffiliateModalVisible, setIsAffiliateModalVisible] = useState(false)
-  const [editingAffiliateRow, setEditingAffiliateRow] = useState(null)
-
-  const [isInsightsModalVisible, setIsInsightsModalVisible] = useState(false)
-  const [editingInsightsRow, setEditingInsightsRow] = useState(null)
-
-  // --- DUMMY DATA FOR TABLES (Replace with your actual data) ---
-  const [affiliateData, setAffiliateData] = useState([
+  // State for table data
+  const [affiliatesTableData, setAffiliatesTableData] = useState([
     {
       key: '1',
       name: '2958032',
@@ -263,113 +168,59 @@ const DashboardPage = () => {
     },
   ])
 
-  const [insightsData, setInsightsData] = useState([
+  const [insightsTableData, setInsightsTableData] = useState([
     { key: '1', day: 'Monday', value: 18, percentage: '0%' },
     { key: '2', day: 'Wednesday', value: 12, percentage: '0%' },
   ])
 
-  // --- AFFILIATES TABLE COLUMNS ---
-  const affiliateColumns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      sorter: (a: { name: string }, b: { name: any }) => a.name.localeCompare(b.name),
-    },
-    {
-      title: 'Impressions',
-      dataIndex: 'impressions',
-      key: 'impressions',
-      sorter: (a: { impressions: number }, b: { impressions: number }) =>
-        a.impressions - b.impressions,
-    },
-    {
-      title: 'Leads',
-      dataIndex: 'leads',
-      key: 'leads',
-      sorter: (a: { leads: number }, b: { leads: number }) => a.leads - b.leads,
-    },
-    {
-      title: 'FTDs',
-      dataIndex: 'ftds',
-      key: 'ftds',
-      sorter: (a: { ftds: number }, b: { ftds: number }) => a.ftds - b.ftds,
-    },
-    {
-      title: 'Conversion Rate',
-      dataIndex: 'conversionRate',
-      key: 'conversionRate',
-      sorter: (a: { conversionRate: string }, b: { conversionRate: string }) =>
-        parseFloat(a.conversionRate) - parseFloat(b.conversionRate),
-    },
-    {
-      title: 'Clicks',
-      dataIndex: 'clicks',
-      key: 'clicks',
-      sorter: (a: { clicks: number }, b: { clicks: number }) => a.clicks - b.clicks,
-    },
+  const [isEditTableModalVisible, setIsEditTableModalVisible] = useState(false)
+  const [currentEditingTableType, setCurrentEditingTableType] = useState(null) // 'affiliates' or 'insights'
+  const [initialTableModalData, setInitialTableModalData] = useState([])
+
+  // --- Table Edit Modal Handlers ---
+  const handleTableTitleClick = (tableType: any) => {
+    setCurrentEditingTableType(tableType)
+    if (tableType === 'affiliates') {
+      setInitialTableModalData(affiliatesTableData as any)
+    } else if (tableType === 'insights') {
+      setInitialTableModalData(insightsTableData as any)
+    }
+    setIsEditTableModalVisible(true)
+  }
+
+  const handleTableModalSave = (newData: any) => {
+    console.log('--- ', newData)
+
+    if (currentEditingTableType === 'affiliates') {
+      setAffiliatesTableData(newData)
+    } else if (currentEditingTableType === 'insights') {
+      setInsightsTableData(newData)
+    }
+    setIsEditTableModalVisible(false)
+    setCurrentEditingTableType(null)
+  }
+
+  const handleTableModalCancel = () => {
+    setIsEditTableModalVisible(false)
+    setCurrentEditingTableType(null)
+  }
+
+  // Columns for the Affiliates table (for display, not for modal editing)
+  const affiliatesColumns = [
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Impressions', dataIndex: 'impressions', key: 'impressions' },
+    { title: 'Leads', dataIndex: 'leads', key: 'leads' },
+    { title: 'FTDs', dataIndex: 'ftds', key: 'ftds' },
+    { title: 'Conversion Rate', dataIndex: 'conversionRate', key: 'conversionRate' },
+    { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
   ]
 
-  // --- INSIGHTS TABLE COLUMNS ---
+  // Columns for the Insights table (for display, not for modal editing)
   const insightsColumns = [
-    {
-      title: 'Day',
-      dataIndex: 'day',
-      key: 'day',
-      sorter: (a: { day: string }, b: { day: any }) => a.day.localeCompare(b.day),
-    },
-    {
-      title: 'Value',
-      dataIndex: 'value',
-      key: 'value',
-      sorter: (a: { value: number }, b: { value: number }) => a.value - b.value,
-    },
-    {
-      title: 'Percentage',
-      dataIndex: 'percentage',
-      key: 'percentage',
-      sorter: (a: { percentage: string }, b: { percentage: string }) =>
-        parseFloat(a.percentage) - parseFloat(b.percentage),
-    },
+    { title: 'Day', dataIndex: 'day', key: 'day' },
+    { title: 'Value', dataIndex: 'value', key: 'value' },
+    { title: 'Percentage', dataIndex: 'percentage', key: 'percentage' },
   ]
-
-  // --- NEW HANDLERS FOR AFFILIATE TABLE MODAL ---
-  const handleAffiliateRowClick = (record: SetStateAction<null>) => {
-    setEditingAffiliateRow(record)
-    setIsAffiliateModalVisible(true)
-  }
-
-  const handleAffiliateModalSave = (newValues: { key: string }) => {
-    setAffiliateData((prevData) =>
-      prevData.map((row) => (row.key === newValues.key ? { ...row, ...newValues } : row)),
-    )
-    setIsAffiliateModalVisible(false)
-    setEditingAffiliateRow(null)
-  }
-
-  const handleAffiliateModalCancel = () => {
-    setIsAffiliateModalVisible(false)
-    setEditingAffiliateRow(null)
-  }
-
-  // --- NEW HANDLERS FOR INSIGHTS TABLE MODAL ---
-  const handleInsightsRowClick = (record: SetStateAction<null>) => {
-    setEditingInsightsRow(record)
-    setIsInsightsModalVisible(true)
-  }
-
-  const handleInsightsModalSave = (newValues: { key: string }) => {
-    setInsightsData((prevData) =>
-      prevData.map((row) => (row.key === newValues.key ? { ...row, ...newValues } : row)),
-    )
-    setIsInsightsModalVisible(false)
-    setEditingInsightsRow(null)
-  }
-
-  const handleInsightsModalCancel = () => {
-    setIsInsightsModalVisible(false)
-    setEditingInsightsRow(null)
-  }
 
   return (
     <PageLayout
@@ -471,8 +322,13 @@ const DashboardPage = () => {
               title='Top 10 Affiliates'
               className={cls.flexContentStart}
               dropDownTitle='Affiliate'
+              onTitleClick={() => handleTableTitleClick('affiliates')}
             >
-              <CustomTable title={`Showing ${data.length} Items`} columns={columns} data={data} />
+              <CustomTable
+                title={`Showing ${insightsColumns.length} Items`}
+                columns={affiliatesColumns}
+                data={affiliatesTableData}
+              />
             </MetricBox>
           </Col>
 
@@ -525,11 +381,12 @@ const DashboardPage = () => {
                   title='Insights'
                   className={cls.flexContentStart}
                   dropDownTitle='Impressions'
+                  onTitleClick={() => handleTableTitleClick('insights')}
                 >
                   <CustomTable
-                    title={`Showing ${data.length} Items`}
-                    columns={columnsInsights}
-                    data={dataInsights}
+                    title={`Showing ${insightsTableData.length} Items`}
+                    columns={insightsColumns}
+                    data={insightsTableData}
                   />
                 </MetricBox>
               </Col>
@@ -544,20 +401,13 @@ const DashboardPage = () => {
         initialValues={initialFormValues}
       />
 
+      {/* The Edit Table Modal */}
       <EditTableModal
-        visible={isAffiliateModalVisible}
-        onCancel={handleAffiliateModalCancel}
-        onSave={handleAffiliateModalSave}
-        initialValues={editingAffiliateRow}
-        modalTitle='Edit Affiliate'
-      />
-
-      <EditTableModal
-        visible={isInsightsModalVisible}
-        onCancel={handleInsightsModalCancel}
-        onSave={handleInsightsModalSave}
-        initialValues={editingInsightsRow}
-        modalTitle='Edit Insight'
+        visible={isEditTableModalVisible}
+        onCancel={handleTableModalCancel}
+        onSave={handleTableModalSave}
+        initialTableData={initialTableModalData}
+        tableType={currentEditingTableType} // Pass type to differentiate columns
       />
     </PageLayout>
   )

@@ -82,16 +82,20 @@ export const MetricBox = ({
   dropDownTitle,
   children,
   className,
+  onTitleClick,
 }: {
   title: string
   dropDownTitle?: string
+  onTitleClick?: any
   className?: string
   children?: ReactNode
 }) => {
   return (
     <Row className={classNames(cls.wrapper, [className])}>
       <Col span={dropDownTitle ? 12 : 24}>
-        <Text className={cls.metricTitle}>{title}</Text>
+        <Text className={cls.metricTitle} onClick={onTitleClick}>
+          {title}
+        </Text>
       </Col>
 
       {dropDownTitle && (
