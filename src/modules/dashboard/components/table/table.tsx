@@ -23,6 +23,7 @@ const CustomTable = ({
         bordered
         style={{ backgroundColor: '#1E1E1E' }}
         className={cls.customTable}
+        scroll={{ x: 'max-content' }}
       />
     </Col>
   )

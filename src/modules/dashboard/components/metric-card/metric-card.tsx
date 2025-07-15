@@ -34,11 +34,19 @@ export const MetricCard: FC<IMetricCardProps> = ({
           <div className={cls.title}>{title}</div>
 
           {/* Value, Trendline, and Percentage */}
-          <div className={cls.trend}>
+          <div
+            className={classNames(cls.trend, [
+              parseFloat(percentage) < 0
+                ? cls.down
+                : parseFloat(percentage) > 0
+                  ? cls.up
+                  : cls.equal,
+            ])}
+          >
             <div className={cls.name}>{value}</div>
             <div className={cls.trendLine}>
               {trendLine && <div className={cls.line}></div>}
-              <span className={cls.trendLineText}>{percentage}</span>
+              <span className={cls.trendLineText}>{percentage}%</span>
             </div>
           </div>
 

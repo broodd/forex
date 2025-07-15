@@ -135,8 +135,13 @@
   .menuBottom {
     text-align: center;
 
-    .ant-menu-item {
-      margin-bottom: 1rem;
+    :global {
+      .ant-menu-item:last-child {
+        margin-bottom: 1rem;
+        padding: 1.2rem 0.6rem;
+        background: color-mix(in lab, var(--brand-100), white 15%);
+        border-radius: 48px;
+      }
     }
   }
 }

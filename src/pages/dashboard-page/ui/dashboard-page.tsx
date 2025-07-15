@@ -175,7 +175,7 @@ const DashboardPage = () => {
                 value='131'
                 today='11'
                 yesterday='19'
-                percentage='100%'
+                percentage='-90'
                 trendLine={true}
               />
 
@@ -185,7 +185,7 @@ const DashboardPage = () => {
                 value='94'
                 today='10'
                 yesterday='13'
-                percentage='100%'
+                percentage='100'
                 trendLine={true}
               />
 
@@ -195,7 +195,7 @@ const DashboardPage = () => {
                 value='100%'
                 today='100%'
                 yesterday='100%'
-                percentage='100%'
+                percentage='100'
                 trendLine={true}
               />
             </MetricBox>
@@ -206,7 +206,7 @@ const DashboardPage = () => {
                 value='2'
                 today='1'
                 yesterday='19'
-                percentage='90%'
+                percentage='90'
                 trendLine={true}
               />
 
@@ -215,8 +215,8 @@ const DashboardPage = () => {
                 value='0'
                 today='10'
                 yesterday='90'
-                percentage='0%'
-                trendLine={false}
+                percentage='0'
+                trendLine={true}
               />
 
               <MetricCard
@@ -224,8 +224,8 @@ const DashboardPage = () => {
                 value='0%'
                 today='0%'
                 yesterday='4%'
-                percentage='0%'
-                trendLine={false}
+                percentage='0'
+                trendLine={true}
               />
             </MetricBox>
 
@@ -245,7 +245,7 @@ const DashboardPage = () => {
                     value='131'
                     today='11'
                     yesterday='19'
-                    percentage='100%'
+                    percentage='100'
                     trendLine={true}
                   />
                 </MetricBox>
@@ -258,7 +258,7 @@ const DashboardPage = () => {
                     value='131'
                     today='11'
                     yesterday='19'
-                    percentage='100%'
+                    percentage='100'
                     trendLine={true}
                   />
                 </MetricBox>
