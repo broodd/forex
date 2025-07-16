@@ -16,6 +16,7 @@ interface IMetricCardProps {
   yesterday: string | number
   percentage: string
   trendLine: boolean
+  showToday: boolean
   onTitleClick?: any
 }
 
@@ -28,6 +29,7 @@ export const MetricCard: FC<IMetricCardProps> = ({
   yesterday,
   percentage,
   trendLine,
+  showToday,
   onTitleClick,
 }) => {
   return (
@@ -50,17 +52,21 @@ export const MetricCard: FC<IMetricCardProps> = ({
             ])}
           >
             <div className={cls.name}>{value}</div>
-            <div className={cls.trendLine}>
-              {trendLine && <div className={cls.line}></div>}
-              <span className={cls.trendLineText}>{percentage}%</span>
-            </div>
+            {trendLine && (
+              <div className={cls.trendLine}>
+                <div className={cls.line}></div>
+                <span className={cls.trendLineText}>{percentage}%</span>
+              </div>
+            )}
           </div>
 
           {/* Today and Yesterday data */}
-          <div className={cls.details}>
-            <div>Today: {today}</div>
-            <div>Yesterday: {yesterday}</div>
-          </div>
+          {showToday && (
+            <div className={cls.details}>
+              <div>Today: {today}</div>
+              <div>Yesterday: {yesterday}</div>
+            </div>
+          )}
         </div>
       </Card>
     </Col>

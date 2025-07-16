@@ -15,6 +15,7 @@ import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 import cls from './dashboard-page.module.scss'
 import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
 import { EditTrafficMapModal } from '~/modules/dashboard/components/metric-card/edit-map-modal'
+import EditTextModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
 
 const { Text } = Typography
 
@@ -41,6 +42,7 @@ const DashboardPage = () => {
         today: '11',
         yesterday: '19',
         trendLine: true,
+        showToday: true,
       },
       clicks: {
         value: '94',
@@ -48,6 +50,7 @@ const DashboardPage = () => {
         today: '10',
         yesterday: '13',
         trendLine: true,
+        showToday: true,
       },
       ctl: {
         value: '100%', // CTL is a percentage itself
@@ -55,6 +58,7 @@ const DashboardPage = () => {
         today: '100%',
         yesterday: '100%',
         trendLine: true,
+        showToday: true,
       },
     },
     conversion: {
@@ -64,6 +68,7 @@ const DashboardPage = () => {
         today: '1',
         yesterday: '19',
         trendLine: true,
+        showToday: true,
       },
       ftds: {
         value: '0',
@@ -71,6 +76,7 @@ const DashboardPage = () => {
         today: '10',
         yesterday: '90',
         trendLine: true, // No trend line shown in the image for FTDs
+        showToday: true,
       },
       cr: {
         value: '0%',
@@ -78,6 +84,7 @@ const DashboardPage = () => {
         today: '0%',
         yesterday: '4%',
         trendLine: true, // No trend line shown in the image for CR
+        showToday: true,
       },
     },
     finance: {
@@ -86,7 +93,8 @@ const DashboardPage = () => {
         percentage: '100',
         today: '11',
         yesterday: '19',
-        trendLine: true,
+        trendLine: false,
+        showToday: false,
       },
     },
     balance: {
@@ -95,7 +103,8 @@ const DashboardPage = () => {
         percentage: '100',
         today: '11',
         yesterday: '19',
-        trendLine: true,
+        trendLine: false,
+        showToday: false,
       },
     },
   })
@@ -131,6 +140,8 @@ const DashboardPage = () => {
           percentage: newValues.percentage,
           today: newValues.today,
           yesterday: newValues.yesterday,
+          trendLine: newValues.trendLine,
+          showToday: newValues.showToday,
           // Important: preserve trendLine and other non-editable properties
           // If trendLine should be dynamic based on percentage, update logic here
         },
@@ -335,6 +346,25 @@ const DashboardPage = () => {
     setIsEditTrafficMapModalVisible(false)
   }
 
+  // NEW STATE FOR DATE RANGE
+  const [dateRangeText, setDateRangeText] = useState(
+    `${formatDate(lastWeek)} - ${formatDate(today)}`,
+  )
+  const [isEditDateRangeModalVisible, setIsEditDateRangeModalVisible] = useState(false)
+
+  const handleDateRangeClick = () => {
+    setIsEditDateRangeModalVisible(true)
+  }
+
+  const handleDateRangeModalSave = (newText: string) => {
+    setDateRangeText(newText)
+    setIsEditDateRangeModalVisible(false)
+  }
+
+  const handleDateRangeModalCancel = () => {
+    setIsEditDateRangeModalVisible(false)
+  }
+
   return (
     <PageLayout
       header={{
@@ -346,8 +376,8 @@ const DashboardPage = () => {
           <Col lg={9} className={cls.filters}>
             <FilterIcon className={cls.filterIcon} />
             <Text>Filter</Text>
-            <Text className={cls.filtersDate}>
-              {formatDate(lastWeek)} - {formatDate(today)}
+            <Text className={cls.filtersDate} onClick={handleDateRangeClick}>
+              {dateRangeText}
             </Text>
             <RefreshIcon className={cls.refhreshIcon} />
           </Col>
@@ -373,6 +403,7 @@ const DashboardPage = () => {
                 yesterday={metricsData.traffic.impressions.yesterday}
                 percentage={metricsData.traffic.impressions.percentage}
                 trendLine={metricsData.traffic.impressions.trendLine}
+                showToday={metricsData.traffic.impressions.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('traffic', 'impressions')}
               />
 
@@ -384,6 +415,7 @@ const DashboardPage = () => {
                 yesterday={metricsData.traffic.clicks.yesterday}
                 percentage={metricsData.traffic.clicks.percentage}
                 trendLine={metricsData.traffic.clicks.trendLine}
+                showToday={metricsData.traffic.clicks.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('traffic', 'clicks')} // Pass callback
               />
 
@@ -395,10 +427,50 @@ const DashboardPage = () => {
                 yesterday={metricsData.traffic.ctl.yesterday}
                 percentage={metricsData.traffic.ctl.percentage}
                 trendLine={metricsData.traffic.ctl.trendLine}
+                showToday={metricsData.traffic.ctl.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('traffic', 'ctl')}
               />
             </MetricBox>
+          </Col>
 
+          <Col span={13} lg={13} md={13} className={cls.rightSide}>
+            <Row className={cls.rightSideRow}>
+              <Col span={12}>
+                <MetricBox title='Finance' className={cls.rightSideRowInner}>
+                  <MetricCard
+                    span={24}
+                    title='Payout'
+                    value={metricsData.finance.payout.value}
+                    today={metricsData.finance.payout.today}
+                    yesterday={metricsData.finance.payout.yesterday}
+                    percentage={metricsData.finance.payout.percentage}
+                    trendLine={metricsData.finance.payout.trendLine}
+                    showToday={metricsData.finance.payout.showToday}
+                    onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
+                  />
+                </MetricBox>
+              </Col>
+              <Col span={12}>
+                <MetricBox title='Balance' className={cls.rightSideRowInner}>
+                  <MetricCard
+                    span={24}
+                    title='Total Balance'
+                    value={metricsData.balance.payout.value}
+                    today={metricsData.balance.payout.today}
+                    yesterday={metricsData.balance.payout.yesterday}
+                    percentage={metricsData.balance.payout.percentage}
+                    trendLine={metricsData.balance.payout.trendLine}
+                    showToday={metricsData.balance.payout.showToday}
+                    onTitleClick={() => handleMetricCardTitleClick('balance', 'payout')}
+                  />
+                </MetricBox>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col span={11} lg={11} md={11} className={cls.leftSide}>
             <MetricBox title='Conversion'>
               <MetricCard
                 title='Leads'
@@ -407,6 +479,7 @@ const DashboardPage = () => {
                 yesterday={metricsData.conversion.leads.yesterday}
                 percentage={metricsData.conversion.leads.percentage}
                 trendLine={metricsData.conversion.leads.trendLine}
+                showToday={metricsData.conversion.leads.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('conversion', 'leads')}
               />
 
@@ -417,6 +490,7 @@ const DashboardPage = () => {
                 yesterday={metricsData.conversion.ftds.yesterday}
                 percentage={metricsData.conversion.ftds.percentage}
                 trendLine={metricsData.conversion.ftds.trendLine}
+                showToday={metricsData.conversion.ftds.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('conversion', 'ftds')}
               />
 
@@ -427,6 +501,7 @@ const DashboardPage = () => {
                 yesterday={metricsData.conversion.cr.yesterday}
                 percentage={metricsData.conversion.cr.percentage}
                 trendLine={metricsData.conversion.cr.trendLine}
+                showToday={metricsData.conversion.cr.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('conversion', 'cr')}
               />
             </MetricBox>
@@ -447,37 +522,6 @@ const DashboardPage = () => {
 
           {/* Right Section: Finance, Balance, Statistics Chart */}
           <Col span={13} lg={13} md={13}>
-            <Row>
-              <Col span={12}>
-                <MetricBox title='Finance'>
-                  <MetricCard
-                    span={24}
-                    title='Payout'
-                    value={metricsData.finance.payout.value}
-                    today={metricsData.finance.payout.today}
-                    yesterday={metricsData.finance.payout.yesterday}
-                    percentage={metricsData.finance.payout.percentage}
-                    trendLine={metricsData.finance.payout.trendLine}
-                    onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
-                  />
-                </MetricBox>
-              </Col>
-              <Col span={12}>
-                <MetricBox title='Balance'>
-                  <MetricCard
-                    span={24}
-                    title='Total Balance'
-                    value={metricsData.balance.payout.value}
-                    today={metricsData.balance.payout.today}
-                    yesterday={metricsData.balance.payout.yesterday}
-                    percentage={metricsData.balance.payout.percentage}
-                    trendLine={metricsData.balance.payout.trendLine}
-                    onTitleClick={() => handleMetricCardTitleClick('balance', 'payout')}
-                  />
-                </MetricBox>
-              </Col>
-            </Row>
-
             <MetricBox
               title='Statistics'
               dropDownTitle='3 selected'
@@ -521,7 +565,6 @@ const DashboardPage = () => {
         onSave={handleModalSave}
         initialValues={initialFormValues}
       />
-
       {/* The Edit Table Modal */}
       <EditTableModal
         visible={isEditTableModalVisible}
@@ -530,19 +573,24 @@ const DashboardPage = () => {
         initialTableData={initialTableModalData}
         tableType={currentEditingTableType} // Pass type to differentiate columns
       />
-
       <EditChartModal
         visible={isEditChartModalVisible}
         onCancel={handleChartModalCancel}
         onSave={handleChartModalSave}
         initialChartData={chartData} // Pass the chartData in Chart.js format
       />
-
       <EditTrafficMapModal
         visible={isEditTrafficMapModalVisible}
         onCancel={handleTrafficMapModalCancel}
         onSave={handleTrafficMapModalSave}
         initialTrafficMapData={trafficMapData}
+      />
+      {/* NEW: The Edit Date Range Modal */}
+      <EditTextModal
+        visible={isEditDateRangeModalVisible}
+        onCancel={handleDateRangeModalCancel}
+        onSave={handleDateRangeModalSave}
+        initialText={dateRangeText}
       />
     </PageLayout>
   )

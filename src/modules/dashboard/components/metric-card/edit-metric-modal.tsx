@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Button, Form, Input, InputNumber, Modal, Typography } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Switch, Typography } from 'antd'
 import { useEffect } from 'react'
 
 const { Title } = Typography
@@ -123,6 +123,24 @@ export const EditMetricModal = ({
           ) : (
             <Input style={{ backgroundColor: '#4a4a4a', borderColor: '#6a6a6a', color: 'white' }} />
           )}
+        </Form.Item>
+
+        <Form.Item
+          name='trendLine'
+          label={<span style={{ color: 'white' }}>Show Trend Line</span>}
+          valuePropName='checked' // Essential for Switch component
+          style={{ marginBottom: 0 }}
+        >
+          <Switch />
+        </Form.Item>
+
+        <Form.Item
+          name='showToday'
+          label={<span style={{ color: 'white' }}>Show Today/Yesterday</span>}
+          valuePropName='checked' // Essential for Switch component
+          style={{ marginTop: 8 }} // Add some spacing between switches
+        >
+          <Switch />
         </Form.Item>
       </Form>
     </Modal>

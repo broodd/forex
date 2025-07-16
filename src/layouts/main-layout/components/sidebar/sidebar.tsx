@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { AccountIcon, LogoIcon } from '~/shared/ui/icon'
@@ -14,6 +14,7 @@ import { OffersIcon } from '~/shared/ui/icon/ui/offers-icon'
 import { PostbacksIcon } from '~/shared/ui/icon/ui/postbacks-icon'
 import { StatisticsIcon } from '~/shared/ui/icon/ui/statistics-icon'
 import cls from './sidebar.module.scss'
+import EditDateRangeModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
 
 interface ISidebarProps {
   className?: string
@@ -64,6 +65,25 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
     },
   ]
 
+  const n = new Date()
+  const [dateText, setDateText] = useState(
+    `${n.getHours().toString().padStart(2, '0')}:${n.getMinutes().toString().padStart(2, '0')}`,
+  )
+  const [isEditDateModalVisible, setIsEditDateModalVisible] = useState(false)
+
+  const handleDateClick = () => {
+    setIsEditDateModalVisible(true)
+  }
+
+  const handleDateModalSave = (newText: string) => {
+    setDateText(newText)
+    setIsEditDateModalVisible(false)
+  }
+
+  const handleDateModalCancel = () => {
+    setIsEditDateModalVisible(false)
+  }
+
   return (
     <div className={classNames(cls.wrapper, [className])}>
       <div className={cls.logoWrapper}>
@@ -86,12 +106,19 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
         />
         <div className={cls.menuBottom}>
           <Menu className={cls.menu} items={menuItemsBottom} />
-          <div className={cls.clock}>
-            <span className={cls.time}>08:22</span>
+          <div className={cls.clock} onClick={handleDateClick}>
+            <span className={cls.time}>{dateText}</span>
             <span className={cls.timezone}>UTC</span>
           </div>
         </div>
       </div>
+
+      <EditDateRangeModal
+        visible={isEditDateModalVisible}
+        onCancel={handleDateModalCancel}
+        onSave={handleDateModalSave}
+        initialText={dateText}
+      />
     </div>
   )
 }

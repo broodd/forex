@@ -1,49 +1,20 @@
 @font-face {
-  font-family: 'Open Sans';
-  src:
-    url('../fonts/open-sans/OpenSans-Regular.woff2') format('woff2'),
-    url('../fonts/open-sans/OpenSans-Regular.woff') format('woff'),
-    url('../fonts/open-sans/OpenSans-Regular.ttf') format('ttf');
+  font-family: Poppins;
+  src: url('../fonts/poppins/Poppins-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Open Sans';
-  src:
-    url('../fonts/open-sans/OpenSans-SemiBold.woff2') format('woff2'),
-    url('../fonts/open-sans/OpenSans-SemiBold.woff') format('woff'),
-    url('../fonts/open-sans/OpenSans-SemiBold.ttf') format('ttf');
+  font-family: Poppins;
+  src: url('../fonts/poppins/Poppins-Medium.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Playfair Display';
-  src:
-    url('../fonts/playfair-display/PlayfairDisplay-Medium.woff2') format('woff2'),
-    url('../fonts/playfair-display/PlayfairDisplay-Medium.woff') format('woff'),
-    url('../fonts/playfair-display/PlayfairDisplay-Medium.ttf') format('ttf');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Playfair Display';
-  src:
-    url('../fonts/playfair-display/PlayfairDisplay-SemiBold.woff2') format('woff2'),
-    url('../fonts/playfair-display/PlayfairDisplay-SemiBold.woff') format('woff'),
-    url('../fonts/playfair-display/PlayfairDisplay-SemiBold.ttf') format('ttf');
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Playfair Display';
-  src:
-    url('../fonts/playfair-display/PlayfairDisplay-Bold.woff2') format('woff2'),
-    url('../fonts/playfair-display/PlayfairDisplay-Bold.woff') format('woff'),
-    url('../fonts/playfair-display/PlayfairDisplay-Bold.ttf') format('ttf');
+  font-family: Poppins;
+  src: url('../fonts/poppins/Poppins-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }

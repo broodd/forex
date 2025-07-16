@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { FC, ReactNode } from 'react'
-import { Heading } from '~/lib/components'
 import cls from './header.module.scss'
+import { Heading } from '~/lib/components'
 
 export interface IHeaderProps {
   className?: string

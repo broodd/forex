@@ -16,6 +16,19 @@
   flex-direction: column;
 }
 
+.rightSide {
+  position: relative;
+
+  .rightSideRow {
+    height: 100%;
+  }
+
+  .rightSideRowInner {
+    height: calc(100% - 0.8rem);
+    align-content: flex-start;
+  }
+}
+
 :global {
   .ant-typography {
     color: white;
