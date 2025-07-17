@@ -25,13 +25,14 @@ export const router = createBrowserRouter(
           </AuthLayout>
         }
       >
+        <Route path={ROUTES.ROOT.route} element={<SignInPage />} />
         <Route path={ROUTES.SIGN_IN.route} element={<SignInPage />} />
       </Route>
       <Route
         element={
           <MainLayout>
             <Suspense fallback={<PageLoader />}>
-              <ProtectedRoute isSuper />
+              <ProtectedRoute />
             </Suspense>
           </MainLayout>
         }

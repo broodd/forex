@@ -1,22 +1,18 @@
 import { FC } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
+import { ROUTES } from '~/lib/constants/routes'
+import { useAuth } from '~/shared/hooks/useAuth'
 
 interface IProtectedRouteProps {
   isSuper?: boolean
 }
 
-export const ProtectedRoute: FC<IProtectedRouteProps> = ({ isSuper }) => {
-  console.log(isSuper)
-  // const { client } = useAuth()
-  // const isAdmin = client.data?.role === EProfileRole.ADMIN
+export const ProtectedRoute: FC<IProtectedRouteProps> = () => {
+  const { client } = useAuth()
 
-  // if (!client.isAuthorized && client.isClientLoaded) {
-  //   return <Navigate to={ROUTES.SIGN_IN.getPath()} replace />
-  // }
-
-  // if (client.isAuthorized && isSuper && !isAdmin) {
-  //   return <Navigate to='/__not_found__' replace />
-  // }
+  if (!client.data || !client.isAuthorized) {
+    return <Navigate to={ROUTES.SIGN_IN.getPath()} replace />
+  }
 
   return <Outlet />
 }

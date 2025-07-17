@@ -10,7 +10,6 @@ interface IAuthWrapperProps {
 export const AuthWrapper: FC<IAuthWrapperProps> = ({ className, children }) => {
   return (
     <div className={classNames(cls.wrapper, [className])}>
-      {/* <LogoIcon /> */}
       <>{children}</>
     </div>
   )
