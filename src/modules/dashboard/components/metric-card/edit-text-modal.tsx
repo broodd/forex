@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/EditTextModal.js
-import React, { useEffect } from 'react'
-import { Modal, Form, Input, Button, Typography } from 'antd'
+import { Button, Form, Input, Modal, Typography } from 'antd'
 import { useForm } from 'antd/lib/form/Form'
+import { useEffect } from 'react'
 
 const { Title } = Typography
 

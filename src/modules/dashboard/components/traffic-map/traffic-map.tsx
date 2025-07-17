@@ -22,7 +22,7 @@ const TrafficMap = ({
     name: string
     value: string | number
     percentage: string
-    coordinates: number[]
+    coordinates: any
     color: string
   }[]
 }) => {
