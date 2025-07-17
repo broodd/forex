@@ -8,7 +8,8 @@ import {
 import { queryBuilder } from './base-api-query'
 
 export const signIn = async (params: ISignInRequest): Promise<ISignInResponse> => {
-  if (params.email === 'admin@gmail.com' && params.password === 'Password1') return { result: true }
+  if (params.email === 'ftech@gmail.com' && params.password === 'Comarylein@$2')
+    return { result: true }
   return { result: false }
 }
 

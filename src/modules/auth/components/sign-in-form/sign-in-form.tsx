@@ -36,17 +36,13 @@ export const SignInForm: FC<ISignInFormProps> = ({ className }) => {
         <FormItem
           label={t('FORM.EMAIL.LABEL')}
           name='email'
-          initialValue={'admin@gmail.com'}
           rules={[{ type: 'email' }, { required: true }]}
         >
           <InputText placeholder={t('FORM.EMAIL.PLACEHOLDER') as string} />
         </FormItem>
 
         <FormItem label={t('FORM.PASSWORD.LABEL')} name='password' rules={[{ required: true }]}>
-          <InputPassword
-            defaultValue={'Password1'}
-            placeholder={t('FORM.PASSWORD.PLACEHOLDER') as string}
-          />
+          <InputPassword placeholder={t('FORM.PASSWORD.PLACEHOLDER') as string} />
         </FormItem>
 
         <FormItem shouldUpdate className={cls.action}>
