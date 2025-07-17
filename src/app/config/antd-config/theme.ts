@@ -111,8 +111,8 @@ export const theme: ThemeConfig = {
       fontSizeIcon: 20,
     },
     Menu: {
-      itemBg: 'rgb(255,179,0)',
-      itemColor: 'rgb(42,46,52)',
+      itemBg: 'var(--brand-100)',
+      itemColor: 'var(--menu-color)',
     },
     Drawer: {
       colorBgMask: 'rgba(21,24,26,0.19)',

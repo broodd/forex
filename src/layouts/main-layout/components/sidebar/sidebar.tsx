@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import classNames from 'classnames'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { AccountIcon, LogoIcon } from '~/shared/ui/icon'
@@ -15,6 +16,8 @@ import { PostbacksIcon } from '~/shared/ui/icon/ui/postbacks-icon'
 import { StatisticsIcon } from '~/shared/ui/icon/ui/statistics-icon'
 import cls from './sidebar.module.scss'
 import EditDateRangeModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
+import { ColorThemeModal } from '~/modules/dashboard/components/metric-card/color-theme-modal'
+import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
 
 interface ISidebarProps {
   className?: string
@@ -84,9 +87,36 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
     setIsEditDateModalVisible(false)
   }
 
+  // NEW: State for Color Theme
+  const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false)
+  const [currentTheme, setCurrentTheme] = useState(THEME_PALETTES[0]) // Will store the active theme object
+  const [currentMenuColor, setCurrentMenuColor] = useState(THEME_PALETTES[0].menu)
+
+  const handleThemeSettingsClick = () => {
+    setIsColorThemeModalVisible(true)
+  }
+
+  const handleApplyColorTheme = (themeObject: any) => {
+    setCurrentTheme(themeObject)
+    setCurrentMenuColor(themeObject.menu) // Update currentMenuColor state
+    setIsColorThemeModalVisible(false)
+  }
+
+  const handleColorThemeModalCancel = () => {
+    setIsColorThemeModalVisible(false)
+  }
+
+  useEffect(() => {
+    if (currentTheme) {
+      const root = document.documentElement
+      root.style.setProperty('--brand-100', currentTheme.brand)
+      root.style.setProperty('--menu-color', currentTheme.menu)
+    }
+  }, [currentTheme])
+
   return (
     <div className={classNames(cls.wrapper, [className])}>
-      <div className={cls.logoWrapper}>
+      <div className={cls.logoWrapper} onClick={handleThemeSettingsClick}>
         {collapsed ? (
           <LogoIcon style={{ fontSize: 42 }} className={cls.logo} />
         ) : (
@@ -118,6 +148,14 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
         onCancel={handleDateModalCancel}
         onSave={handleDateModalSave}
         initialText={dateText}
+      />
+
+      {/* NEW: Color Theme Modal */}
+      <ColorThemeModal
+        visible={isColorThemeModalVisible}
+        onCancel={handleColorThemeModalCancel}
+        onApplyTheme={handleApplyColorTheme}
+        currentMenuColor={currentMenuColor}
       />
     </div>
   )

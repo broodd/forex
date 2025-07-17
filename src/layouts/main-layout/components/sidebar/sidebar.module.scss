@@ -15,7 +15,7 @@
   }
 
   .clock {
-    // margin-top: 1.5rem;
+    color: var(--menu-color);
     margin-bottom: 0.5rem;
 
     .time {
@@ -115,7 +115,7 @@
   }
 
   .logo {
-    color: var(--logo);
+    color: var(--menu-color);
   }
 
   .menu {
