@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useTranslation } from 'react-i18next'
-
-import { Col, Row, Typography } from 'antd'
+import { Col, Row, Spin, Typography } from 'antd'
 import { PageLayout } from '~/layouts'
 import { EditTableModal, MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
 import CustomTable from '~/modules/dashboard/components/table/table'
 import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
 // import { Menu } from '~/shared/ui/menu'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
+import { EditTrafficMapModal } from '~/modules/dashboard/components/metric-card/edit-map-modal'
 import { EditMetricModal } from '~/modules/dashboard/components/metric-card/edit-metric-modal'
+import EditTextModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
 import { FilterIcon } from '~/shared/ui/icon'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 import cls from './dashboard-page.module.scss'
-import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
-import { EditTrafficMapModal } from '~/modules/dashboard/components/metric-card/edit-map-modal'
-import EditTextModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
+import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
 
 const { Text } = Typography
 
@@ -26,15 +25,34 @@ const formatDate = (date: Date): string => {
   return `${day}/${month}/${year}`
 }
 
+export function randomFromTo(min: number, max: number) {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 const today = new Date()
 const lastWeek = new Date()
 lastWeek.setDate(today.getDate() - 7)
 
-const DashboardPage = () => {
-  const { t } = useTranslation()
+// Columns for the Affiliates table (for display, not for modal editing)
+const affiliatesColumns = [
+  { title: 'Name', dataIndex: 'name', key: 'name' },
+  { title: 'Impressions', dataIndex: 'impressions', key: 'impressions' },
+  { title: 'Leads', dataIndex: 'leads', key: 'leads' },
+  { title: 'FTDs', dataIndex: 'ftds', key: 'ftds' },
+  { title: 'Conversion Rate', dataIndex: 'conversionRate', key: 'conversionRate' },
+  { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
+]
 
-  // Define the metrics state here
-  const [metricsData, setMetricsData] = useState({
+// Columns for the Insights table (for display, not for modal editing)
+const insightsColumns = [
+  { title: 'Day', dataIndex: 'day', key: 'day' },
+  { title: 'Value', dataIndex: 'value', key: 'value' },
+  { title: 'Percentage', dataIndex: 'percentage', key: 'percentage' },
+]
+
+export const DEFAULT_DASHBOARD_STATE = {
+  metricsData: {
     traffic: {
       impressions: {
         value: '131',
@@ -107,60 +125,8 @@ const DashboardPage = () => {
         showToday: false,
       },
     },
-  })
-
-  // State for modal visibility and data being edited
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false)
-  const [currentEditingMetricType, setCurrentEditingMetricType] = useState(null) // e.g., 'traffic' or 'conversion'
-  const [currentEditingMetricName, setCurrentEditingMetricName] = useState(null) // e.g., 'impressions', 'clicks'
-  const [initialFormValues, setInitialFormValues] = useState({}) // Data to pre-fill the form
-
-  const handleMetricCardTitleClick = (metricType: any, metricName: any) => {
-    const metricData = (metricsData as any)[metricType][metricName]
-    setCurrentEditingMetricType(metricType)
-    setCurrentEditingMetricName(metricName)
-    // Prepare initial values for the form, including a display title for the modal
-    setInitialFormValues({
-      // Capitalize first letter for display in modal title
-      title: metricName.charAt(0).toUpperCase() + metricName.slice(1),
-      ...metricData,
-    })
-    setIsEditModalVisible(true)
-  }
-
-  const handleModalSave = (newValues: any) => {
-    setMetricsData((prevData) => ({
-      ...prevData,
-      [currentEditingMetricType as any]: {
-        ...(prevData as any)[currentEditingMetricType as any],
-        [currentEditingMetricName as any]: {
-          ...(prevData as any)[currentEditingMetricType as any][currentEditingMetricName as any],
-          // Update only the editable fields, merge with existing data
-          value: newValues.value,
-          percentage: newValues.percentage,
-          today: newValues.today,
-          yesterday: newValues.yesterday,
-          trendLine: newValues.trendLine,
-          showToday: newValues.showToday,
-          // Important: preserve trendLine and other non-editable properties
-          // If trendLine should be dynamic based on percentage, update logic here
-        },
-      } as any,
-    }))
-    setIsEditModalVisible(false)
-    setCurrentEditingMetricType(null)
-    setCurrentEditingMetricName(null)
-  }
-
-  // Function to handle cancelling the modal
-  const handleModalCancel = () => {
-    setIsEditModalVisible(false)
-    setCurrentEditingMetricType(null)
-    setCurrentEditingMetricName(null)
-  }
-
-  // State for table data
-  const [affiliatesTableData, setAffiliatesTableData] = useState([
+  },
+  affiliatesTableData: [
     {
       key: '1',
       name: '2958032',
@@ -179,64 +145,12 @@ const DashboardPage = () => {
       conversionRate: '0%',
       clicks: 81,
     },
-  ])
-
-  const [insightsTableData, setInsightsTableData] = useState([
+  ],
+  insightsTableData: [
     { key: '1', day: 'Monday', value: 18, percentage: '0%' },
     { key: '2', day: 'Wednesday', value: 12, percentage: '0%' },
-  ])
-
-  const [isEditTableModalVisible, setIsEditTableModalVisible] = useState(false)
-  const [currentEditingTableType, setCurrentEditingTableType] = useState(null) // 'affiliates' or 'insights'
-  const [initialTableModalData, setInitialTableModalData] = useState([])
-
-  // --- Table Edit Modal Handlers ---
-  const handleTableTitleClick = (tableType: any) => {
-    setCurrentEditingTableType(tableType)
-    if (tableType === 'affiliates') {
-      setInitialTableModalData(affiliatesTableData as any)
-    } else if (tableType === 'insights') {
-      setInitialTableModalData(insightsTableData as any)
-    }
-    setIsEditTableModalVisible(true)
-  }
-
-  const handleTableModalSave = (newData: any) => {
-    console.log('--- ', newData)
-
-    if (currentEditingTableType === 'affiliates') {
-      setAffiliatesTableData(newData)
-    } else if (currentEditingTableType === 'insights') {
-      setInsightsTableData(newData)
-    }
-    setIsEditTableModalVisible(false)
-    setCurrentEditingTableType(null)
-  }
-
-  const handleTableModalCancel = () => {
-    setIsEditTableModalVisible(false)
-    setCurrentEditingTableType(null)
-  }
-
-  // Columns for the Affiliates table (for display, not for modal editing)
-  const affiliatesColumns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Impressions', dataIndex: 'impressions', key: 'impressions' },
-    { title: 'Leads', dataIndex: 'leads', key: 'leads' },
-    { title: 'FTDs', dataIndex: 'ftds', key: 'ftds' },
-    { title: 'Conversion Rate', dataIndex: 'conversionRate', key: 'conversionRate' },
-    { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
-  ]
-
-  // Columns for the Insights table (for display, not for modal editing)
-  const insightsColumns = [
-    { title: 'Day', dataIndex: 'day', key: 'day' },
-    { title: 'Value', dataIndex: 'value', key: 'value' },
-    { title: 'Percentage', dataIndex: 'percentage', key: 'percentage' },
-  ]
-
-  // State for chart data - NOW MANAGED HERE IN Dashboard.js
-  const [chartData, setChartData] = useState({
+  ],
+  chartData: {
     labels: ['04 Jul', '05 Jul', '06 Jul', '07 Jul', '08 Jul', '09 Jul', '10 Jul', '11 Jul'],
     datasets: [
       {
@@ -270,28 +184,8 @@ const DashboardPage = () => {
         tension: 0.4, // Smooth curves
       },
     ],
-  })
-
-  // State for chart edit modal
-  const [isEditChartModalVisible, setIsEditChartModalVisible] = useState(false)
-
-  // --- Chart Edit Modal Handlers ---
-  const handleChartTitleClick = () => {
-    setIsEditChartModalVisible(true)
-  }
-
-  const handleChartModalSave = (newChartData: any) => {
-    // newChartData is already in the Chart.js format thanks to the modal's transformation
-    setChartData(newChartData)
-    setIsEditChartModalVisible(false)
-  }
-
-  const handleChartModalCancel = () => {
-    setIsEditChartModalVisible(false)
-  }
-
-  // --- NEW STATE FOR TRAFFIC MAP DATA ---
-  const [trafficMapData, setTrafficMapData] = useState([
+  },
+  trafficMapData: [
     {
       name: 'Spain',
       value: 116,
@@ -327,48 +221,165 @@ const DashboardPage = () => {
       coordinates: [-75.6972, 45.4215],
       color: 'blue',
     },
-  ])
+  ],
+  currentTheme: THEME_PALETTES[0],
+  dateRangeText: `${formatDate(lastWeek)} - ${formatDate(today)}`,
+}
 
-  // --- NEW STATE FOR TRAFFIC MAP MODAL ---
-  const [isEditTrafficMapModalVisible, setIsEditTrafficMapModalVisible] = useState(false)
+const DashboardPage = () => {
+  // Unified state for all dashboard data
+  const [dashboardState, setDashboardState] = useState(DEFAULT_DASHBOARD_STATE)
 
-  // --- NEW TRAFFIC MAP MODAL HANDLERS ---
-  const handleTrafficMapTitleClick = () => {
-    setIsEditTrafficMapModalVisible(true)
-  }
+  // States for modal visibility and current editing items (these don't need to be persisted)
+  const [isEditMetricModalVisible, setIsEditMetricModalVisible] = useState(false)
+  const [currentEditingMetricType, setCurrentEditingMetricType] = useState(null)
+  const [currentEditingMetricName, setCurrentEditingMetricName] = useState(null)
+  const [initialFormValues, setInitialFormValues] = useState({})
 
-  const handleTrafficMapModalSave = (newData: any) => {
-    setTrafficMapData(newData)
-    setIsEditTrafficMapModalVisible(false)
-  }
+  const [isEditTableModalVisible, setIsEditTableModalVisible] = useState(false)
+  const [currentEditingTableType, setCurrentEditingTableType] = useState(null)
+  const [initialTableModalData, setInitialTableModalData] = useState([])
 
-  const handleTrafficMapModalCancel = () => {
-    setIsEditTrafficMapModalVisible(false)
-  }
-
-  // NEW STATE FOR DATE RANGE
-  const [dateRangeText, setDateRangeText] = useState(
-    `${formatDate(lastWeek)} - ${formatDate(today)}`,
-  )
+  const [isEditChartModalVisible, setIsEditChartModalVisible] = useState(false)
+  const [isEditTrafficMapModalVisible, setIsEditTrafficMapModal] = useState(false)
   const [isEditDateRangeModalVisible, setIsEditDateRangeModalVisible] = useState(false)
 
+  // Loading state for initial dashboard data load
+  const [isLoading, setIsLoading] = useState<boolean | null>(null)
+
+  // Effect to load all dashboard state from localStorage on component mount
+  useEffect(() => {
+    try {
+      setIsLoading(true)
+      const savedState = localStorage.getItem('fullDashboardState')
+      if (savedState) {
+        const parsedState = JSON.parse(savedState)
+        setDashboardState(parsedState)
+      } else {
+        // If no saved state, apply default and save it
+        setDashboardState(DEFAULT_DASHBOARD_STATE)
+        localStorage.setItem('fullDashboardState', JSON.stringify(DEFAULT_DASHBOARD_STATE))
+      }
+    } catch (error) {
+      console.error('Failed to load dashboard state from localStorage:', error)
+      // Fallback to default if there's an error
+      setDashboardState(DEFAULT_DASHBOARD_STATE)
+    } finally {
+      setTimeout(
+        () => {
+          setIsLoading(false)
+        },
+        randomFromTo(600, 2300),
+      )
+    }
+  }, []) // Run only once on mount
+
+  // Helper function to update a nested state and save to localStorage
+  const updateDashboardState = (newStateUpdates: any) => {
+    setDashboardState((prevState) => {
+      const updatedState = { ...prevState, ...newStateUpdates }
+      localStorage.setItem('fullDashboardState', JSON.stringify(updatedState))
+      return updatedState
+    })
+  }
+
+  // --- Metric Edit Modal Handlers ---
+  const handleMetricCardTitleClick = (metricType: any, metricName: any) => {
+    setCurrentEditingMetricType(metricType)
+    setCurrentEditingMetricName(metricName)
+    setInitialFormValues((dashboardState as any).metricsData[metricType][metricName])
+    setIsEditMetricModalVisible(true)
+  }
+  const handleMetricModalSave = (newValues: any) => {
+    updateDashboardState({
+      metricsData: {
+        ...dashboardState.metricsData,
+        [currentEditingMetricType as any]: {
+          ...(dashboardState as any).metricsData[currentEditingMetricType as any],
+          [currentEditingMetricName as any]: newValues,
+        },
+      },
+    })
+    setIsEditMetricModalVisible(false)
+  }
+  const handleMetricModalCancel = () => {
+    setIsEditMetricModalVisible(false)
+  }
+
+  // --- Table Edit Modal Handlers ---
+  const handleTableTitleClick = (tableType: any) => {
+    setCurrentEditingTableType(tableType)
+    if (tableType === 'affiliates') {
+      setInitialTableModalData((dashboardState as any).affiliatesTableData)
+    } else if (tableType === 'insights') {
+      setInitialTableModalData((dashboardState as any).insightsTableData)
+    }
+    setIsEditTableModalVisible(true)
+  }
+  const handleTableModalSave = (newData: any) => {
+    if (currentEditingTableType === 'affiliates') {
+      updateDashboardState({ affiliatesTableData: newData })
+    } else if (currentEditingTableType === 'insights') {
+      updateDashboardState({ insightsTableData: newData })
+    }
+    setIsEditTableModalVisible(false)
+  }
+  const handleTableModalCancel = () => {
+    setIsEditTableModalVisible(false)
+  }
+
+  // --- Chart Edit Modal Handlers ---
+  const handleChartTitleClick = () => {
+    setIsEditChartModalVisible(true)
+  }
+  const handleChartModalSave = (newChartData: any) => {
+    updateDashboardState({ chartData: newChartData })
+    setIsEditChartModalVisible(false)
+  }
+  const handleChartModalCancel = () => {
+    setIsEditChartModalVisible(false)
+  }
+
+  // --- Traffic Map Modal Handlers ---
+  const handleTrafficMapTitleClick = () => {
+    setIsEditTrafficMapModal(true)
+  }
+  const handleTrafficMapModalSave = (newData: any) => {
+    updateDashboardState({ trafficMapData: newData })
+    setIsEditTrafficMapModal(false)
+  }
+  const handleTrafficMapModalCancel = () => {
+    setIsEditTrafficMapModal(false)
+  }
+
+  // --- Date Range Modal Handlers ---
   const handleDateRangeClick = () => {
     setIsEditDateRangeModalVisible(true)
   }
-
-  const handleDateRangeModalSave = (newText: string) => {
-    setDateRangeText(newText)
+  const handleDateRangeModalSave = (newText: any) => {
+    updateDashboardState({ dateRangeText: newText })
+    setIsEditDateRangeModalVisible(false)
+  }
+  const handleDateRangeModalCancel = () => {
     setIsEditDateRangeModalVisible(false)
   }
 
-  const handleDateRangeModalCancel = () => {
-    setIsEditDateRangeModalVisible(false)
+  if (isLoading == null) return
+
+  if (isLoading) {
+    // Use the default theme colors for the loading screen
+
+    return (
+      <div className={cls.loadingWrap}>
+        <Spin size='large' />
+      </div>
+    )
   }
 
   return (
     <PageLayout
       header={{
-        title: t('PAGES.DASHBOARD.TITLE')!,
+        title: 'Dashboard',
       }}
     >
       <div className={cls.wrapper}>
@@ -377,7 +388,7 @@ const DashboardPage = () => {
             <FilterIcon className={cls.filterIcon} />
             <Text>Filter</Text>
             <Text className={cls.filtersDate} onClick={handleDateRangeClick}>
-              {dateRangeText}
+              {dashboardState.dateRangeText}
             </Text>
             <RefreshIcon className={cls.refhreshIcon} />
           </Col>
@@ -398,36 +409,36 @@ const DashboardPage = () => {
             <MetricBox title='Traffic'>
               <MetricCard
                 title='Impressions'
-                value={metricsData.traffic.impressions.value}
-                today={metricsData.traffic.impressions.today}
-                yesterday={metricsData.traffic.impressions.yesterday}
-                percentage={metricsData.traffic.impressions.percentage}
-                trendLine={metricsData.traffic.impressions.trendLine}
-                showToday={metricsData.traffic.impressions.showToday}
+                value={dashboardState.metricsData.traffic.impressions.value}
+                today={dashboardState.metricsData.traffic.impressions.today}
+                yesterday={dashboardState.metricsData.traffic.impressions.yesterday}
+                percentage={dashboardState.metricsData.traffic.impressions.percentage}
+                trendLine={dashboardState.metricsData.traffic.impressions.trendLine}
+                showToday={dashboardState.metricsData.traffic.impressions.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('traffic', 'impressions')}
               />
 
               {/* Clicks Card */}
               <MetricCard
                 title='Clicks'
-                value={metricsData.traffic.clicks.value}
-                today={metricsData.traffic.clicks.today}
-                yesterday={metricsData.traffic.clicks.yesterday}
-                percentage={metricsData.traffic.clicks.percentage}
-                trendLine={metricsData.traffic.clicks.trendLine}
-                showToday={metricsData.traffic.clicks.showToday}
+                value={dashboardState.metricsData.traffic.clicks.value}
+                today={dashboardState.metricsData.traffic.clicks.today}
+                yesterday={dashboardState.metricsData.traffic.clicks.yesterday}
+                percentage={dashboardState.metricsData.traffic.clicks.percentage}
+                trendLine={dashboardState.metricsData.traffic.clicks.trendLine}
+                showToday={dashboardState.metricsData.traffic.clicks.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('traffic', 'clicks')} // Pass callback
               />
 
               {/* CTL Card */}
               <MetricCard
                 title='CTL'
-                value={metricsData.traffic.ctl.value}
-                today={metricsData.traffic.ctl.today}
-                yesterday={metricsData.traffic.ctl.yesterday}
-                percentage={metricsData.traffic.ctl.percentage}
-                trendLine={metricsData.traffic.ctl.trendLine}
-                showToday={metricsData.traffic.ctl.showToday}
+                value={dashboardState.metricsData.traffic.ctl.value}
+                today={dashboardState.metricsData.traffic.ctl.today}
+                yesterday={dashboardState.metricsData.traffic.ctl.yesterday}
+                percentage={dashboardState.metricsData.traffic.ctl.percentage}
+                trendLine={dashboardState.metricsData.traffic.ctl.trendLine}
+                showToday={dashboardState.metricsData.traffic.ctl.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('traffic', 'ctl')}
               />
             </MetricBox>
@@ -440,12 +451,12 @@ const DashboardPage = () => {
                   <MetricCard
                     span={24}
                     title='Payout'
-                    value={metricsData.finance.payout.value}
-                    today={metricsData.finance.payout.today}
-                    yesterday={metricsData.finance.payout.yesterday}
-                    percentage={metricsData.finance.payout.percentage}
-                    trendLine={metricsData.finance.payout.trendLine}
-                    showToday={metricsData.finance.payout.showToday}
+                    value={dashboardState.metricsData.finance.payout.value}
+                    today={dashboardState.metricsData.finance.payout.today}
+                    yesterday={dashboardState.metricsData.finance.payout.yesterday}
+                    percentage={dashboardState.metricsData.finance.payout.percentage}
+                    trendLine={dashboardState.metricsData.finance.payout.trendLine}
+                    showToday={dashboardState.metricsData.finance.payout.showToday}
                     onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
                   />
                 </MetricBox>
@@ -455,12 +466,12 @@ const DashboardPage = () => {
                   <MetricCard
                     span={24}
                     title='Total Balance'
-                    value={metricsData.balance.payout.value}
-                    today={metricsData.balance.payout.today}
-                    yesterday={metricsData.balance.payout.yesterday}
-                    percentage={metricsData.balance.payout.percentage}
-                    trendLine={metricsData.balance.payout.trendLine}
-                    showToday={metricsData.balance.payout.showToday}
+                    value={dashboardState.metricsData.balance.payout.value}
+                    today={dashboardState.metricsData.balance.payout.today}
+                    yesterday={dashboardState.metricsData.balance.payout.yesterday}
+                    percentage={dashboardState.metricsData.balance.payout.percentage}
+                    trendLine={dashboardState.metricsData.balance.payout.trendLine}
+                    showToday={dashboardState.metricsData.balance.payout.showToday}
                     onTitleClick={() => handleMetricCardTitleClick('balance', 'payout')}
                   />
                 </MetricBox>
@@ -474,34 +485,34 @@ const DashboardPage = () => {
             <MetricBox title='Conversion'>
               <MetricCard
                 title='Leads'
-                value={metricsData.conversion.leads.value}
-                today={metricsData.conversion.leads.today}
-                yesterday={metricsData.conversion.leads.yesterday}
-                percentage={metricsData.conversion.leads.percentage}
-                trendLine={metricsData.conversion.leads.trendLine}
-                showToday={metricsData.conversion.leads.showToday}
+                value={dashboardState.metricsData.conversion.leads.value}
+                today={dashboardState.metricsData.conversion.leads.today}
+                yesterday={dashboardState.metricsData.conversion.leads.yesterday}
+                percentage={dashboardState.metricsData.conversion.leads.percentage}
+                trendLine={dashboardState.metricsData.conversion.leads.trendLine}
+                showToday={dashboardState.metricsData.conversion.leads.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('conversion', 'leads')}
               />
 
               <MetricCard
                 title='FTDs'
-                value={metricsData.conversion.ftds.value}
-                today={metricsData.conversion.ftds.today}
-                yesterday={metricsData.conversion.ftds.yesterday}
-                percentage={metricsData.conversion.ftds.percentage}
-                trendLine={metricsData.conversion.ftds.trendLine}
-                showToday={metricsData.conversion.ftds.showToday}
+                value={dashboardState.metricsData.conversion.ftds.value}
+                today={dashboardState.metricsData.conversion.ftds.today}
+                yesterday={dashboardState.metricsData.conversion.ftds.yesterday}
+                percentage={dashboardState.metricsData.conversion.ftds.percentage}
+                trendLine={dashboardState.metricsData.conversion.ftds.trendLine}
+                showToday={dashboardState.metricsData.conversion.ftds.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('conversion', 'ftds')}
               />
 
               <MetricCard
                 title='CR'
-                value={metricsData.conversion.cr.value}
-                today={metricsData.conversion.cr.today}
-                yesterday={metricsData.conversion.cr.yesterday}
-                percentage={metricsData.conversion.cr.percentage}
-                trendLine={metricsData.conversion.cr.trendLine}
-                showToday={metricsData.conversion.cr.showToday}
+                value={dashboardState.metricsData.conversion.cr.value}
+                today={dashboardState.metricsData.conversion.cr.today}
+                yesterday={dashboardState.metricsData.conversion.cr.yesterday}
+                percentage={dashboardState.metricsData.conversion.cr.percentage}
+                trendLine={dashboardState.metricsData.conversion.cr.trendLine}
+                showToday={dashboardState.metricsData.conversion.cr.showToday}
                 onTitleClick={() => handleMetricCardTitleClick('conversion', 'cr')}
               />
             </MetricBox>
@@ -515,7 +526,7 @@ const DashboardPage = () => {
               <CustomTable
                 title={`Showing ${insightsColumns.length} Items`}
                 columns={affiliatesColumns}
-                data={affiliatesTableData}
+                data={dashboardState.affiliatesTableData}
               />
             </MetricBox>
           </Col>
@@ -527,7 +538,7 @@ const DashboardPage = () => {
               dropDownTitle='3 selected'
               onTitleClick={handleChartTitleClick}
             >
-              <StatisticsChart chartData={chartData} />
+              <StatisticsChart chartData={dashboardState.chartData} />
             </MetricBox>
 
             <Row>
@@ -537,7 +548,7 @@ const DashboardPage = () => {
                   dropDownTitle='Impressions'
                   onTitleClick={handleTrafficMapTitleClick}
                 >
-                  <TrafficMap mapData={trafficMapData} />
+                  <TrafficMap mapData={dashboardState.trafficMapData} />
                 </MetricBox>
               </Col>
 
@@ -549,9 +560,9 @@ const DashboardPage = () => {
                   onTitleClick={() => handleTableTitleClick('insights')}
                 >
                   <CustomTable
-                    title={`Showing ${insightsTableData.length} Items`}
+                    title={`Showing ${dashboardState.insightsTableData.length} Items`}
                     columns={insightsColumns}
-                    data={insightsTableData}
+                    data={dashboardState.insightsTableData}
                   />
                 </MetricBox>
               </Col>
@@ -560,9 +571,9 @@ const DashboardPage = () => {
         </Row>
       </div>
       <EditMetricModal
-        visible={isEditModalVisible}
-        onCancel={handleModalCancel}
-        onSave={handleModalSave}
+        visible={isEditMetricModalVisible}
+        onCancel={handleMetricModalCancel}
+        onSave={handleMetricModalSave}
         initialValues={initialFormValues}
       />
       {/* The Edit Table Modal */}
@@ -577,20 +588,20 @@ const DashboardPage = () => {
         visible={isEditChartModalVisible}
         onCancel={handleChartModalCancel}
         onSave={handleChartModalSave}
-        initialChartData={chartData} // Pass the chartData in Chart.js format
+        initialChartData={dashboardState.chartData} // Pass the chartData in Chart.js format
       />
       <EditTrafficMapModal
         visible={isEditTrafficMapModalVisible}
         onCancel={handleTrafficMapModalCancel}
         onSave={handleTrafficMapModalSave}
-        initialTrafficMapData={trafficMapData}
+        initialTrafficMapData={dashboardState.trafficMapData}
       />
       {/* NEW: The Edit Date Range Modal */}
       <EditTextModal
         visible={isEditDateRangeModalVisible}
         onCancel={handleDateRangeModalCancel}
         onSave={handleDateRangeModalSave}
-        initialText={dateRangeText}
+        initialText={dashboardState.dateRangeText}
       />
     </PageLayout>
   )

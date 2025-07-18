@@ -10,7 +10,7 @@ interface IProtectedRouteProps {
 export const ProtectedRoute: FC<IProtectedRouteProps> = () => {
   const { client } = useAuth()
 
-  if (!client.data || !client.isAuthorized) {
+  if ((!client.data || !client.isAuthorized) && client.isClientLoaded) {
     return <Navigate to={ROUTES.SIGN_IN.getPath()} replace />
   }
 

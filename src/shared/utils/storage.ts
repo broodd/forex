@@ -16,10 +16,7 @@ class StorageService {
     if (!localStorage || !sessionStorage) {
       return null
     }
-    if (key === KEEP_LOG_IN_KEY || this.isKeepLogIn()) {
-      return localStorage.getItem(key)
-    }
-    return sessionStorage.getItem(key)
+    return localStorage.getItem(key)
   }
 
   setToStorage = (key: string, value: string) => {

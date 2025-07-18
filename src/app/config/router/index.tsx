@@ -37,7 +37,6 @@ export const router = createBrowserRouter(
           </MainLayout>
         }
       >
-        {/* <Route path={ROUTES.ROOT.route} element={<DashboardPage />} /> */}
         <Route path={ROUTES.DASHBOARD.route} element={<DashboardPage />} />
       </Route>
     </Route>,

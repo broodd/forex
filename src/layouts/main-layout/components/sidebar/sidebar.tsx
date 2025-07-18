@@ -8,6 +8,9 @@ import { AccountIcon, LogoIcon } from '~/shared/ui/icon'
 import { Menu } from '~/shared/ui/menu'
 
 import { ERoutes, ROUTES } from '~/lib/constants/routes'
+import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
+import { ColorThemeModal } from '~/modules/dashboard/components/metric-card/color-theme-modal'
+import EditDateRangeModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
 import { BalanceIcon } from '~/shared/ui/icon/ui/balance-icon'
 import { ItemsIcon } from '~/shared/ui/icon/ui/items-icon'
 import { LeadsIcon } from '~/shared/ui/icon/ui/leads-icon'
@@ -15,9 +18,6 @@ import { OffersIcon } from '~/shared/ui/icon/ui/offers-icon'
 import { PostbacksIcon } from '~/shared/ui/icon/ui/postbacks-icon'
 import { StatisticsIcon } from '~/shared/ui/icon/ui/statistics-icon'
 import cls from './sidebar.module.scss'
-import EditDateRangeModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
-import { ColorThemeModal } from '~/modules/dashboard/components/metric-card/color-theme-modal'
-import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
 
 interface ISidebarProps {
   className?: string
@@ -99,6 +99,12 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
   const handleApplyColorTheme = (themeObject: any) => {
     setCurrentTheme(themeObject)
     setCurrentMenuColor(themeObject.menu) // Update currentMenuColor state
+
+    const savedState = localStorage.getItem('fullDashboardState')!
+    const parsedState = JSON.parse(savedState)
+    parsedState.currentTheme = themeObject
+    localStorage.setItem('fullDashboardState', JSON.stringify(parsedState))
+
     setIsColorThemeModalVisible(false)
   }
 
@@ -113,6 +119,27 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
       root.style.setProperty('--menu-color', currentTheme.menu)
     }
   }, [currentTheme])
+
+  // Loading state for initial dashboard data load
+  const [isLoading, setIsLoading] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    try {
+      setIsLoading(true)
+      const savedState = localStorage.getItem('fullDashboardState')
+      if (savedState) {
+        const parsedState = JSON.parse(savedState)
+        setCurrentTheme(parsedState.currentTheme)
+        setCurrentMenuColor(parsedState.currentTheme.menu)
+      }
+    } catch (error) {
+      console.error('Failed to load menu state from localStorage:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, []) // Run only once on mount
+
+  if (isLoading) return
 
   return (
     <div className={classNames(cls.wrapper, [className])}>

@@ -3,7 +3,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background-color: rgb(28, 29, 37);
+  background-color: var(--background);
 
   .filters {
     margin-bottom: 24px;
