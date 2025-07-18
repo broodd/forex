@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Card, Col, Dropdown, Menu, Row, Typography } from 'antd'
+import { DownOutlined } from '@ant-design/icons'
+import { Button, Card, Col, Dropdown, Menu, Row, Skeleton, Typography } from 'antd'
+import classNames from 'classnames'
 import { FC, ReactNode } from 'react'
 import cls from './metric-card.module.scss'
-import classNames from 'classnames'
-import { DownOutlined } from '@ant-design/icons'
 
 const { Text } = Typography
 
 interface IMetricCardProps {
   span?: number
   className?: string
+  isLoading?: boolean
   title: string
   value: string | number
   today: string | number
@@ -26,6 +27,7 @@ export const MetricCard: FC<IMetricCardProps> = ({
   title,
   value,
   today,
+  isLoading,
   yesterday,
   percentage,
   trendLine,
@@ -41,31 +43,36 @@ export const MetricCard: FC<IMetricCardProps> = ({
             {title}
           </div>
 
-          {/* Value, Trendline, and Percentage */}
-          <div
-            className={classNames(cls.trend, [
-              parseFloat(percentage) < 0
-                ? cls.down
-                : parseFloat(percentage) > 0
-                  ? cls.up
-                  : cls.equal,
-            ])}
-          >
-            <div className={cls.name}>{value}</div>
-            {trendLine && (
-              <div className={cls.trendLine}>
-                <div className={cls.line}></div>
-                <span className={cls.trendLineText}>{percentage}%</span>
+          {isLoading ? (
+            <Skeleton active={true} paragraph={{ rows: 2 }} />
+          ) : (
+            <>
+              <div
+                className={classNames(cls.trend, [
+                  parseFloat(percentage) < 0
+                    ? cls.down
+                    : parseFloat(percentage) > 0
+                      ? cls.up
+                      : cls.equal,
+                ])}
+              >
+                <div className={cls.name}>{value}</div>
+                {trendLine && (
+                  <div className={cls.trendLine}>
+                    <div className={cls.line}></div>
+                    <span className={cls.trendLineText}>{percentage}%</span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Today and Yesterday data */}
-          {showToday && (
-            <div className={cls.details}>
-              <div>Today: {today}</div>
-              <div>Yesterday: {yesterday}</div>
-            </div>
+              {/* Today and Yesterday data */}
+              {showToday && (
+                <div className={cls.details}>
+                  <div>Today: {today}</div>
+                  <div>Yesterday: {yesterday}</div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </Card>
@@ -86,11 +93,15 @@ const dropdownMenu = (
 export const MetricBox = ({
   title,
   dropDownTitle,
+  isLoading,
+  loadingTable,
   children,
   className,
   onTitleClick,
 }: {
   title: string
+  isLoading?: boolean
+  loadingTable?: number
   dropDownTitle?: string
   onTitleClick?: any
   className?: string
@@ -98,33 +109,52 @@ export const MetricBox = ({
 }) => {
   return (
     <Row className={classNames(cls.wrapper, [className])}>
-      <Col span={dropDownTitle ? 12 : 24}>
-        <Text className={cls.metricTitle} onClick={onTitleClick}>
-          {title}
-        </Text>
-      </Col>
+      {isLoading ? (
+        loadingTable ? (
+          <Col className={cls.skeletonTable}>
+            {new Array(loadingTable).fill(1).map((_item, index) => (
+              <Skeleton.Button key={index} active={true} block={true} size='large' />
+            ))}
+          </Col>
+        ) : (
+          <Col className={cls.skeletonBox}>
+            <Skeleton.Button active={true} block={true} size='large' />
+          </Col>
+        )
+      ) : (
+        <>
+          <Col span={dropDownTitle ? 12 : 24}>
+            <Text className={cls.metricTitle} onClick={onTitleClick}>
+              {title}
+            </Text>
+          </Col>
 
-      {dropDownTitle && (
-        <Col className={cls.dropdown}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 20,
-            }}
-          >
-            <Dropdown overlay={dropdownMenu} trigger={['click']}>
-              <Button type='link' style={{ color: 'white', display: 'flex', alignItems: 'center' }}>
-                {dropDownTitle}
-                <DownOutlined style={{ marginLeft: 5 }} />
-              </Button>
-            </Dropdown>
-          </div>
-        </Col>
+          {dropDownTitle && (
+            <Col className={cls.dropdown}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 20,
+                }}
+              >
+                <Dropdown overlay={dropdownMenu} trigger={['click']}>
+                  <Button
+                    type='link'
+                    style={{ color: 'white', display: 'flex', alignItems: 'center' }}
+                  >
+                    {dropDownTitle}
+                    <DownOutlined style={{ marginLeft: 5 }} />
+                  </Button>
+                </Dropdown>
+              </div>
+            </Col>
+          )}
+
+          {children}
+        </>
       )}
-
-      {children}
     </Row>
   )
 }

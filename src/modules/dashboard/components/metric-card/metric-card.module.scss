@@ -108,3 +108,39 @@
     padding: 0 !important;
   }
 }
+
+.skeletonTable {
+  flex: 1;
+  padding: 1rem;
+
+  :global {
+    .ant-skeleton {
+      margin-bottom: 1.5rem;
+
+      &:first-child {
+        margin-bottom: 5rem;
+      }
+
+      .ant-skeleton-button {
+        height: 40px;
+      }
+    }
+  }
+}
+
+.skeletonBox {
+  flex: 1;
+  padding: 1rem;
+  height: 100%;
+  min-height: 300px;
+
+  :global {
+    .ant-skeleton {
+      height: 100%;
+
+      .ant-skeleton-button {
+        height: 100%;
+      }
+    }
+  }
+}

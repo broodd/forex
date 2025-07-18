@@ -216,5 +216,13 @@ export const theme: ThemeConfig = {
     Card: {
       borderRadiusLG: 0,
     },
+    Skeleton: {
+      gradientFromColor: 'rgb(52,55,62)',
+      gradientToColor: 'rgb(199,197,197)',
+      paragraphLiHeight: 15,
+      titleHeight: 30,
+      controlHeightXS: 5,
+      controlHeightSM: 10,
+    },
   },
 }

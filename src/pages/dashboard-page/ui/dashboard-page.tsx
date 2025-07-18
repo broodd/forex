@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Row, Spin, Typography } from 'antd'
+import { Col, Row, Typography } from 'antd'
 import { PageLayout } from '~/layouts'
 import { EditTableModal, MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
@@ -278,13 +278,29 @@ const DashboardPage = () => {
 
   const handleChangePeriod = (index: number) => {
     setPeriodMenuActive(index)
-
+    setIsLoading(true)
     updateDashboardState({ dateRangeText: periodMenu[index].date })
+    setTimeout(
+      () => {
+        setIsLoading(false)
+      },
+      randomFromTo(300, 1100),
+    )
   }
 
   const updateFullState = (data: any) => {
     setDashboardState(data)
     localStorage.setItem('fullDashboardState', JSON.stringify(data))
+  }
+
+  const setFullLoading = () => {
+    setIsLoading(true)
+    setTimeout(
+      () => {
+        setIsLoading(false)
+      },
+      randomFromTo(700, 2400),
+    )
   }
 
   // Effect to load all dashboard state from localStorage on component mount
@@ -303,12 +319,7 @@ const DashboardPage = () => {
       // Fallback to default if there's an error
       setDashboardState(DEFAULT_DASHBOARD_STATE)
     } finally {
-      setTimeout(
-        () => {
-          setIsLoading(false)
-        },
-        // randomFromTo(600, 2300),
-      )
+      setFullLoading()
     }
   }, []) // Run only once on mount
 
@@ -404,15 +415,15 @@ const DashboardPage = () => {
 
   if (isLoading == null) return
 
-  if (isLoading) {
-    // Use the default theme colors for the loading screen
+  // if (isLoading) {
+  //   // Use the default theme colors for the loading screen
 
-    return (
-      <div className={cls.loadingWrap}>
-        <Spin size='large' />
-      </div>
-    )
-  }
+  //   return (
+  //     <div className={cls.loadingWrap}>
+  //       <Spin size='large' />
+  //     </div>
+  //   )
+  // }
 
   return (
     <PageLayout
@@ -428,7 +439,7 @@ const DashboardPage = () => {
             <Text className={cls.filtersDate} onClick={handleDateRangeClick}>
               {dashboardState.dateRangeText}
             </Text>
-            <RefreshIcon className={cls.refhreshIcon} />
+            <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
           </Col>
 
           <Col className={cls.periodFilter}>
@@ -449,6 +460,7 @@ const DashboardPage = () => {
             <MetricBox title='Traffic'>
               <MetricCard
                 title='Impressions'
+                isLoading={isLoading}
                 value={dashboardState.metricsData.traffic.impressions.value}
                 today={dashboardState.metricsData.traffic.impressions.today}
                 yesterday={dashboardState.metricsData.traffic.impressions.yesterday}
@@ -461,6 +473,7 @@ const DashboardPage = () => {
               {/* Clicks Card */}
               <MetricCard
                 title='Clicks'
+                isLoading={isLoading}
                 value={dashboardState.metricsData.traffic.clicks.value}
                 today={dashboardState.metricsData.traffic.clicks.today}
                 yesterday={dashboardState.metricsData.traffic.clicks.yesterday}
@@ -473,6 +486,7 @@ const DashboardPage = () => {
               {/* CTL Card */}
               <MetricCard
                 title='CTL'
+                isLoading={isLoading}
                 value={dashboardState.metricsData.traffic.ctl.value}
                 today={dashboardState.metricsData.traffic.ctl.today}
                 yesterday={dashboardState.metricsData.traffic.ctl.yesterday}
@@ -490,6 +504,7 @@ const DashboardPage = () => {
                 <MetricBox title='Finance' className={cls.rightSideRowInner}>
                   <MetricCard
                     span={24}
+                    isLoading={isLoading}
                     title='Payout'
                     value={dashboardState.metricsData.finance.payout.value}
                     today={dashboardState.metricsData.finance.payout.today}
@@ -505,6 +520,7 @@ const DashboardPage = () => {
                 <MetricBox title='Balance' className={cls.rightSideRowInner}>
                   <MetricCard
                     span={24}
+                    isLoading={isLoading}
                     title='Total Balance'
                     value={dashboardState.metricsData.balance.payout.value}
                     today={dashboardState.metricsData.balance.payout.today}
@@ -525,6 +541,7 @@ const DashboardPage = () => {
             <MetricBox title='Conversion'>
               <MetricCard
                 title='Leads'
+                isLoading={isLoading}
                 value={dashboardState.metricsData.conversion.leads.value}
                 today={dashboardState.metricsData.conversion.leads.today}
                 yesterday={dashboardState.metricsData.conversion.leads.yesterday}
@@ -536,6 +553,7 @@ const DashboardPage = () => {
 
               <MetricCard
                 title='FTDs'
+                isLoading={isLoading}
                 value={dashboardState.metricsData.conversion.ftds.value}
                 today={dashboardState.metricsData.conversion.ftds.today}
                 yesterday={dashboardState.metricsData.conversion.ftds.yesterday}
@@ -547,6 +565,7 @@ const DashboardPage = () => {
 
               <MetricCard
                 title='CR'
+                isLoading={isLoading}
                 value={dashboardState.metricsData.conversion.cr.value}
                 today={dashboardState.metricsData.conversion.cr.today}
                 yesterday={dashboardState.metricsData.conversion.cr.yesterday}
@@ -559,6 +578,8 @@ const DashboardPage = () => {
 
             <MetricBox
               title='Top 10 Countries'
+              isLoading={isLoading}
+              loadingTable={5}
               className={cls.flexContentStart}
               dropDownTitle='Country'
               onTitleClick={() => handleTableTitleClick('affiliates')}
@@ -573,18 +594,26 @@ const DashboardPage = () => {
 
           {/* Right Section: Finance, Balance, Statistics Chart */}
           <Col span={13} lg={13} md={13}>
-            <MetricBox
-              title='Statistics'
-              dropDownTitle='3 selected'
-              onTitleClick={handleChartTitleClick}
-            >
-              <StatisticsChart chartData={dashboardState.chartData} />
-            </MetricBox>
+            <Row>
+              <Col span={24} className={cls.dFlex}>
+                <MetricBox
+                  className={cls.flex1}
+                  title='Statistics'
+                  isLoading={isLoading}
+                  dropDownTitle='3 selected'
+                  onTitleClick={handleChartTitleClick}
+                >
+                  <StatisticsChart chartData={dashboardState.chartData} />
+                </MetricBox>
+              </Col>
+            </Row>
 
             <Row>
-              <Col span={12}>
+              <Col span={12} className={cls.dFlex}>
                 <MetricBox
+                  className={cls.flex1}
                   title='Traffic Map'
+                  isLoading={isLoading}
                   dropDownTitle='Impressions'
                   onTitleClick={handleTrafficMapTitleClick}
                 >
@@ -595,6 +624,8 @@ const DashboardPage = () => {
               <Col span={12} className={cls.dFlex}>
                 <MetricBox
                   title='Insights'
+                  isLoading={isLoading}
+                  loadingTable={3}
                   className={cls.flexContentStart}
                   dropDownTitle='Impressions'
                   onTitleClick={() => handleTableTitleClick('insights')}
