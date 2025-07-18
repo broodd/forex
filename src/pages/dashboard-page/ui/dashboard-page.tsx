@@ -15,14 +15,13 @@ import { FilterIcon } from '~/shared/ui/icon'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 import cls from './dashboard-page.module.scss'
 import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
+import classNames from 'classnames'
+import { Dayjs, dayjs } from '~/shared/providers'
 
 const { Text } = Typography
 
-const formatDate = (date: Date): string => {
-  const day = String(date.getDate()).padStart(2, '0')
-  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-indexed
-  const year = date.getFullYear()
-  return `${day}/${month}/${year}`
+const formatDate = (date: Dayjs): string => {
+  return date.format('DD/MM/YYYY')
 }
 
 export function randomFromTo(min: number, max: number) {
@@ -30,9 +29,38 @@ export function randomFromTo(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-const today = new Date()
-const lastWeek = new Date()
-lastWeek.setDate(today.getDate() - 7)
+const today = dayjs()
+
+const periodMenu = [
+  {
+    title: 'Today',
+    date: `${formatDate(today)} - ${formatDate(today)}`,
+  },
+  {
+    title: 'Yesterday',
+    date: `${formatDate(today.subtract(1, 'day'))} - ${formatDate(today.subtract(1, 'day'))}`,
+  },
+  {
+    title: 'Last 7 Days',
+    date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+  },
+  {
+    title: 'This Week',
+    date: `${formatDate(today.startOf('week'))} - ${formatDate(today.endOf('week'))}`,
+  },
+  {
+    title: 'This Month',
+    date: `${formatDate(today.startOf('month'))} - ${formatDate(today.endOf('month'))}`,
+  },
+  {
+    title: 'Last Month',
+    date: `${formatDate(today.subtract(1, 'month').startOf('month'))} - ${formatDate(today.subtract(1, 'month').endOf('month'))}`,
+  },
+  {
+    title: 'Custom',
+    date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+  },
+]
 
 // Columns for the Affiliates table (for display, not for modal editing)
 const affiliatesColumns = [
@@ -111,8 +139,8 @@ export const DEFAULT_DASHBOARD_STATE = {
         percentage: '100',
         today: '11',
         yesterday: '19',
-        trendLine: false,
-        showToday: false,
+        trendLine: true,
+        showToday: true,
       },
     },
     balance: {
@@ -121,15 +149,15 @@ export const DEFAULT_DASHBOARD_STATE = {
         percentage: '100',
         today: '11',
         yesterday: '19',
-        trendLine: false,
-        showToday: false,
+        trendLine: true,
+        showToday: true,
       },
     },
   },
   affiliatesTableData: [
     {
       key: '1',
-      name: '2958032',
+      name: 'ES (Spain)',
       impressions: 18,
       leads: 0,
       ftds: 0,
@@ -138,7 +166,7 @@ export const DEFAULT_DASHBOARD_STATE = {
     },
     {
       key: '2',
-      name: '2958154',
+      name: 'CZ (Czech Republic)',
       impressions: 97,
       leads: 81,
       ftds: 0,
@@ -223,7 +251,7 @@ export const DEFAULT_DASHBOARD_STATE = {
     },
   ],
   currentTheme: THEME_PALETTES[0],
-  dateRangeText: `${formatDate(lastWeek)} - ${formatDate(today)}`,
+  dateRangeText: periodMenu[3].date,
 }
 
 const DashboardPage = () => {
@@ -246,6 +274,18 @@ const DashboardPage = () => {
 
   // Loading state for initial dashboard data load
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
+  const [periodMenuActive, setPeriodMenuActive] = useState<number | null>(null)
+
+  const handleChangePeriod = (index: number) => {
+    setPeriodMenuActive(index)
+
+    updateDashboardState({ dateRangeText: periodMenu[index].date })
+  }
+
+  const updateFullState = (data: any) => {
+    setDashboardState(data)
+    localStorage.setItem('fullDashboardState', JSON.stringify(data))
+  }
 
   // Effect to load all dashboard state from localStorage on component mount
   useEffect(() => {
@@ -256,9 +296,7 @@ const DashboardPage = () => {
         const parsedState = JSON.parse(savedState)
         setDashboardState(parsedState)
       } else {
-        // If no saved state, apply default and save it
-        setDashboardState(DEFAULT_DASHBOARD_STATE)
-        localStorage.setItem('fullDashboardState', JSON.stringify(DEFAULT_DASHBOARD_STATE))
+        updateFullState(DEFAULT_DASHBOARD_STATE)
       }
     } catch (error) {
       console.error('Failed to load dashboard state from localStorage:', error)
@@ -269,7 +307,7 @@ const DashboardPage = () => {
         () => {
           setIsLoading(false)
         },
-        randomFromTo(600, 2300),
+        // randomFromTo(600, 2300),
       )
     }
   }, []) // Run only once on mount
@@ -386,7 +424,7 @@ const DashboardPage = () => {
         <Row>
           <Col lg={9} className={cls.filters}>
             <FilterIcon className={cls.filterIcon} />
-            <Text>Filter</Text>
+            <Text onClick={() => updateFullState(DEFAULT_DASHBOARD_STATE)}>Filter</Text>
             <Text className={cls.filtersDate} onClick={handleDateRangeClick}>
               {dashboardState.dateRangeText}
             </Text>
@@ -394,13 +432,15 @@ const DashboardPage = () => {
           </Col>
 
           <Col className={cls.periodFilter}>
-            <Text className={cls.periodItem}>Today</Text>
-            <Text className={cls.periodItem}>Yesterday</Text>
-            <Text className={cls.periodItem}>Last 7 Days</Text>
-            <Text className={cls.periodItem}>This Week</Text>
-            <Text className={cls.periodItem}>This Month</Text>
-            <Text className={cls.periodItem}>Last Month</Text>
-            <Text className={cls.periodItem}>Custom</Text>
+            {periodMenu.map((item, index) => (
+              <Text
+                className={classNames(cls.periodItem, index === periodMenuActive && cls.active)}
+                key={index}
+                onClick={() => handleChangePeriod(index)}
+              >
+                {item.title}
+              </Text>
+            ))}
           </Col>
         </Row>
 
@@ -518,9 +558,9 @@ const DashboardPage = () => {
             </MetricBox>
 
             <MetricBox
-              title='Top 10 Affiliates'
+              title='Top 10 Countries'
               className={cls.flexContentStart}
-              dropDownTitle='Affiliate'
+              dropDownTitle='Country'
               onTitleClick={() => handleTableTitleClick('affiliates')}
             >
               <CustomTable

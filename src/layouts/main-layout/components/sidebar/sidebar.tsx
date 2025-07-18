@@ -139,6 +139,24 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
     }
   }, []) // Run only once on mount
 
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date()
+      const hours = String(now.getUTCHours()).padStart(2, '0')
+      const minutes = String(now.getUTCMinutes()).padStart(2, '0')
+      setDateText(hours + ':' + minutes)
+    }
+
+    // Initial call to set the time immediately
+    updateTime()
+
+    // Set up interval to update time every second (or minute, depending on precision needed)
+    const intervalId = setInterval(updateTime, 1000) // Update every second
+
+    // Cleanup function: clear the interval when the component unmounts
+    return () => clearInterval(intervalId)
+  }, [])
+
   if (isLoading) return
 
   return (
