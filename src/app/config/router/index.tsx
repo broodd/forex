@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
 import { createBrowserRouter, createRoutesFromElements, Outlet, Route } from 'react-router-dom'
-import { SplashLoader } from '~/lib/components'
 import { ROUTES } from '~/lib/constants/routes'
 import { PageLoader } from '~/shared/ui/page-loader'
 import { ProtectedRoute } from './protected-route'
@@ -10,8 +9,8 @@ import { AuthLayout, MainLayout } from '~/layouts'
 
 /* PAGES */
 import { DashboardPage } from '~/pages/dashboard-page'
-import { SignInPage } from '~/pages/sign-in-page'
 import { ErrorPage } from '~/pages/error-page'
+import { SignInPage } from '~/pages/sign-in-page'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,7 +18,7 @@ export const router = createBrowserRouter(
       <Route
         element={
           <AuthLayout>
-            <Suspense fallback={<SplashLoader />}>
+            <Suspense>
               <Outlet />
             </Suspense>
           </AuthLayout>

@@ -10,7 +10,6 @@ import { Menu } from '~/shared/ui/menu'
 import { ERoutes, ROUTES } from '~/lib/constants/routes'
 import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
 import { ColorThemeModal } from '~/modules/dashboard/components/metric-card/color-theme-modal'
-import EditDateRangeModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
 import { BalanceIcon } from '~/shared/ui/icon/ui/balance-icon'
 import { ItemsIcon } from '~/shared/ui/icon/ui/items-icon'
 import { LeadsIcon } from '~/shared/ui/icon/ui/leads-icon'
@@ -72,20 +71,6 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
   const [dateText, setDateText] = useState(
     `${n.getHours().toString().padStart(2, '0')}:${n.getMinutes().toString().padStart(2, '0')}`,
   )
-  const [isEditDateModalVisible, setIsEditDateModalVisible] = useState(false)
-
-  const handleDateClick = () => {
-    setIsEditDateModalVisible(true)
-  }
-
-  const handleDateModalSave = (newText: string) => {
-    setDateText(newText)
-    setIsEditDateModalVisible(false)
-  }
-
-  const handleDateModalCancel = () => {
-    setIsEditDateModalVisible(false)
-  }
 
   // NEW: State for Color Theme
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false)
@@ -181,19 +166,12 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
         />
         <div className={cls.menuBottom}>
           <Menu className={cls.menu} items={menuItemsBottom} />
-          <div className={cls.clock} onClick={handleDateClick}>
+          <div className={cls.clock}>
             <span className={cls.time}>{dateText}</span>
             <span className={cls.timezone}>UTC</span>
           </div>
         </div>
       </div>
-
-      <EditDateRangeModal
-        visible={isEditDateModalVisible}
-        onCancel={handleDateModalCancel}
-        onSave={handleDateModalSave}
-        initialText={dateText}
-      />
 
       {/* NEW: Color Theme Modal */}
       <ColorThemeModal

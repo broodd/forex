@@ -24,9 +24,25 @@ const formatDate = (date: Dayjs): string => {
   return date.format('DD/MM/YYYY')
 }
 
-export function randomFromTo(min: number, max: number) {
-  // min and max included
+function randomFromTo(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function convertTwoDigitNumber(num: number) {
+  const sign = Math.sign(num)
+  let absoluteNum = Math.abs(num)
+
+  if (sign === -1) {
+    absoluteNum = 100 - absoluteNum
+  }
+
+  let numStr = String(absoluteNum)
+
+  if (numStr.length === 1) {
+    numStr = '0' + numStr
+  }
+  const resultStr = sign === 1 ? `1.${numStr}` : `0.${numStr}`
+  return parseFloat(resultStr)
 }
 
 const today = dayjs()
@@ -35,40 +51,55 @@ const periodMenu = [
   {
     title: 'Today',
     date: `${formatDate(today)} - ${formatDate(today)}`,
+    leadRand: 1,
+    leadKoef: 1,
   },
   {
     title: 'Yesterday',
     date: `${formatDate(today.subtract(1, 'day'))} - ${formatDate(today.subtract(1, 'day'))}`,
+    leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
+    leadKoef: 1,
   },
   {
     title: 'Last 7 Days',
     date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+    leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
+    leadKoef: 7,
   },
   {
     title: 'This Week',
     date: `${formatDate(today.startOf('week'))} - ${formatDate(today.endOf('week'))}`,
+    leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
+    leadKoef: today.day() + 1,
   },
   {
     title: 'This Month',
     date: `${formatDate(today.startOf('month'))} - ${formatDate(today.endOf('month'))}`,
+    leadRand: 0.7,
+    // leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
+    leadKoef: today.date(),
   },
   {
     title: 'Last Month',
     date: `${formatDate(today.subtract(1, 'month').startOf('month'))} - ${formatDate(today.subtract(1, 'month').endOf('month'))}`,
+    leadRand: 1,
+    leadKoef: 1,
   },
   {
     title: 'Custom',
     date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+    leadRand: 1,
+    leadKoef: 1,
   },
 ]
 
 // Columns for the Affiliates table (for display, not for modal editing)
-const affiliatesColumns = [
+const countyColumns = [
   { title: 'Name', dataIndex: 'name', key: 'name' },
   { title: 'Impressions', dataIndex: 'impressions', key: 'impressions' },
   { title: 'Leads', dataIndex: 'leads', key: 'leads' },
   { title: 'FTDs', dataIndex: 'ftds', key: 'ftds' },
-  { title: 'Conversion Rate', dataIndex: 'conversionRate', key: 'conversionRate' },
+  { title: 'Conversion Rate', dataIndex: 'cr', key: 'cr' },
   { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
 ]
 
@@ -79,48 +110,48 @@ const insightsColumns = [
   { title: 'Percentage', dataIndex: 'percentage', key: 'percentage' },
 ]
 
-export const DEFAULT_DASHBOARD_STATE = {
+const DEFAULT_DASHBOARD_STATE = {
   metricsData: {
     traffic: {
       impressions: {
-        value: '131',
-        percentage: '-90',
-        today: '11',
-        yesterday: '19',
+        value: '0',
+        percentage: '0',
+        today: '0',
+        yesterday: '0',
         trendLine: true,
         showToday: true,
       },
       clicks: {
-        value: '94',
-        percentage: '100',
-        today: '10',
-        yesterday: '13',
+        value: '0',
+        percentage: '0',
+        today: '0',
+        yesterday: '0',
         trendLine: true,
         showToday: true,
       },
       ctl: {
-        value: '100%', // CTL is a percentage itself
-        percentage: '100',
-        today: '100%',
-        yesterday: '100%',
+        value: '0',
+        percentage: '0',
+        today: '0',
+        yesterday: '0',
         trendLine: true,
         showToday: true,
       },
     },
     conversion: {
       leads: {
-        value: '2',
-        percentage: '90',
-        today: '1',
-        yesterday: '19',
+        value: '40',
+        percentage: '0',
+        today: '0',
+        yesterday: '0',
         trendLine: true,
         showToday: true,
       },
       ftds: {
         value: '0',
         percentage: '0',
-        today: '10',
-        yesterday: '90',
+        today: '0',
+        yesterday: '0',
         trendLine: true, // No trend line shown in the image for FTDs
         showToday: true,
       },
@@ -134,49 +165,41 @@ export const DEFAULT_DASHBOARD_STATE = {
       },
     },
     finance: {
-      payout: {
-        value: '131',
-        percentage: '100',
-        today: '11',
-        yesterday: '19',
+      revenue: {
+        value: '0',
+        percentage: '0',
+        today: '0',
+        yesterday: '0',
         trendLine: true,
         showToday: true,
       },
-    },
-    balance: {
       payout: {
-        value: '131',
-        percentage: '100',
-        today: '11',
-        yesterday: '19',
+        value: '0',
+        percentage: '0',
+        today: '0',
+        yesterday: '0',
+        trendLine: true,
+        showToday: true,
+      },
+      net: {
+        value: '0',
+        percentage: '0',
+        today: '0',
+        yesterday: '0',
         trendLine: true,
         showToday: true,
       },
     },
   },
-  affiliatesTableData: [
+  trafficMapData: [
     {
-      key: '1',
-      name: 'ES (Spain)',
-      impressions: 18,
-      leads: 0,
-      ftds: 0,
-      conversionRate: '0%',
-      clicks: 0,
+      name: 'Spain',
+      code: 'ES',
+      value: 116,
+      percentage: '88.5%',
+      coordinates: [-3.7038, 40.4168],
+      color: 'red',
     },
-    {
-      key: '2',
-      name: 'CZ (Czech Republic)',
-      impressions: 97,
-      leads: 81,
-      ftds: 0,
-      conversionRate: '0%',
-      clicks: 81,
-    },
-  ],
-  insightsTableData: [
-    { key: '1', day: 'Monday', value: 18, percentage: '0%' },
-    { key: '2', day: 'Wednesday', value: 12, percentage: '0%' },
   ],
   chartData: {
     labels: ['04 Jul', '05 Jul', '06 Jul', '07 Jul', '08 Jul', '09 Jul', '10 Jul', '11 Jul'],
@@ -213,45 +236,14 @@ export const DEFAULT_DASHBOARD_STATE = {
       },
     ],
   },
-  trafficMapData: [
-    {
-      name: 'Spain',
-      value: 116,
-      percentage: '88.5%',
-      coordinates: [-3.7038, 40.4168],
-      color: 'red',
-    },
-    {
-      name: 'Italy',
-      value: 6,
-      percentage: '4.6%',
-      coordinates: [12.5674, 41.9028],
-      color: 'orange',
-    },
-    {
-      name: 'Ukraine',
-      value: 4,
-      percentage: '3.1%',
-      coordinates: [30.5234, 50.4501],
-      color: 'gold',
-    },
-    {
-      name: 'Czech Republic',
-      value: 3,
-      percentage: '2.3%',
-      coordinates: [14.4378, 50.0755],
-      color: 'green',
-    },
-    {
-      name: 'Canada',
-      value: 2,
-      percentage: '1.5%',
-      coordinates: [-75.6972, 45.4215],
-      color: 'blue',
-    },
+
+  insightsTableData: [
+    { key: '1', day: 'Monday', value: 18, percentage: '0%' },
+    { key: '2', day: 'Wednesday', value: 12, percentage: '0%' },
   ],
   currentTheme: THEME_PALETTES[0],
   dateRangeText: periodMenu[3].date,
+  periodMenuActive: 0,
 }
 
 const DashboardPage = () => {
@@ -274,18 +266,11 @@ const DashboardPage = () => {
 
   // Loading state for initial dashboard data load
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
-  const [periodMenuActive, setPeriodMenuActive] = useState<number | null>(null)
 
   const handleChangePeriod = (index: number) => {
-    setPeriodMenuActive(index)
     setIsLoading(true)
-    updateDashboardState({ dateRangeText: periodMenu[index].date })
-    setTimeout(
-      () => {
-        setIsLoading(false)
-      },
-      randomFromTo(300, 1100),
-    )
+    updateDashboardState({ dateRangeText: periodMenu[index].date, periodMenuActive: index })
+    setTimeout(() => setIsLoading(false), randomFromTo(300, 1100))
   }
 
   const updateFullState = (data: any) => {
@@ -295,12 +280,7 @@ const DashboardPage = () => {
 
   const setFullLoading = () => {
     setIsLoading(true)
-    setTimeout(
-      () => {
-        setIsLoading(false)
-      },
-      randomFromTo(700, 2400),
-    )
+    setTimeout(() => setIsLoading(false), randomFromTo(700, 2400))
   }
 
   // Effect to load all dashboard state from localStorage on component mount
@@ -336,10 +316,28 @@ const DashboardPage = () => {
   const handleMetricCardTitleClick = (metricType: any, metricName: any) => {
     setCurrentEditingMetricType(metricType)
     setCurrentEditingMetricName(metricName)
-    setInitialFormValues((dashboardState as any).metricsData[metricType][metricName])
+
+    if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
+      const value = getLeadsByPeriod(
+        (dashboardState as any).metricsData[metricType][metricName].value,
+      ).toString()
+      setInitialFormValues({
+        ...(dashboardState as any).metricsData[metricType][metricName],
+        value,
+      })
+    } else {
+      setInitialFormValues((dashboardState as any).metricsData[metricType][metricName])
+    }
+
     setIsEditMetricModalVisible(true)
   }
+
   const handleMetricModalSave = (newValues: any) => {
+    if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
+      const data = periodMenu[dashboardState.periodMenuActive]
+      newValues.value = (newValues.value / (data.leadKoef * data.leadRand)).toFixed(3)
+    }
+
     updateDashboardState({
       metricsData: {
         ...dashboardState.metricsData,
@@ -413,17 +411,17 @@ const DashboardPage = () => {
     setIsEditDateRangeModalVisible(false)
   }
 
+  /**
+   * =====
+   * Algoritms
+   */
+
+  const getLeadsByPeriod = (value: string): string | number => {
+    const data = periodMenu[dashboardState.periodMenuActive]
+    return Math.ceil(parseFloat((parseFloat(value) * data.leadKoef * data.leadRand).toFixed(1)))
+  }
+
   if (isLoading == null) return
-
-  // if (isLoading) {
-  //   // Use the default theme colors for the loading screen
-
-  //   return (
-  //     <div className={cls.loadingWrap}>
-  //       <Spin size='large' />
-  //     </div>
-  //   )
-  // }
 
   return (
     <PageLayout
@@ -445,7 +443,10 @@ const DashboardPage = () => {
           <Col className={cls.periodFilter}>
             {periodMenu.map((item, index) => (
               <Text
-                className={classNames(cls.periodItem, index === periodMenuActive && cls.active)}
+                className={classNames(
+                  cls.periodItem,
+                  index === dashboardState.periodMenuActive && cls.active,
+                )}
                 key={index}
                 onClick={() => handleChangePeriod(index)}
               >
@@ -461,7 +462,7 @@ const DashboardPage = () => {
               <MetricCard
                 title='Impressions'
                 isLoading={isLoading}
-                value={dashboardState.metricsData.traffic.impressions.value}
+                value={parseFloat(dashboardState.metricsData.conversion.leads.value) * 1.22}
                 today={dashboardState.metricsData.traffic.impressions.today}
                 yesterday={dashboardState.metricsData.traffic.impressions.yesterday}
                 percentage={dashboardState.metricsData.traffic.impressions.percentage}
@@ -474,7 +475,7 @@ const DashboardPage = () => {
               <MetricCard
                 title='Clicks'
                 isLoading={isLoading}
-                value={dashboardState.metricsData.traffic.clicks.value}
+                value={parseFloat(dashboardState.metricsData.conversion.leads.value) * 1.35}
                 today={dashboardState.metricsData.traffic.clicks.today}
                 yesterday={dashboardState.metricsData.traffic.clicks.yesterday}
                 percentage={dashboardState.metricsData.traffic.clicks.percentage}
@@ -487,7 +488,11 @@ const DashboardPage = () => {
               <MetricCard
                 title='CTL'
                 isLoading={isLoading}
-                value={dashboardState.metricsData.traffic.ctl.value}
+                value={(
+                  (parseFloat(dashboardState.metricsData.traffic.impressions.value) /
+                    parseFloat(dashboardState.metricsData.traffic.clicks.value)) *
+                  100
+                ).toFixed(0)}
                 today={dashboardState.metricsData.traffic.ctl.today}
                 yesterday={dashboardState.metricsData.traffic.ctl.yesterday}
                 percentage={dashboardState.metricsData.traffic.ctl.percentage}
@@ -499,40 +504,41 @@ const DashboardPage = () => {
           </Col>
 
           <Col span={13} lg={13} md={13} className={cls.rightSide}>
-            <Row className={cls.rightSideRow}>
-              <Col span={12}>
-                <MetricBox title='Finance' className={cls.rightSideRowInner}>
-                  <MetricCard
-                    span={24}
-                    isLoading={isLoading}
-                    title='Payout'
-                    value={dashboardState.metricsData.finance.payout.value}
-                    today={dashboardState.metricsData.finance.payout.today}
-                    yesterday={dashboardState.metricsData.finance.payout.yesterday}
-                    percentage={dashboardState.metricsData.finance.payout.percentage}
-                    trendLine={dashboardState.metricsData.finance.payout.trendLine}
-                    showToday={dashboardState.metricsData.finance.payout.showToday}
-                    onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
-                  />
-                </MetricBox>
-              </Col>
-              <Col span={12}>
-                <MetricBox title='Balance' className={cls.rightSideRowInner}>
-                  <MetricCard
-                    span={24}
-                    isLoading={isLoading}
-                    title='Total Balance'
-                    value={dashboardState.metricsData.balance.payout.value}
-                    today={dashboardState.metricsData.balance.payout.today}
-                    yesterday={dashboardState.metricsData.balance.payout.yesterday}
-                    percentage={dashboardState.metricsData.balance.payout.percentage}
-                    trendLine={dashboardState.metricsData.balance.payout.trendLine}
-                    showToday={dashboardState.metricsData.balance.payout.showToday}
-                    onTitleClick={() => handleMetricCardTitleClick('balance', 'payout')}
-                  />
-                </MetricBox>
-              </Col>
-            </Row>
+            <MetricBox title='Finance' className={cls.rightSideRowInner}>
+              <MetricCard
+                isLoading={isLoading}
+                title='Revenue'
+                value={dashboardState.metricsData.finance.revenue.value}
+                today={dashboardState.metricsData.finance.revenue.today}
+                yesterday={dashboardState.metricsData.finance.revenue.yesterday}
+                percentage={dashboardState.metricsData.finance.revenue.percentage}
+                trendLine={dashboardState.metricsData.finance.revenue.trendLine}
+                showToday={dashboardState.metricsData.finance.revenue.showToday}
+                onTitleClick={() => handleMetricCardTitleClick('finance', 'revenue')}
+              />
+              <MetricCard
+                isLoading={isLoading}
+                title='Payout'
+                value={dashboardState.metricsData.finance.payout.value}
+                today={dashboardState.metricsData.finance.payout.today}
+                yesterday={dashboardState.metricsData.finance.payout.yesterday}
+                percentage={dashboardState.metricsData.finance.payout.percentage}
+                trendLine={dashboardState.metricsData.finance.payout.trendLine}
+                showToday={dashboardState.metricsData.finance.payout.showToday}
+                onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
+              />
+              <MetricCard
+                isLoading={isLoading}
+                title='Net Profit'
+                value={dashboardState.metricsData.finance.net.value}
+                today={dashboardState.metricsData.finance.net.today}
+                yesterday={dashboardState.metricsData.finance.net.yesterday}
+                percentage={dashboardState.metricsData.finance.net.percentage}
+                trendLine={dashboardState.metricsData.finance.net.trendLine}
+                showToday={dashboardState.metricsData.finance.net.showToday}
+                onTitleClick={() => handleMetricCardTitleClick('finance', 'net')}
+              />
+            </MetricBox>
           </Col>
         </Row>
 
@@ -542,7 +548,7 @@ const DashboardPage = () => {
               <MetricCard
                 title='Leads'
                 isLoading={isLoading}
-                value={dashboardState.metricsData.conversion.leads.value}
+                value={getLeadsByPeriod(dashboardState.metricsData.conversion.leads.value)}
                 today={dashboardState.metricsData.conversion.leads.today}
                 yesterday={dashboardState.metricsData.conversion.leads.yesterday}
                 percentage={dashboardState.metricsData.conversion.leads.percentage}
@@ -582,12 +588,22 @@ const DashboardPage = () => {
               loadingTable={5}
               className={cls.flexContentStart}
               dropDownTitle='Country'
-              onTitleClick={() => handleTableTitleClick('affiliates')}
+              // onTitleClick={() => handleTableTitleClick('affiliates')}
             >
               <CustomTable
-                title={`Showing ${insightsColumns.length} Items`}
-                columns={affiliatesColumns}
-                data={dashboardState.affiliatesTableData}
+                title={`Showing ${dashboardState.trafficMapData.length} Items`}
+                columns={countyColumns}
+                data={dashboardState.trafficMapData.map((item) => {
+                  return {
+                    ...item,
+                    impressions: dashboardState.metricsData.traffic.impressions.value,
+                    leads: getLeadsByPeriod(dashboardState.metricsData.conversion.leads.value),
+                    ftds: dashboardState.metricsData.conversion.ftds.value,
+                    cr: dashboardState.metricsData.conversion.cr.value,
+                    clicks: dashboardState.metricsData.traffic.clicks.value,
+                    name: `(${item.code}) ${item.name}`,
+                  }
+                })}
               />
             </MetricBox>
           </Col>
