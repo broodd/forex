@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Col, Row, Typography } from 'antd'
 import { PageLayout } from '~/layouts'
@@ -5,12 +6,10 @@ import { EditTableModal, MetricBox, MetricCard } from '~/modules/dashboard/compo
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
 import CustomTable from '~/modules/dashboard/components/table/table'
 import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
-// import { Menu } from '~/shared/ui/menu'
 import { useEffect, useState } from 'react'
 import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
 import { EditTrafficMapModal } from '~/modules/dashboard/components/metric-card/edit-map-modal'
 import { EditMetricModal } from '~/modules/dashboard/components/metric-card/edit-metric-modal'
-import EditTextModal from '~/modules/dashboard/components/metric-card/edit-text-modal'
 import { FilterIcon } from '~/shared/ui/icon'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 import cls from './dashboard-page.module.scss'
@@ -20,6 +19,10 @@ import { Dayjs, dayjs } from '~/shared/providers'
 
 const { Text } = Typography
 
+const getArray = (length: number): number[] => {
+  return Array.from({ length }, (_, i) => i)
+}
+
 const formatDate = (date: Dayjs): string => {
   return date.format('DD/MM/YYYY')
 }
@@ -28,7 +31,75 @@ function randomFromTo(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function convertTwoDigitNumber(num: number) {
+/**
+ * Генерує випадкове число з деяким "зміщенням" до кінця діапазону.
+ * Можна налаштувати експоненційно, щоб більші значення були більш ймовірними.
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
+function biasedRandom(min: number, max: number, power = 1) {
+  // Використовуємо Math.pow для створення зміщення.
+  // Чим більше ступінь (наприклад, 2 або 3), тим сильніше зміщення до більших чисел.
+  // Math.pow(Math.random(), power) зі степенем > 1 зміщує до 0.
+  // Math.pow(Math.random(), 1/power) зі степенем > 1 зміщує до 1.
+  // Отже, для зміщення до більших чисел нам потрібен `1 - Math.pow(Math.random(), somePower)` або `Math.pow(Math.random(), 1/somePower)`
+
+  let rand = Math.random()
+  if (power !== 1) {
+    rand = Math.pow(rand, power) // Якщо power < 1, Math.random()^power > Math.random() -> зміщення до більших
+    // Якщо power > 1, Math.random()^power < Math.random() -> зміщення до менших
+  }
+  return Math.floor(min + rand * (max - min + 1)) // +1, щоб включити max
+}
+
+function distributeRandomlyWithBias(x: number, n: number, biasPower = 1) {
+  const cutPoints = []
+  for (let i = 0; i < n - 1; i++) {
+    // Використовуємо biasedRandom для генерації точок розрізу
+    // Діапазон від 0 до x
+    cutPoints.push(biasedRandom(0, x, biasPower))
+  }
+
+  // Додаємо 0 та x до точок розрізу, сортуємо їх
+  cutPoints.push(0)
+  cutPoints.push(x)
+  cutPoints.sort((a, b) => a - b)
+
+  // Обчислюємо різниці між послідовними точками розрізу
+  const result = []
+  for (let i = 0; i < n; i++) {
+    result.push(cutPoints[i + 1] - cutPoints[i])
+  }
+
+  return result
+}
+
+// function distributeRandomly(x: number, n: number): number[] {
+//   // Створюємо n-1 випадкових точок розрізу (роздільників)
+//   // Ці точки будуть знаходитись у діапазоні від 0 до x
+//   const cutPoints = []
+//   for (let i = 0; i < n - 1; i++) {
+//     cutPoints.push(Math.floor(Math.random() * (x + 1))) // +1, щоб включити x
+//   }
+
+//   // Додаємо 0 та x до точок розрізу, сортуємо їх
+//   // Це визначає початок та кінець "лінії", яку ми розділяємо
+//   cutPoints.push(0)
+//   cutPoints.push(x)
+//   cutPoints.sort((a, b) => a - b)
+
+//   // Обчислюємо різниці між послідовними точками розрізу
+//   // Ці різниці і є елементами нашого масиву
+//   const result = []
+//   for (let i = 0; i < n; i++) {
+//     result.push(cutPoints[i + 1] - cutPoints[i])
+//   }
+
+//   return result
+// }
+
+function convertTwoDigitNumber(num: number): number {
   const sign = Math.sign(num)
   let absoluteNum = Math.abs(num)
 
@@ -51,43 +122,78 @@ const periodMenu = [
   {
     title: 'Today',
     date: `${formatDate(today)} - ${formatDate(today)}`,
+    labels: getArray(24),
+    dataset: [],
     leadRand: 1,
     leadKoef: 1,
   },
   {
     title: 'Yesterday',
     date: `${formatDate(today.subtract(1, 'day'))} - ${formatDate(today.subtract(1, 'day'))}`,
+    labels: getArray(24),
+    dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: 1,
   },
   {
     title: 'Last 7 Days',
-    date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+    date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today)}`,
+    labels: getArray(today.diff(today.subtract(6, 'day'), 'day') + 1).map((item) => {
+      return today.subtract(6, 'day').add(item, 'day').format('DD MMM')
+    }),
+    dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: 7,
   },
   {
     title: 'This Week',
-    date: `${formatDate(today.startOf('week'))} - ${formatDate(today.endOf('week'))}`,
+    date: `${formatDate(today.startOf('week'))} - ${formatDate(today.endOf('week').add(1, 'day'))}`,
+    labels: getArray(today.endOf('week').add(1, 'day').diff(today.startOf('week'), 'day') + 1).map(
+      (item) => {
+        return today.startOf('week').add(item, 'day').format('DD MMM')
+      },
+    ),
+    dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.day() + 1,
   },
   {
     title: 'This Month',
     date: `${formatDate(today.startOf('month'))} - ${formatDate(today.endOf('month'))}`,
-    leadRand: 0.7,
-    // leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
+    labels: [
+      today.startOf('month'),
+      today.date(7),
+      today.date(15),
+      today.date(21),
+      today.endOf('month'),
+    ].map((item) => item.format('DD MMM')),
+    // labels: getArray(today.endOf('month').diff(today.startOf('month'), 'day') + 1).map((item) => {
+    //   return today.startOf('month').add(item, 'day').format('DD MMM')
+    // }),
+    dataset: [],
+    leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.date(),
   },
   {
     title: 'Last Month',
     date: `${formatDate(today.subtract(1, 'month').startOf('month'))} - ${formatDate(today.subtract(1, 'month').endOf('month'))}`,
-    leadRand: 1,
-    leadKoef: 1,
+    labels: getArray(
+      today
+        .subtract(1, 'month')
+        .endOf('month')
+        .diff(today.subtract(1, 'month').startOf('month'), 'day'),
+    ).map((item) => {
+      return today.subtract(1, 'month').startOf('month').add(item, 'day').format('DD MMM')
+    }),
+    dataset: [],
+    leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
+    leadKoef: today.subtract(1, 'month').daysInMonth(),
   },
   {
     title: 'Custom',
     date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+    labels: [],
+    dataset: [],
     leadRand: 1,
     leadKoef: 1,
   },
@@ -159,7 +265,7 @@ const DEFAULT_DASHBOARD_STATE = {
         value: '0%',
         percentage: '0',
         today: '0%',
-        yesterday: '4%',
+        yesterday: '0%',
         trendLine: true, // No trend line shown in the image for CR
         showToday: true,
       },
@@ -169,7 +275,7 @@ const DEFAULT_DASHBOARD_STATE = {
         value: '0',
         percentage: '0',
         today: '0',
-        yesterday: '0',
+        yesterday: convertTwoDigitNumber(randomFromTo(-30, 30)),
         trendLine: true,
         showToday: true,
       },
@@ -177,7 +283,7 @@ const DEFAULT_DASHBOARD_STATE = {
         value: '0',
         percentage: '0',
         today: '0',
-        yesterday: '0',
+        yesterday: convertTwoDigitNumber(randomFromTo(-30, 30)),
         trendLine: true,
         showToday: true,
       },
@@ -185,7 +291,7 @@ const DEFAULT_DASHBOARD_STATE = {
         value: '0',
         percentage: '0',
         today: '0',
-        yesterday: '0',
+        yesterday: convertTwoDigitNumber(randomFromTo(-30, 30)),
         trendLine: true,
         showToday: true,
       },
@@ -232,18 +338,30 @@ const DEFAULT_DASHBOARD_STATE = {
         pointBackgroundColor: '#ffffff',
         pointBorderColor: '#ffffff',
         pointRadius: 4,
-        tension: 0.4, // Smooth curves
+        tension: 0.4,
       },
     ],
   },
-
   insightsTableData: [
     { key: '1', day: 'Monday', value: 18, percentage: '0%' },
     { key: '2', day: 'Wednesday', value: 12, percentage: '0%' },
   ],
   currentTheme: THEME_PALETTES[0],
-  dateRangeText: periodMenu[3].date,
+  dateRangeText: periodMenu[0].date,
   periodMenuActive: 0,
+  dayLeads: '40',
+  metricsToday: {
+    leads: '40',
+    impressions: '0',
+    clicks: '0',
+    ctl: '0',
+  },
+  metricsYersterday: {
+    leads: '40',
+    impressions: '0',
+    clicks: '0',
+    ctl: '0',
+  },
 }
 
 const DashboardPage = () => {
@@ -262,7 +380,6 @@ const DashboardPage = () => {
 
   const [isEditChartModalVisible, setIsEditChartModalVisible] = useState(false)
   const [isEditTrafficMapModalVisible, setIsEditTrafficMapModal] = useState(false)
-  const [isEditDateRangeModalVisible, setIsEditDateRangeModalVisible] = useState(false)
 
   // Loading state for initial dashboard data load
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
@@ -270,17 +387,13 @@ const DashboardPage = () => {
   const handleChangePeriod = (index: number) => {
     setIsLoading(true)
     updateDashboardState({ dateRangeText: periodMenu[index].date, periodMenuActive: index })
+    calcMetciByPeriodAndUpdate(index)
     setTimeout(() => setIsLoading(false), randomFromTo(300, 1100))
-  }
-
-  const updateFullState = (data: any) => {
-    setDashboardState(data)
-    localStorage.setItem('fullDashboardState', JSON.stringify(data))
   }
 
   const setFullLoading = () => {
     setIsLoading(true)
-    setTimeout(() => setIsLoading(false), randomFromTo(700, 2400))
+    setTimeout(() => setIsLoading(false), randomFromTo(500, 2200))
   }
 
   // Effect to load all dashboard state from localStorage on component mount
@@ -290,13 +403,25 @@ const DashboardPage = () => {
       const savedState = localStorage.getItem('fullDashboardState')
       if (savedState) {
         const parsedState = JSON.parse(savedState)
-        setDashboardState(parsedState)
+
+        calcMetciByPeriodAndUpdate(parsedState.periodMenuActive, parsedState.dayLeads)
+
+        const metricsToday = calcMetciByPeriod(0, parsedState.dayLeads)
+        const metricsYersterday = calcMetciByPeriod(1, parsedState.dayLeads)
+
+        updateDashboardState({
+          metricsToday: { ...metricsToday, leads: metricsToday.periodLeads },
+          metricsYersterday: { ...metricsYersterday, leads: metricsYersterday.periodLeads },
+        })
       } else {
-        updateFullState(DEFAULT_DASHBOARD_STATE)
+        updateDashboardState(DEFAULT_DASHBOARD_STATE)
+        calcMetciByPeriodAndUpdate(
+          DEFAULT_DASHBOARD_STATE.periodMenuActive,
+          DEFAULT_DASHBOARD_STATE.dayLeads,
+        )
       }
     } catch (error) {
       console.error('Failed to load dashboard state from localStorage:', error)
-      // Fallback to default if there's an error
       setDashboardState(DEFAULT_DASHBOARD_STATE)
     } finally {
       setFullLoading()
@@ -317,36 +442,26 @@ const DashboardPage = () => {
     setCurrentEditingMetricType(metricType)
     setCurrentEditingMetricName(metricName)
 
-    if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
-      const value = getLeadsByPeriod(
-        (dashboardState as any).metricsData[metricType][metricName].value,
-      ).toString()
-      setInitialFormValues({
-        ...(dashboardState as any).metricsData[metricType][metricName],
-        value,
-      })
-    } else {
-      setInitialFormValues((dashboardState as any).metricsData[metricType][metricName])
-    }
-
+    setInitialFormValues((dashboardState as any).metricsData[metricType][metricName])
     setIsEditMetricModalVisible(true)
   }
 
   const handleMetricModalSave = (newValues: any) => {
     if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
       const data = periodMenu[dashboardState.periodMenuActive]
-      newValues.value = (newValues.value / (data.leadKoef * data.leadRand)).toFixed(3)
-    }
-
-    updateDashboardState({
-      metricsData: {
-        ...dashboardState.metricsData,
-        [currentEditingMetricType as any]: {
-          ...(dashboardState as any).metricsData[currentEditingMetricType as any],
-          [currentEditingMetricName as any]: newValues,
+      const dayLeads = (newValues.value / (data.leadKoef * data.leadRand)).toFixed(3)
+      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive, dayLeads)
+    } else {
+      updateDashboardState({
+        metricsData: {
+          ...dashboardState.metricsData,
+          [currentEditingMetricType as any]: {
+            ...(dashboardState as any).metricsData[currentEditingMetricType as any],
+            [currentEditingMetricName as any]: newValues,
+          },
         },
-      },
-    })
+      })
+    }
     setIsEditMetricModalVisible(false)
   }
   const handleMetricModalCancel = () => {
@@ -399,26 +514,99 @@ const DashboardPage = () => {
     setIsEditTrafficMapModal(false)
   }
 
-  // --- Date Range Modal Handlers ---
-  const handleDateRangeClick = () => {
-    setIsEditDateRangeModalVisible(true)
-  }
-  const handleDateRangeModalSave = (newText: any) => {
-    updateDashboardState({ dateRangeText: newText })
-    setIsEditDateRangeModalVisible(false)
-  }
-  const handleDateRangeModalCancel = () => {
-    setIsEditDateRangeModalVisible(false)
-  }
-
   /**
    * =====
    * Algoritms
    */
 
-  const getLeadsByPeriod = (value: string): string | number => {
-    const data = periodMenu[dashboardState.periodMenuActive]
+  const getLeadsByPeriod = (value: string, period?: number): string | number => {
+    const data = periodMenu[period ?? dashboardState.periodMenuActive]
     return Math.ceil(parseFloat((parseFloat(value) * data.leadKoef * data.leadRand).toFixed(1)))
+  }
+
+  const calcMetciByPeriod = (period: number, inputLeads?: string) => {
+    const dayLeads = parseFloat(inputLeads ? inputLeads : dashboardState.dayLeads)
+    const periodLeads = parseFloat(getLeadsByPeriod(dayLeads.toString(), period).toString())
+
+    // console.log('--- calcMetciByPeriodAndUpdate', {
+    //   period,
+    //   inputLeads,
+    //   dashboardState: dashboardState.metricsData.conversion.leads.value,
+    //   dayLeads,
+    //   periodLeads,
+    // })
+    const impressions = Math.ceil(periodLeads * 1.22)
+    const clicks = Math.ceil(periodLeads * 1.35)
+    const ctl = ((impressions / clicks) * 100).toFixed(0)
+
+    return {
+      dayLeads,
+      periodLeads,
+      impressions,
+      clicks,
+      ctl,
+    }
+  }
+
+  const calcMetciByPeriodAndUpdate = (period: number, inputLeads?: string) => {
+    const res = calcMetciByPeriod(period, inputLeads)
+
+    const labels = periodMenu[period].labels
+
+    const datasets = [
+      distributeRandomlyWithBias(res.impressions, labels.length),
+      distributeRandomlyWithBias(res.periodLeads, labels.length),
+      distributeRandomlyWithBias(0, labels.length),
+    ]
+
+    setDashboardState((prevState: any) => {
+      const prevMetrics = prevState.metricsData
+      const prevChart = prevState.chartData
+
+      const updatedState = {
+        ...prevState,
+        chartData: {
+          ...prevChart,
+          labels,
+          datasets: prevChart.datasets.map((item: any, index: number) => ({
+            ...item,
+            data: datasets[index],
+          })),
+        },
+        metricsData: {
+          ...prevMetrics,
+          traffic: {
+            ...prevMetrics.traffic,
+            impressions: {
+              ...prevMetrics.traffic.impressions,
+              value: res.impressions,
+            },
+            clicks: {
+              ...prevMetrics.traffic.clicks,
+              value: res.clicks,
+            },
+            ctl: {
+              ...prevMetrics.traffic.ctl,
+              value: res.ctl,
+            },
+          },
+          conversion: {
+            ...prevMetrics.conversion,
+            leads: {
+              ...prevMetrics.conversion.leads,
+              value: res.periodLeads,
+            },
+          },
+        },
+        dayLeads: res.dayLeads,
+      }
+
+      localStorage.setItem('fullDashboardState', JSON.stringify(updatedState))
+
+      return updatedState
+    })
+
+    return res
   }
 
   if (isLoading == null) return
@@ -430,13 +618,22 @@ const DashboardPage = () => {
       }}
     >
       <div className={cls.wrapper}>
+        {/* <pre style={{ background: 'white' }}>{JSON.stringify(dashboardState, null, 2)}</pre> */}
         <Row>
           <Col lg={9} className={cls.filters}>
             <FilterIcon className={cls.filterIcon} />
-            <Text onClick={() => updateFullState(DEFAULT_DASHBOARD_STATE)}>Filter</Text>
-            <Text className={cls.filtersDate} onClick={handleDateRangeClick}>
-              {dashboardState.dateRangeText}
+            <Text
+              onClick={() => {
+                updateDashboardState(DEFAULT_DASHBOARD_STATE)
+                calcMetciByPeriodAndUpdate(
+                  DEFAULT_DASHBOARD_STATE.periodMenuActive,
+                  DEFAULT_DASHBOARD_STATE.dayLeads,
+                )
+              }}
+            >
+              Filter
             </Text>
+            <Text className={cls.filtersDate}>{dashboardState.dateRangeText}</Text>
             <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
           </Col>
 
@@ -462,43 +659,39 @@ const DashboardPage = () => {
               <MetricCard
                 title='Impressions'
                 isLoading={isLoading}
-                value={parseFloat(dashboardState.metricsData.conversion.leads.value) * 1.22}
-                today={dashboardState.metricsData.traffic.impressions.today}
-                yesterday={dashboardState.metricsData.traffic.impressions.yesterday}
+                value={dashboardState.metricsData.traffic.impressions.value}
+                today={dashboardState.metricsToday.impressions}
+                yesterday={dashboardState.metricsYersterday.impressions}
                 percentage={dashboardState.metricsData.traffic.impressions.percentage}
                 trendLine={dashboardState.metricsData.traffic.impressions.trendLine}
                 showToday={dashboardState.metricsData.traffic.impressions.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('traffic', 'impressions')}
+                // onTitleClick={() => handleMetricCardTitleClick('traffic', 'impressions')}
               />
 
               {/* Clicks Card */}
               <MetricCard
                 title='Clicks'
                 isLoading={isLoading}
-                value={parseFloat(dashboardState.metricsData.conversion.leads.value) * 1.35}
-                today={dashboardState.metricsData.traffic.clicks.today}
-                yesterday={dashboardState.metricsData.traffic.clicks.yesterday}
+                value={dashboardState.metricsData.traffic.clicks.value}
+                today={dashboardState.metricsToday.clicks}
+                yesterday={dashboardState.metricsYersterday.clicks}
                 percentage={dashboardState.metricsData.traffic.clicks.percentage}
                 trendLine={dashboardState.metricsData.traffic.clicks.trendLine}
                 showToday={dashboardState.metricsData.traffic.clicks.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('traffic', 'clicks')} // Pass callback
+                // onTitleClick={() => handleMetricCardTitleClick('traffic', 'clicks')}
               />
 
               {/* CTL Card */}
               <MetricCard
                 title='CTL'
                 isLoading={isLoading}
-                value={(
-                  (parseFloat(dashboardState.metricsData.traffic.impressions.value) /
-                    parseFloat(dashboardState.metricsData.traffic.clicks.value)) *
-                  100
-                ).toFixed(0)}
-                today={dashboardState.metricsData.traffic.ctl.today}
-                yesterday={dashboardState.metricsData.traffic.ctl.yesterday}
+                value={dashboardState.metricsData.traffic.ctl.value}
+                today={dashboardState.metricsToday.ctl}
+                yesterday={dashboardState.metricsYersterday.ctl}
                 percentage={dashboardState.metricsData.traffic.ctl.percentage}
                 trendLine={dashboardState.metricsData.traffic.ctl.trendLine}
                 showToday={dashboardState.metricsData.traffic.ctl.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('traffic', 'ctl')}
+                // onTitleClick={() => handleMetricCardTitleClick('traffic', 'ctl')}
               />
             </MetricBox>
           </Col>
@@ -510,7 +703,10 @@ const DashboardPage = () => {
                 title='Revenue'
                 value={dashboardState.metricsData.finance.revenue.value}
                 today={dashboardState.metricsData.finance.revenue.today}
-                yesterday={dashboardState.metricsData.finance.revenue.yesterday}
+                yesterday={
+                  parseFloat(dashboardState.metricsData.finance.revenue.value) *
+                  dashboardState.metricsData.finance.revenue.yesterday
+                }
                 percentage={dashboardState.metricsData.finance.revenue.percentage}
                 trendLine={dashboardState.metricsData.finance.revenue.trendLine}
                 showToday={dashboardState.metricsData.finance.revenue.showToday}
@@ -521,7 +717,10 @@ const DashboardPage = () => {
                 title='Payout'
                 value={dashboardState.metricsData.finance.payout.value}
                 today={dashboardState.metricsData.finance.payout.today}
-                yesterday={dashboardState.metricsData.finance.payout.yesterday}
+                yesterday={
+                  parseFloat(dashboardState.metricsData.finance.payout.value) *
+                  dashboardState.metricsData.finance.payout.yesterday
+                }
                 percentage={dashboardState.metricsData.finance.payout.percentage}
                 trendLine={dashboardState.metricsData.finance.payout.trendLine}
                 showToday={dashboardState.metricsData.finance.payout.showToday}
@@ -532,7 +731,10 @@ const DashboardPage = () => {
                 title='Net Profit'
                 value={dashboardState.metricsData.finance.net.value}
                 today={dashboardState.metricsData.finance.net.today}
-                yesterday={dashboardState.metricsData.finance.net.yesterday}
+                yesterday={
+                  parseFloat(dashboardState.metricsData.finance.net.value) *
+                  dashboardState.metricsData.finance.net.yesterday
+                }
                 percentage={dashboardState.metricsData.finance.net.percentage}
                 trendLine={dashboardState.metricsData.finance.net.trendLine}
                 showToday={dashboardState.metricsData.finance.net.showToday}
@@ -548,9 +750,9 @@ const DashboardPage = () => {
               <MetricCard
                 title='Leads'
                 isLoading={isLoading}
-                value={getLeadsByPeriod(dashboardState.metricsData.conversion.leads.value)}
-                today={dashboardState.metricsData.conversion.leads.today}
-                yesterday={dashboardState.metricsData.conversion.leads.yesterday}
+                value={dashboardState.metricsData.conversion.leads.value}
+                today={dashboardState.metricsToday.leads}
+                yesterday={dashboardState.metricsYersterday.leads}
                 percentage={dashboardState.metricsData.conversion.leads.percentage}
                 trendLine={dashboardState.metricsData.conversion.leads.trendLine}
                 showToday={dashboardState.metricsData.conversion.leads.showToday}
@@ -597,7 +799,7 @@ const DashboardPage = () => {
                   return {
                     ...item,
                     impressions: dashboardState.metricsData.traffic.impressions.value,
-                    leads: getLeadsByPeriod(dashboardState.metricsData.conversion.leads.value),
+                    leads: dashboardState.metricsData.conversion.leads.value,
                     ftds: dashboardState.metricsData.conversion.ftds.value,
                     cr: dashboardState.metricsData.conversion.cr.value,
                     clicks: dashboardState.metricsData.traffic.clicks.value,
@@ -633,7 +835,16 @@ const DashboardPage = () => {
                   dropDownTitle='Impressions'
                   onTitleClick={handleTrafficMapTitleClick}
                 >
-                  <TrafficMap mapData={dashboardState.trafficMapData} />
+                  <TrafficMap
+                    // mapData={dashboardState.trafficMapData}
+                    mapData={dashboardState.trafficMapData.map((item) => {
+                      return {
+                        ...item,
+                        value: dashboardState.metricsData.traffic.impressions.value,
+                        percentage: dashboardState.metricsData.traffic.ctl.value + '%',
+                      }
+                    })}
+                  />
                 </MetricBox>
               </Col>
 
@@ -682,13 +893,6 @@ const DashboardPage = () => {
         onCancel={handleTrafficMapModalCancel}
         onSave={handleTrafficMapModalSave}
         initialTrafficMapData={dashboardState.trafficMapData}
-      />
-      {/* NEW: The Edit Date Range Modal */}
-      <EditTextModal
-        visible={isEditDateRangeModalVisible}
-        onCancel={handleDateRangeModalCancel}
-        onSave={handleDateRangeModalSave}
-        initialText={dashboardState.dateRangeText}
       />
     </PageLayout>
   )

@@ -76,7 +76,7 @@ const TrafficMap = ({
                 fill={color}
                 stroke={color}
                 strokeWidth='30'
-                stroke-opacity='0.2'
+                strokeOpacity='0.2'
                 cursor='pointer'
               />
             </Marker>

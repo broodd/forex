@@ -224,7 +224,7 @@ export const EditTableModal = ({
           {modalTitle}
         </Title>
       }
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       width='90%'
       // width={tableType === 'affiliates' ? 900 : 700} // Adjust width based on table type
@@ -241,7 +241,7 @@ export const EditTableModal = ({
           Save All Changes
         </Button>,
       ]}
-      bodyStyle={{ background: '#2a2a2a', padding: 12 }}
+      styles={{ body: { background: '#2a2a2a', padding: 12 } }}
       style={{ top: 50 }}
     >
       <Button

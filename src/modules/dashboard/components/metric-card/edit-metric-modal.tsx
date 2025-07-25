@@ -42,7 +42,7 @@ export const EditMetricModal = ({
           Edit {initialValues?.title || 'Metric'}
         </Title>
       }
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       footer={[
         <Button key='back' onClick={onCancel}>
@@ -57,7 +57,7 @@ export const EditMetricModal = ({
           Save
         </Button>,
       ]}
-      bodyStyle={{ background: '#2a2a2a', padding: 24 }} // Dark background for modal content
+      styles={{ body: { background: '#2a2a2a', padding: 24 } }} // Dark background for modal content
       style={{ top: 50 }} // Position modal higher
     >
       <Form form={form} layout='vertical' name='edit_metric_form' initialValues={initialValues}>

@@ -13,8 +13,8 @@ interface IMetricCardProps {
   isLoading?: boolean
   title: string
   value: string | number
-  today: string | number
-  yesterday: string | number
+  today?: string | number
+  yesterday: number | string
   percentage: string
   trendLine: boolean
   showToday: boolean
@@ -69,7 +69,7 @@ export const MetricCard: FC<IMetricCardProps> = ({
               {showToday && (
                 <div className={cls.details}>
                   <div>Today: {today}</div>
-                  <div>Yesterday: {yesterday}</div>
+                  <div>Yesterday: {parseFloat(yesterday as string).toFixed(0)}</div>
                 </div>
               )}
             </>

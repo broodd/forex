@@ -44,7 +44,7 @@ const EditTextModal = ({
           Edit Date Range
         </Title>
       }
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       onOk={handleOk}
       footer={[
@@ -60,7 +60,7 @@ const EditTextModal = ({
           Save
         </Button>,
       ]}
-      bodyStyle={{ background: '#2a2a2a', padding: 24 }}
+      styles={{ body: { background: '#2a2a2a', padding: 24 } }}
       style={{ top: 50 }}
     >
       <Form form={form} layout='vertical' name='date_range_edit_form'>

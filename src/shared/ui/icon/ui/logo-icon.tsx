@@ -21,7 +21,7 @@ const LogoSvg = () => {
         <filter id='drop-shadow-1' filterUnits='userSpaceOnUse'>
           <feOffset dx='0' dy='0' />
           <feGaussianBlur result='blur' stdDeviation='1.54' />
-          <feFlood flood-color='#000' flood-opacity='.2' />
+          <feFlood floodColor='#000' floodOpacity='.2' />
           <feComposite in2='blur' operator='in' />
           <feComposite in='SourceGraphic' />
         </filter>

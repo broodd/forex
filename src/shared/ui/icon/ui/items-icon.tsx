@@ -8,16 +8,16 @@ const ItemsSvg = () => {
       <path
         d='M11.8906 14.1177H17.5377'
         stroke='currentColor'
-        stroke-width='1.5'
-        stroke-miterlimit='10'
-        stroke-linecap='round'
+        strokeWidth='1.5'
+        strokeMiterlimit='10'
+        strokeLinecap='round'
       />
       <path
         d='M14.7139 16.941L14.7139 11.2939'
         stroke='currentColor'
-        stroke-width='1.5'
-        stroke-miterlimit='10'
-        stroke-linecap='round'
+        strokeWidth='1.5'
+        strokeMiterlimit='10'
+        strokeLinecap='round'
       />
       <path
         d='M7.14049 1.92678V6.54381H2.52346V1.92678H7.14049ZM8.11351 0H1.55043C1.02298 0 0.59668 0.426299 0.59668 0.953754V7.51683C0.59668 8.04429 1.02298 8.47059 1.55043 8.47059H8.11351C8.64097 8.47059 9.06727 8.04429 9.06727 7.51683V0.953754C9.06727 0.426299 8.64097 0 8.11351 0Z'

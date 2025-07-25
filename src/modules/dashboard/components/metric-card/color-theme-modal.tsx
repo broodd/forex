@@ -40,11 +40,11 @@ export const ColorThemeModal = ({
           Select Color Theme
         </Title>
       }
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       width={700}
       footer={null} // No footer buttons, as applying is done by clicking a theme
-      bodyStyle={{ background: '#2a2a2a', padding: 24 }}
+      styles={{ body: { background: '#2a2a2a', padding: 24 } }}
       style={{ top: 50 }}
     >
       <Form

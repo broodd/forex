@@ -359,7 +359,7 @@ export const EditTrafficMapModal = ({
           Edit Traffic Map Data
         </Title>
       }
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       width='90%' // Adjust width as needed
       footer={[
@@ -375,7 +375,7 @@ export const EditTrafficMapModal = ({
           Save All Changes
         </Button>,
       ]}
-      bodyStyle={{ background: '#2a2a2a', padding: 24 }}
+      styles={{ body: { background: '#2a2a2a', padding: 24 } }}
       style={{ top: 50 }}
     >
       <Button
