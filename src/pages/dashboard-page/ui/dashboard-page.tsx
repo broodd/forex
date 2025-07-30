@@ -19,8 +19,8 @@ import { Dayjs, dayjs } from '~/shared/providers'
 
 const { Text } = Typography
 
-const getArray = (length: number): number[] => {
-  return Array.from({ length }, (_, i) => i)
+const getArray = (length: number, start = 0): number[] => {
+  return Array.from({ length }, (_, i) => start + i)
 }
 
 const formatDate = (date: Dayjs): string => {
@@ -122,7 +122,9 @@ const periodMenu = [
   {
     title: 'Today',
     date: `${formatDate(today)} - ${formatDate(today)}`,
-    labels: getArray(24),
+    startGap: getArray(9, 0),
+    endGap: getArray(6, 18),
+    labels: getArray(9, 9),
     dataset: [],
     leadRand: 1,
     leadKoef: 1,
@@ -130,7 +132,9 @@ const periodMenu = [
   {
     title: 'Yesterday',
     date: `${formatDate(today.subtract(1, 'day'))} - ${formatDate(today.subtract(1, 'day'))}`,
-    labels: getArray(24),
+    startGap: getArray(9, 0),
+    endGap: getArray(6, 18),
+    labels: getArray(9, 9),
     dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: 1,
@@ -138,6 +142,8 @@ const periodMenu = [
   {
     title: 'Last 7 Days',
     date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today)}`,
+    startGap: [],
+    endGap: [],
     labels: getArray(today.diff(today.subtract(6, 'day'), 'day') + 1).map((item) => {
       return today.subtract(6, 'day').add(item, 'day').format('DD MMM')
     }),
@@ -148,11 +154,16 @@ const periodMenu = [
   {
     title: 'This Week',
     date: `${formatDate(today.startOf('week'))} - ${formatDate(today.endOf('week').add(1, 'day'))}`,
-    labels: getArray(today.endOf('week').add(1, 'day').diff(today.startOf('week'), 'day') + 1).map(
-      (item) => {
-        return today.startOf('week').add(item, 'day').format('DD MMM')
-      },
-    ),
+    startGap: [],
+    endGap: getArray(today.endOf('week').add(1, 'day').diff(today, 'day') + 1).map((item) => {
+      return today
+        .startOf('week')
+        .add(today.day() + item, 'day')
+        .format('DD MMM')
+    }),
+    labels: getArray(today.diff(today.startOf('week'), 'day') + 1).map((item) => {
+      return today.startOf('week').add(item, 'day').format('DD MMM')
+    }),
     dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.day() + 1,
@@ -160,16 +171,21 @@ const periodMenu = [
   {
     title: 'This Month',
     date: `${formatDate(today.startOf('month'))} - ${formatDate(today.endOf('month'))}`,
-    labels: [
-      today.startOf('month'),
-      today.date(7),
-      today.date(15),
-      today.date(21),
-      today.endOf('month'),
-    ].map((item) => item.format('DD MMM')),
-    // labels: getArray(today.endOf('month').diff(today.startOf('month'), 'day') + 1).map((item) => {
-    //   return today.startOf('month').add(item, 'day').format('DD MMM')
-    // }),
+    startGap: [],
+    endGap: getArray(today.endOf('month').diff(today, 'day')).map((item) => {
+      return today.add(item + 1, 'day').format('DD MMM')
+    }),
+    // labels: [
+    //   today.startOf('month'),
+    //   today.date(7),
+    //   today.date(15),
+    //   today.date(21),
+    //   today.endOf('month'),
+    // ].map((item) => item.format('DD MMM')),
+    // from start to end
+    labels: getArray(today.diff(today.startOf('month'), 'day') + 1).map((item) => {
+      return today.startOf('month').add(item, 'day').format('DD MMM')
+    }),
     dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.date(),
@@ -177,6 +193,8 @@ const periodMenu = [
   {
     title: 'Last Month',
     date: `${formatDate(today.subtract(1, 'month').startOf('month'))} - ${formatDate(today.subtract(1, 'month').endOf('month'))}`,
+    startGap: [],
+    endGap: [],
     labels: getArray(
       today
         .subtract(1, 'month')
@@ -192,6 +210,8 @@ const periodMenu = [
   {
     title: 'Custom',
     date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+    startGap: [],
+    endGap: [],
     labels: [],
     dataset: [],
     leadRand: 1,
@@ -221,7 +241,7 @@ const DEFAULT_DASHBOARD_STATE = {
     traffic: {
       impressions: {
         value: '0',
-        percentage: '0',
+        percentage: randomFromTo(10, 40).toString(),
         today: '0',
         yesterday: '0',
         trendLine: true,
@@ -229,7 +249,7 @@ const DEFAULT_DASHBOARD_STATE = {
       },
       clicks: {
         value: '0',
-        percentage: '0',
+        percentage: randomFromTo(10, 40).toString(),
         today: '0',
         yesterday: '0',
         trendLine: true,
@@ -237,7 +257,7 @@ const DEFAULT_DASHBOARD_STATE = {
       },
       ctl: {
         value: '0',
-        percentage: '0',
+        percentage: randomFromTo(10, 40).toString(),
         today: '0',
         yesterday: '0',
         trendLine: true,
@@ -247,7 +267,7 @@ const DEFAULT_DASHBOARD_STATE = {
     conversion: {
       leads: {
         value: '40',
-        percentage: '0',
+        percentage: randomFromTo(10, 40).toString(),
         today: '0',
         yesterday: '0',
         trendLine: true,
@@ -255,7 +275,7 @@ const DEFAULT_DASHBOARD_STATE = {
       },
       ftds: {
         value: '0',
-        percentage: '0',
+        percentage: randomFromTo(10, 40).toString(),
         today: '0',
         yesterday: '0',
         trendLine: true, // No trend line shown in the image for FTDs
@@ -263,7 +283,7 @@ const DEFAULT_DASHBOARD_STATE = {
       },
       cr: {
         value: '0%',
-        percentage: '0',
+        percentage: randomFromTo(5, 20).toString(),
         today: '0%',
         yesterday: '0%',
         trendLine: true, // No trend line shown in the image for CR
@@ -461,6 +481,7 @@ const DashboardPage = () => {
           },
         },
       })
+      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive)
     }
     setIsEditMetricModalVisible(false)
   }
@@ -528,13 +549,6 @@ const DashboardPage = () => {
     const dayLeads = parseFloat(inputLeads ? inputLeads : dashboardState.dayLeads)
     const periodLeads = parseFloat(getLeadsByPeriod(dayLeads.toString(), period).toString())
 
-    // console.log('--- calcMetciByPeriodAndUpdate', {
-    //   period,
-    //   inputLeads,
-    //   dashboardState: dashboardState.metricsData.conversion.leads.value,
-    //   dayLeads,
-    //   periodLeads,
-    // })
     const impressions = Math.ceil(periodLeads * 1.22)
     const clicks = Math.ceil(periodLeads * 1.35)
     const ctl = ((impressions / clicks) * 100).toFixed(0)
@@ -552,22 +566,34 @@ const DashboardPage = () => {
     const res = calcMetciByPeriod(period, inputLeads)
 
     const labels = periodMenu[period].labels
+    const startGap: unknown[] = periodMenu[period].startGap
+    const endGap: unknown[] = periodMenu[period].endGap
+
+    console.log('--- ', labels, startGap, endGap)
+
+    const startGapZero = startGap.map(() => 0)
+    const endGapZero = endGap.map(() => 0)
 
     const datasets = [
-      distributeRandomlyWithBias(res.impressions, labels.length),
-      distributeRandomlyWithBias(res.periodLeads, labels.length),
-      distributeRandomlyWithBias(0, labels.length),
+      startGapZero.concat(distributeRandomlyWithBias(res.impressions, labels.length), endGapZero),
+      startGapZero.concat(distributeRandomlyWithBias(res.periodLeads, labels.length), endGapZero),
+      startGapZero.concat(distributeRandomlyWithBias(0, labels.length), endGapZero),
     ]
+
+    const labelsConcated = startGap.concat(labels, endGap)
 
     setDashboardState((prevState: any) => {
       const prevMetrics = prevState.metricsData
       const prevChart = prevState.chartData
 
+      const ftds = prevMetrics.conversion.ftds.value
+      const cr = !parseFloat(ftds) ? 0 : ((ftds / res.dayLeads) * 100).toFixed(2)
+
       const updatedState = {
         ...prevState,
         chartData: {
           ...prevChart,
-          labels,
+          labels: labelsConcated,
           datasets: prevChart.datasets.map((item: any, index: number) => ({
             ...item,
             data: datasets[index],
@@ -595,6 +621,10 @@ const DashboardPage = () => {
             leads: {
               ...prevMetrics.conversion.leads,
               value: res.periodLeads,
+            },
+            cr: {
+              ...prevMetrics.conversion.cr,
+              value: cr,
             },
           },
         },
@@ -685,7 +715,7 @@ const DashboardPage = () => {
               <MetricCard
                 title='CTL'
                 isLoading={isLoading}
-                value={dashboardState.metricsData.traffic.ctl.value}
+                value={dashboardState.metricsData.traffic.ctl.value + '%'}
                 today={dashboardState.metricsToday.ctl}
                 yesterday={dashboardState.metricsYersterday.ctl}
                 percentage={dashboardState.metricsData.traffic.ctl.percentage}
@@ -774,7 +804,7 @@ const DashboardPage = () => {
               <MetricCard
                 title='CR'
                 isLoading={isLoading}
-                value={dashboardState.metricsData.conversion.cr.value}
+                value={dashboardState.metricsData.conversion.cr.value + '%'}
                 today={dashboardState.metricsData.conversion.cr.today}
                 yesterday={dashboardState.metricsData.conversion.cr.yesterday}
                 percentage={dashboardState.metricsData.conversion.cr.percentage}
