@@ -83,6 +83,8 @@
         align-items: center;
         justify-content: center;
         margin-bottom: 2.5rem;
+        background: transparent !important;
+        color: inherit !important;
 
         .ant-menu-title-content {
           width: auto;

@@ -311,7 +311,7 @@ const DEFAULT_DASHBOARD_STATE = {
     labels: ['04 Jul', '05 Jul', '06 Jul', '07 Jul', '08 Jul', '09 Jul', '10 Jul', '11 Jul'],
     datasets: [
       {
-        label: 'Impressions 131',
+        label: 'Impressions',
         data: [18, 0, 4, 28, 22, 29, 18, 10], // Data points mimicking the orange line
         borderColor: '#e77445', // Orange color from the image
         backgroundColor: 'rgba(243, 199, 93, 0.2)', // Light orange fill
@@ -321,7 +321,7 @@ const DEFAULT_DASHBOARD_STATE = {
         tension: 0.4, // Smooth curves
       },
       {
-        label: 'Leads 94',
+        label: 'Leads',
         data: [15, 0, 2, 23, 16, 19, 13, 10], // Data points mimicking the green line
         borderColor: '#2ed151', // Green color from the image
         backgroundColor: 'rgba(82, 196, 26, 0.2)', // Light green fill
@@ -331,7 +331,7 @@ const DEFAULT_DASHBOARD_STATE = {
         tension: 0.4, // Smooth curves
       },
       {
-        label: 'FTDs 0',
+        label: 'FTDs',
         data: [0, 0, 0, 0, 0, 0, 0, 0], // Data points for FTDs (appears flat at 0)
         borderColor: '#ffffff', // White color from the image
         backgroundColor: 'rgba(255, 255, 255, 0.1)', // Very light white fill
