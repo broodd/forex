@@ -31,6 +31,100 @@ function randomFromTo(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
+function getHourlyGaps(
+  startWorkingHours: number,
+  endWorkingHours: number,
+  currentHour: number,
+): { passedNonWorkHours: number[]; passedWorkHours: number[][]; remainingHours: number[] } {
+  const passedNonWorkHours = []
+  const passedWorkHoursFlat = [] // Temporary array to collect all passed working hours
+  const remainingHours = []
+
+  if (startWorkingHours < endWorkingHours) {
+    const isWorkingHour = (hour: number) => {
+      if (startWorkingHours <= endWorkingHours) {
+        // Normal contiguous working period (e.g., 9:00 to 17:00)
+        return hour >= startWorkingHours && hour <= endWorkingHours
+      } else {
+        // Working period spans midnight (e.g., 21:00 to 06:00)
+        // An hour is working if it's from startWorkingHours to 23:59 OR from 0:00 to endWorkingHours-1
+        return hour >= startWorkingHours || hour < endWorkingHours
+      }
+    }
+
+    // Populate startGap and workGap: hours that have already passed (from 0 up to currentHour)
+    for (let i = 0; i < currentHour; i++) {
+      if (isWorkingHour(i)) {
+        passedWorkHoursFlat.push(i)
+      } else {
+        passedNonWorkHours.push(i)
+      }
+    }
+
+    // Populate endGap: all hours from the currentHour until the end of the day (23)
+    for (let i = currentHour; i < 24; i++) {
+      remainingHours.push(i)
+    }
+    return { passedNonWorkHours, passedWorkHours: [passedWorkHoursFlat], remainingHours }
+  }
+
+  // Helper function to check if a given hour falls within the defined working period.
+  // Handles both contiguous (e.g., 9-17) and wrapped (e.g., 21-6) working hours.
+  const isWorkingHour = (hour: number) => {
+    if (startWorkingHours <= endWorkingHours) {
+      // Normal contiguous working period (e.g., 9:00 to 17:00)
+      // Note: endWorkingHours is exclusive for the working period itself (e.g., 17 means up to 16:59)
+      return hour >= startWorkingHours && hour < endWorkingHours
+    } else {
+      // Working period spans midnight (e.g., 21:00 to 06:00)
+      // An hour is working if it's from startWorkingHours to 23:59 OR from 0:00 to endWorkingHours-1
+      return hour >= startWorkingHours || hour <= endWorkingHours
+    }
+  }
+
+  // Populate passedNonWorkHours and passedWorkHoursFlat: hours that have already passed (from 0 up to and including currentHour)
+  for (let i = 0; i <= currentHour; i++) {
+    // Loop includes currentHour
+    if (isWorkingHour(i)) {
+      passedWorkHoursFlat.push(i)
+    } else {
+      passedNonWorkHours.push(i)
+    }
+  }
+
+  // Populate remainingHours: all hours from the currentHour + 1 until the end of the day (23)
+  for (let i = currentHour + 1; i < 24; i++) {
+    // Loop starts from currentHour + 1
+    remainingHours.push(i)
+  }
+
+  // --- Segment passedWorkHoursFlat into contiguous blocks ---
+  const passedWorkHours = []
+  if (passedWorkHoursFlat.length > 0) {
+    // Sort the flat array to ensure correct segmentation, especially for midnight spanning cases
+    passedWorkHoursFlat.sort((a, b) => a - b)
+
+    let currentSegment = [passedWorkHoursFlat[0]]
+    for (let i = 1; i < passedWorkHoursFlat.length; i++) {
+      const prevHour = passedWorkHoursFlat[i - 1]
+      const currentHourInFlat = passedWorkHoursFlat[i]
+
+      // If the current hour is not consecutive to the previous one, start a new segment
+      // This handles breaks in continuity, including the "gap" when wrapping around midnight
+      // (e.g., after 23, the next hour is 0, but if 23 is followed by 5, that's a break)
+      if (currentHourInFlat !== prevHour + 1) {
+        passedWorkHours.push(currentSegment)
+        currentSegment = [currentHourInFlat]
+      } else {
+        currentSegment.push(currentHourInFlat)
+      }
+    }
+    passedWorkHours.push(currentSegment) // Push the last segment
+  }
+
+  return { passedNonWorkHours, passedWorkHours, remainingHours }
+}
+
 /**
  * Генерує випадкове число з деяким "зміщенням" до кінця діапазону.
  * Можна налаштувати експоненційно, щоб більші значення були більш ймовірними.
@@ -55,6 +149,8 @@ function biasedRandom(min: number, max: number, power = 1) {
 
 function distributeRandomlyWithBias(x: number, n: number, biasPower = 1) {
   const cutPoints = []
+  if (!n) return []
+
   for (let i = 0; i < n - 1; i++) {
     // Використовуємо biasedRandom для генерації точок розрізу
     // Діапазон від 0 до x
@@ -118,24 +214,28 @@ function convertTwoDigitNumber(num: number): number {
 
 const today = dayjs()
 
+const generalWorkGap = getHourlyGaps(9, 18, today.hour() + 1)
+const countryWorkGap = {
+  CA: { start: 17, end: 24 },
+  AU: { start: 21, end: 6 },
+}
+
 const periodMenu = [
   {
     title: 'Today',
     date: `${formatDate(today)} - ${formatDate(today)}`,
-    startGap: getArray(9, 0),
-    endGap: getArray(6, 18),
-    labels: getArray(9, 9),
-    dataset: [],
+    startGap: generalWorkGap.passedNonWorkHours,
+    labels: generalWorkGap.passedWorkHours[0],
+    endGap: generalWorkGap.remainingHours,
     leadRand: 1,
     leadKoef: 1,
   },
   {
     title: 'Yesterday',
     date: `${formatDate(today.subtract(1, 'day'))} - ${formatDate(today.subtract(1, 'day'))}`,
-    startGap: getArray(9, 0),
-    endGap: getArray(6, 18),
-    labels: getArray(9, 9),
-    dataset: [],
+    startGap: generalWorkGap.passedNonWorkHours,
+    labels: generalWorkGap.passedWorkHours[0],
+    endGap: generalWorkGap.remainingHours,
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: 1,
   },
@@ -147,7 +247,6 @@ const periodMenu = [
     labels: getArray(today.diff(today.subtract(6, 'day'), 'day') + 1).map((item) => {
       return today.subtract(6, 'day').add(item, 'day').format('DD MMM')
     }),
-    dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: 7,
   },
@@ -155,16 +254,18 @@ const periodMenu = [
     title: 'This Week',
     date: `${formatDate(today.startOf('week'))} - ${formatDate(today.endOf('week').add(1, 'day'))}`,
     startGap: [],
-    endGap: getArray(today.endOf('week').add(1, 'day').diff(today, 'day') + 1).map((item) => {
+    endGap: getArray(today.endOf('week').add(1, 'day').diff(today, 'day')).map((item) => {
       return today
         .startOf('week')
-        .add(today.day() + item, 'day')
+        .add(today.day() + item + 1, 'day')
         .format('DD MMM')
     }),
-    labels: getArray(today.diff(today.startOf('week'), 'day') + 1).map((item) => {
-      return today.startOf('week').add(item, 'day').format('DD MMM')
+    labels: getArray(today.diff(today.startOf('week'), 'day')).map((item) => {
+      return today
+        .startOf('week')
+        .add(item + 1, 'day')
+        .format('DD MMM')
     }),
-    dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.day() + 1,
   },
@@ -186,7 +287,6 @@ const periodMenu = [
     labels: getArray(today.diff(today.startOf('month'), 'day') + 1).map((item) => {
       return today.startOf('month').add(item, 'day').format('DD MMM')
     }),
-    dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.date(),
   },
@@ -203,7 +303,6 @@ const periodMenu = [
     ).map((item) => {
       return today.subtract(1, 'month').startOf('month').add(item, 'day').format('DD MMM')
     }),
-    dataset: [],
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.subtract(1, 'month').daysInMonth(),
   },
@@ -213,7 +312,6 @@ const periodMenu = [
     startGap: [],
     endGap: [],
     labels: [],
-    dataset: [],
     leadRand: 1,
     leadKoef: 1,
   },
@@ -367,7 +465,7 @@ const DEFAULT_DASHBOARD_STATE = {
     { key: '2', day: 'Wednesday', value: 12, percentage: '0%' },
   ],
   currentTheme: THEME_PALETTES[0],
-  dateRangeText: periodMenu[0].date,
+  dateRangeText: `${formatDate(today)} - ${formatDate(today)}`,
   periodMenuActive: 0,
   dayLeads: '40',
   metricsToday: {
@@ -424,6 +522,7 @@ const DashboardPage = () => {
       if (savedState) {
         const parsedState = JSON.parse(savedState)
 
+        setDashboardState(parsedState)
         calcMetciByPeriodAndUpdate(parsedState.periodMenuActive, parsedState.dayLeads)
 
         const metricsToday = calcMetciByPeriod(0, parsedState.dayLeads)
@@ -529,6 +628,7 @@ const DashboardPage = () => {
   }
   const handleTrafficMapModalSave = (newData: any) => {
     updateDashboardState({ trafficMapData: newData })
+    calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive)
     setIsEditTrafficMapModal(false)
   }
   const handleTrafficMapModalCancel = () => {
@@ -565,22 +665,15 @@ const DashboardPage = () => {
   const calcMetciByPeriodAndUpdate = (period: number, inputLeads?: string) => {
     const res = calcMetciByPeriod(period, inputLeads)
 
-    const labels = periodMenu[period].labels
-    const startGap: unknown[] = periodMenu[period].startGap
-    const endGap: unknown[] = periodMenu[period].endGap
-
-    console.log('--- ', labels, startGap, endGap)
+    let labels = periodMenu[period].labels
+    let startGap: any[] = periodMenu[period].startGap
+    let endGap: any[] = periodMenu[period].endGap
 
     const startGapZero = startGap.map(() => 0)
     const endGapZero = endGap.map(() => 0)
 
-    const datasets = [
-      startGapZero.concat(distributeRandomlyWithBias(res.impressions, labels.length), endGapZero),
-      startGapZero.concat(distributeRandomlyWithBias(res.periodLeads, labels.length), endGapZero),
-      startGapZero.concat(distributeRandomlyWithBias(0, labels.length), endGapZero),
-    ]
-
-    const labelsConcated = startGap.concat(labels, endGap)
+    let datasets: any[] = []
+    let labelsConcated: any[] = []
 
     setDashboardState((prevState: any) => {
       const prevMetrics = prevState.metricsData
@@ -591,14 +684,6 @@ const DashboardPage = () => {
 
       const updatedState = {
         ...prevState,
-        chartData: {
-          ...prevChart,
-          labels: labelsConcated,
-          datasets: prevChart.datasets.map((item: any, index: number) => ({
-            ...item,
-            data: datasets[index],
-          })),
-        },
         metricsData: {
           ...prevMetrics,
           traffic: {
@@ -629,6 +714,83 @@ const DashboardPage = () => {
           },
         },
         dayLeads: res.dayLeads,
+      }
+
+      const country = prevState.trafficMapData[0]
+      const code = country?.code
+      if (code && code in countryWorkGap && (period == 0 || period == 1)) {
+        const { start, end } = countryWorkGap[code as keyof typeof countryWorkGap]
+        const generalWorkGap = getHourlyGaps(start, end, period === 1 ? 23 : today.hour())
+
+        if (start < end) {
+          startGap = generalWorkGap.passedNonWorkHours
+          labels = generalWorkGap.passedWorkHours[0]
+          endGap = generalWorkGap.remainingHours
+
+          const startGapZero = startGap.map(() => 0)
+          const endGapZero = endGap.map(() => 0)
+
+          datasets = [
+            startGapZero.concat(
+              distributeRandomlyWithBias(res.impressions, labels.length),
+              endGapZero,
+            ),
+            startGapZero.concat(
+              distributeRandomlyWithBias(res.periodLeads, labels.length),
+              endGapZero,
+            ),
+          ]
+          datasets.push(Array.from({ length: datasets[0].length }, () => 0))
+
+          labelsConcated = startGap.concat(labels, endGap)
+        } else {
+          labels = generalWorkGap.passedWorkHours[0]
+          startGap = generalWorkGap.passedNonWorkHours
+          const labels2 = generalWorkGap.passedWorkHours[1] || []
+          endGap = generalWorkGap.remainingHours
+
+          const startGapZero = startGap.map(() => 0)
+          const endGapZero = endGap.map(() => 0)
+
+          datasets = [
+            distributeRandomlyWithBias(res.impressions / 2, labels.length).concat(
+              startGapZero,
+              distributeRandomlyWithBias(res.impressions / 2, labels2?.length),
+              endGapZero,
+            ),
+            distributeRandomlyWithBias(res.periodLeads / 2, labels.length).concat(
+              startGapZero,
+              distributeRandomlyWithBias(res.periodLeads / 2, labels2?.length),
+              endGapZero,
+            ),
+          ]
+          datasets.push(Array.from({ length: datasets[0].length }, () => 0))
+
+          labelsConcated = labels.concat(startGap, labels2, endGap)
+        }
+      } else {
+        datasets = [
+          startGapZero.concat(
+            distributeRandomlyWithBias(res.impressions, labels.length),
+            endGapZero,
+          ),
+          startGapZero.concat(
+            distributeRandomlyWithBias(res.periodLeads, labels.length),
+            endGapZero,
+          ),
+        ]
+        datasets.push(Array.from({ length: datasets[0].length }, () => 0))
+
+        labelsConcated = startGap.concat(labels, endGap)
+      }
+
+      updatedState.chartData = {
+        ...prevChart,
+        labels: labelsConcated,
+        datasets: prevChart.datasets.map((item: any, index: number) => ({
+          ...item,
+          data: datasets[index],
+        })),
       }
 
       localStorage.setItem('fullDashboardState', JSON.stringify(updatedState))
