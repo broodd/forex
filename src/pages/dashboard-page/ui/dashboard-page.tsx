@@ -525,13 +525,13 @@ const DashboardPage = () => {
         setDashboardState(parsedState)
         calcMetciByPeriodAndUpdate(parsedState.periodMenuActive, parsedState.dayLeads)
 
-        const metricsToday = calcMetciByPeriod(0, parsedState.dayLeads)
-        const metricsYersterday = calcMetciByPeriod(1, parsedState.dayLeads)
+        // const metricsToday = calcMetciByPeriod(0, parsedState.dayLeads)
+        // const metricsYersterday = calcMetciByPeriod(1, parsedState.dayLeads)
 
-        updateDashboardState({
-          metricsToday: { ...metricsToday, leads: metricsToday.periodLeads },
-          metricsYersterday: { ...metricsYersterday, leads: metricsYersterday.periodLeads },
-        })
+        // updateDashboardState({
+        //   metricsToday: { ...metricsToday, leads: metricsToday.periodLeads },
+        //   metricsYersterday: { ...metricsYersterday, leads: metricsYersterday.periodLeads },
+        // })
       } else {
         updateDashboardState(DEFAULT_DASHBOARD_STATE)
         calcMetciByPeriodAndUpdate(
@@ -782,6 +782,15 @@ const DashboardPage = () => {
         datasets.push(Array.from({ length: datasets[0].length }, () => 0))
 
         labelsConcated = startGap.concat(labels, endGap)
+      }
+
+      const metricsToday = calcMetciByPeriod(0, res.dayLeads as any)
+      const metricsYersterday = calcMetciByPeriod(1, res.dayLeads as any)
+
+      updatedState.metricsToday = { ...metricsToday, leads: metricsToday.periodLeads }
+      updatedState.metricsYersterday = {
+        ...metricsYersterday,
+        leads: metricsYersterday.periodLeads,
       }
 
       updatedState.chartData = {
