@@ -268,6 +268,7 @@ const periodMenu = [
     }),
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.day() + 1,
+    ftdsKoef: today.day(),
   },
   {
     title: 'This Month',
@@ -468,17 +469,20 @@ const DEFAULT_DASHBOARD_STATE = {
   dateRangeText: `${formatDate(today)} - ${formatDate(today)}`,
   periodMenuActive: 0,
   dayLeads: '40',
+  dayFTDs: '0',
   metricsToday: {
     leads: '40',
     impressions: '0',
     clicks: '0',
     ctl: '0',
+    ftds: '0',
   },
   metricsYersterday: {
     leads: '40',
     impressions: '0',
     clicks: '0',
     ctl: '0',
+    ftds: '0',
   },
 }
 
@@ -523,20 +527,17 @@ const DashboardPage = () => {
         const parsedState = JSON.parse(savedState)
 
         setDashboardState(parsedState)
-        calcMetciByPeriodAndUpdate(parsedState.periodMenuActive, parsedState.dayLeads)
-
-        // const metricsToday = calcMetciByPeriod(0, parsedState.dayLeads)
-        // const metricsYersterday = calcMetciByPeriod(1, parsedState.dayLeads)
-
-        // updateDashboardState({
-        //   metricsToday: { ...metricsToday, leads: metricsToday.periodLeads },
-        //   metricsYersterday: { ...metricsYersterday, leads: metricsYersterday.periodLeads },
-        // })
+        calcMetciByPeriodAndUpdate(
+          parsedState.periodMenuActive,
+          parsedState.dayLeads,
+          parsedState.dayFTDs,
+        )
       } else {
         updateDashboardState(DEFAULT_DASHBOARD_STATE)
         calcMetciByPeriodAndUpdate(
           DEFAULT_DASHBOARD_STATE.periodMenuActive,
           DEFAULT_DASHBOARD_STATE.dayLeads,
+          DEFAULT_DASHBOARD_STATE.dayFTDs,
         )
       }
     } catch (error) {
@@ -570,6 +571,10 @@ const DashboardPage = () => {
       const data = periodMenu[dashboardState.periodMenuActive]
       const dayLeads = (newValues.value / (data.leadKoef * data.leadRand)).toFixed(3)
       calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive, dayLeads)
+    } else if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'ftds') {
+      const data = periodMenu[dashboardState.periodMenuActive]
+      const dayFTDs = (newValues.value / data.leadKoef).toFixed(3)
+      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive, undefined, dayFTDs)
     } else {
       updateDashboardState({
         metricsData: {
@@ -645,9 +650,17 @@ const DashboardPage = () => {
     return Math.ceil(parseFloat((parseFloat(value) * data.leadKoef * data.leadRand).toFixed(1)))
   }
 
-  const calcMetciByPeriod = (period: number, inputLeads?: string) => {
+  const getFTDsByPeriod = (value: string, period?: number): string | number => {
+    const data = periodMenu[period ?? dashboardState.periodMenuActive]
+    return Math.ceil(parseFloat((parseFloat(value) * (data.ftdsKoef || data.leadKoef)).toFixed(1)))
+  }
+
+  const calcMetciByPeriod = (period: number, inputLeads?: string, inputFTDs?: string) => {
     const dayLeads = parseFloat(inputLeads ? inputLeads : dashboardState.dayLeads)
     const periodLeads = parseFloat(getLeadsByPeriod(dayLeads.toString(), period).toString())
+
+    const dayFTDs = parseFloat(inputFTDs ? inputFTDs : dashboardState.dayFTDs)
+    const periodFTDs = parseFloat(getFTDsByPeriod(dayFTDs.toString(), period).toString())
 
     const impressions = Math.ceil(periodLeads * 1.22)
     const clicks = Math.ceil(periodLeads * 1.35)
@@ -656,14 +669,20 @@ const DashboardPage = () => {
     return {
       dayLeads,
       periodLeads,
+      dayFTDs,
+      periodFTDs,
       impressions,
       clicks,
       ctl,
     }
   }
 
-  const calcMetciByPeriodAndUpdate = (period: number, inputLeads?: string) => {
-    const res = calcMetciByPeriod(period, inputLeads)
+  const calcMetciByPeriodAndUpdate = (
+    period: number,
+    inputLeads?: string | undefined,
+    inputFTDs?: string | undefined,
+  ) => {
+    const res = calcMetciByPeriod(period, inputLeads, inputFTDs)
 
     let labels = periodMenu[period].labels
     let startGap: any[] = periodMenu[period].startGap
@@ -679,8 +698,8 @@ const DashboardPage = () => {
       const prevMetrics = prevState.metricsData
       const prevChart = prevState.chartData
 
-      const ftds = prevMetrics.conversion.ftds.value
-      const cr = !parseFloat(ftds) ? 0 : ((ftds / res.dayLeads) * 100).toFixed(2)
+      const ftds = res.periodFTDs
+      const cr = !ftds ? 0 : ((ftds / res.periodLeads) * 100).toFixed(2)
 
       const updatedState = {
         ...prevState,
@@ -711,9 +730,14 @@ const DashboardPage = () => {
               ...prevMetrics.conversion.cr,
               value: cr,
             },
+            ftds: {
+              ...prevMetrics.conversion.ftds,
+              value: res.periodFTDs,
+            },
           },
         },
         dayLeads: res.dayLeads,
+        dayFTDs: res.dayFTDs,
       }
 
       const country = prevState.trafficMapData[0]
@@ -739,8 +763,15 @@ const DashboardPage = () => {
               distributeRandomlyWithBias(res.periodLeads, labels.length),
               endGapZero,
             ),
+            startGapZero.concat(
+              distributeRandomlyWithBias(
+                res.periodFTDs,
+                labels.length,
+                labels.length * convertTwoDigitNumber(randomFromTo(-30, 30)),
+              ),
+              endGapZero,
+            ),
           ]
-          datasets.push(Array.from({ length: datasets[0].length }, () => 0))
 
           labelsConcated = startGap.concat(labels, endGap)
         } else {
@@ -763,23 +794,82 @@ const DashboardPage = () => {
               distributeRandomlyWithBias(res.periodLeads / 2, labels2?.length),
               endGapZero,
             ),
+            distributeRandomlyWithBias(res.periodFTDs / 2, labels.length, labels.length).concat(
+              startGapZero,
+              distributeRandomlyWithBias(
+                res.periodFTDs / 2,
+                labels2?.length,
+                labels2?.length * convertTwoDigitNumber(randomFromTo(-30, 30)),
+              ),
+              endGapZero,
+            ),
           ]
-          datasets.push(Array.from({ length: datasets[0].length }, () => 0))
 
           labelsConcated = labels.concat(startGap, labels2, endGap)
         }
       } else {
-        datasets = [
-          startGapZero.concat(
-            distributeRandomlyWithBias(res.impressions, labels.length),
-            endGapZero,
-          ),
-          startGapZero.concat(
-            distributeRandomlyWithBias(res.periodLeads, labels.length),
-            endGapZero,
-          ),
-        ]
-        datasets.push(Array.from({ length: datasets[0].length }, () => 0))
+        if (period == 3 || period == 4) {
+          datasets = [
+            startGapZero.concat(
+              distributeRandomlyWithBias(
+                res.impressions -
+                  parseFloat(dashboardState.metricsYersterday.impressions) -
+                  parseFloat(dashboardState.metricsToday.impressions),
+                labels.length - 2,
+              ),
+              [
+                parseFloat(dashboardState.metricsYersterday.impressions),
+                parseFloat(dashboardState.metricsToday.impressions),
+              ],
+              endGapZero,
+            ),
+            startGapZero.concat(
+              distributeRandomlyWithBias(
+                res.periodLeads -
+                  parseFloat(dashboardState.metricsYersterday.leads) -
+                  parseFloat(dashboardState.metricsToday.leads),
+                labels.length - 2,
+              ),
+              [
+                parseFloat(dashboardState.metricsYersterday.leads),
+                parseFloat(dashboardState.metricsToday.leads),
+              ],
+              endGapZero,
+            ),
+            startGapZero.concat(
+              distributeRandomlyWithBias(
+                res.periodFTDs -
+                  parseFloat(dashboardState.metricsYersterday.ftds) -
+                  parseFloat(dashboardState.metricsToday.ftds),
+                labels.length - 2,
+              ),
+              [
+                parseFloat(dashboardState.metricsYersterday.ftds),
+                parseFloat(dashboardState.metricsToday.ftds),
+              ],
+              endGapZero,
+            ),
+          ]
+        } else {
+          datasets = [
+            startGapZero.concat(
+              distributeRandomlyWithBias(res.impressions, labels.length),
+              endGapZero,
+            ),
+            startGapZero.concat(
+              distributeRandomlyWithBias(res.periodLeads, labels.length),
+              endGapZero,
+            ),
+            startGapZero.concat(
+              distributeRandomlyWithBias(
+                res.periodFTDs,
+                labels.length,
+                labels.length * convertTwoDigitNumber(randomFromTo(-30, 30)),
+              ),
+              endGapZero,
+            ),
+          ]
+        }
 
         labelsConcated = startGap.concat(labels, endGap)
       }
@@ -787,10 +877,15 @@ const DashboardPage = () => {
       const metricsToday = calcMetciByPeriod(0, res.dayLeads as any)
       const metricsYersterday = calcMetciByPeriod(1, res.dayLeads as any)
 
-      updatedState.metricsToday = { ...metricsToday, leads: metricsToday.periodLeads }
+      updatedState.metricsToday = {
+        ...metricsToday,
+        leads: metricsToday.periodLeads,
+        ftds: metricsToday.periodFTDs,
+      }
       updatedState.metricsYersterday = {
         ...metricsYersterday,
         leads: metricsYersterday.periodLeads,
+        ftds: metricsYersterday.periodFTDs,
       }
 
       updatedState.chartData = {
@@ -964,8 +1059,10 @@ const DashboardPage = () => {
                 title='FTDs'
                 isLoading={isLoading}
                 value={dashboardState.metricsData.conversion.ftds.value}
-                today={dashboardState.metricsData.conversion.ftds.today}
-                yesterday={dashboardState.metricsData.conversion.ftds.yesterday}
+                // today={dashboardState.metricsData.conversion.ftds.today}
+                // yesterday={dashboardState.metricsData.conversion.ftds.yesterday}
+                today={dashboardState.metricsToday.ftds}
+                yesterday={dashboardState.metricsYersterday.ftds}
                 percentage={dashboardState.metricsData.conversion.ftds.percentage}
                 trendLine={dashboardState.metricsData.conversion.ftds.trendLine}
                 showToday={dashboardState.metricsData.conversion.ftds.showToday}
