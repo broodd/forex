@@ -17,6 +17,7 @@ import { OffersIcon } from '~/shared/ui/icon/ui/offers-icon'
 import { PostbacksIcon } from '~/shared/ui/icon/ui/postbacks-icon'
 import { StatisticsIcon } from '~/shared/ui/icon/ui/statistics-icon'
 import cls from './sidebar.module.scss'
+import { Link } from 'react-router-dom'
 
 interface ISidebarProps {
   className?: string
@@ -30,12 +31,21 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
     {
       label: t('SIDEBAR.LEADS'),
       key: 'leads',
-      icon: <LeadsIcon style={{ fontSize: 28 }} />,
+      icon: (
+        <Link to={ROUTES[ERoutes.DASHBOARD].getPath()}>
+          <LeadsIcon style={{ fontSize: 28 }} />
+        </Link>
+      ),
     },
     {
       label: t('SIDEBAR.STATISTICS'),
       key: 'statistics',
-      icon: <StatisticsIcon style={{ fontSize: 28 }} />,
+      // icon: <StatisticsIcon style={{ fontSize: 28 }} />,
+      icon: (
+        <Link to={ROUTES[ERoutes.STATISTICS].getPath()}>
+          <StatisticsIcon style={{ fontSize: 28 }} />
+        </Link>
+      ),
     },
     {
       label: t('SIDEBAR.OFFERS'),

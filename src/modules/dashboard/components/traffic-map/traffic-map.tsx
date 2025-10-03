@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Col } from 'antd'
 import { geoPatterson } from 'd3-geo-projection'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
+import ReactTooltip from 'react-tooltip'
 import cls from './traffic-map.module.scss'
 
 // TopoJSON data for a low-resolution world map (needed by react-simple-maps)
@@ -10,7 +11,7 @@ import cls from './traffic-map.module.scss'
 // For simplicity, we'll use a direct link for demonstration, but for production,
 // it's better to host it locally or proxy it.
 // 'https://raw.githubusercontent.com/d3/d3.github.com/refs/heads/master/world-110m.v1.json'
-const geoUrl = '/word-map.json'
+const geoUrl = '/word-map-prop.json'
 
 // Dummy data for the map points and the list below it
 // In a real app, this data would come from your backend API
@@ -32,6 +33,8 @@ const TrafficMap = ({
       .center([40, 30]) // <-- Apply center directly to the projection instance
   }, [])
 
+  const [tooltipContent, setTooltipContent] = useState('aga')
+
   return (
     <Col span={24} className={cls.trafficCard}>
       <div
@@ -41,13 +44,24 @@ const TrafficMap = ({
           overflow: 'hidden',
         }}
       >
-        <ComposableMap projection={customProjection} style={{ width: '100%', height: '100%' }}>
+        <ComposableMap
+          projection={customProjection}
+          style={{ width: '100%', height: '100%' }}
+          data-tip=''
+          data-for='map-tooltip'
+        >
           <Geographies geography={geoUrl}>
             {({ geographies }: { geographies: any }) =>
               geographies.map((geo: any) => (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
+                  onMouseEnter={() => {
+                    setTooltipContent(geo.properties.name)
+                  }}
+                  onMouseLeave={() => {
+                    setTooltipContent('')
+                  }}
                   style={{
                     default: {
                       fill: '#dee2e8', // Default country fill color
@@ -65,7 +79,7 @@ const TrafficMap = ({
                       outline: 'none',
                     },
                   }}
-                />
+                ></Geography>
               ))
             }
           </Geographies>
@@ -82,6 +96,14 @@ const TrafficMap = ({
             </Marker>
           ))}
         </ComposableMap>
+        <ReactTooltip
+          id='map-tooltip'
+          backgroundColor='white'
+          textColor='black'
+          arrowColor='transparent'
+        >
+          {tooltipContent}
+        </ReactTooltip>
       </div>
 
       <div className={cls.trafficMapList}>

@@ -8,6 +8,7 @@ import cls from './page-layout.module.scss'
 
 interface IPageLayoutProps {
   className?: string
+  headerClassName?: string
   header?: IHeaderProps
   footer?: IFooterProps
   fullWidth?: boolean
@@ -20,6 +21,7 @@ interface IPageLayoutProps {
 
 export const PageLayout: FC<IPageLayoutProps> = ({
   className,
+  headerClassName,
   children,
   header,
   footer,
@@ -36,7 +38,7 @@ export const PageLayout: FC<IPageLayoutProps> = ({
         [className],
       )}
     >
-      <Header className={cls.header} {...header} />
+      <Header headerClassName={headerClassName} className={classNames(cls.header)} {...header} />
       {filters && <div className={cls.filters}>{filters}</div>}
       <main className={classNames(cls.content, { [cls.fullWidth]: fullWidth })}>{children}</main>
       {aside && <aside className={cls.aside}>{aside}</aside>}

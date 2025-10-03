@@ -10,6 +10,7 @@ import {
   PointElement,
   Title,
   Tooltip,
+  type Plugin,
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
 import cls from './statistics-card.module.scss'
@@ -17,7 +18,15 @@ import cls from './statistics-card.module.scss'
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-const StatisticsChart = ({ chartData }: { chartData: any }) => {
+const StatisticsChart = ({
+  chartData,
+  options,
+  plugins,
+}: {
+  chartData: any
+  options?: ChartOptions<'line'>
+  plugins?: Plugin<any>[]
+}) => {
   // Calculate totals for legend if you want "Impressions 131" format
   const calculateTotals = (datasets: any) => {
     const totals: any = {}
@@ -104,12 +113,13 @@ const StatisticsChart = ({ chartData }: { chartData: any }) => {
         },
       },
     },
+    ...options,
   }
 
   return (
     <Col span={24} className={cls.metricCard}>
       <div style={{ height: 200 }}>
-        <Line data={finalChartData} options={chartOptions} />
+        <Line data={finalChartData} options={chartOptions} plugins={plugins} />
       </div>
     </Col>
   )

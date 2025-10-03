@@ -11,6 +11,7 @@ import { AuthLayout, MainLayout } from '~/layouts'
 import { DashboardPage } from '~/pages/dashboard-page'
 import { ErrorPage } from '~/pages/error-page'
 import { SignInPage } from '~/pages/sign-in-page'
+import { StatisticsPage } from '~/pages/statistics'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,7 @@ export const router = createBrowserRouter(
         }
       >
         <Route path={ROUTES.DASHBOARD.route} element={<DashboardPage />} />
+        <Route path={ROUTES.STATISTICS.route} element={<StatisticsPage />} />
       </Route>
     </Route>,
   ),

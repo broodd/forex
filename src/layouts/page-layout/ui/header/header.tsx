@@ -5,6 +5,7 @@ import { Heading } from '~/lib/components'
 
 export interface IHeaderProps {
   className?: string
+  headerClassName?: string
   title?: string
   description?: string
   extra?: ReactNode
@@ -13,7 +14,14 @@ export interface IHeaderProps {
   customBackBtn?: React.ReactNode
 }
 
-export const Header: FC<IHeaderProps> = ({ className, title, backBtn, extra, customBackBtn }) => {
+export const Header: FC<IHeaderProps> = ({
+  className,
+  headerClassName,
+  title,
+  backBtn,
+  extra,
+  customBackBtn,
+}) => {
   return (
     <div className={classNames(cls.wrapper, [className])}>
       <div className={cls.content}>
@@ -25,6 +33,7 @@ export const Header: FC<IHeaderProps> = ({ className, title, backBtn, extra, cus
           </div>
           {title && (
             <Heading
+              className={headerClassName}
               title={title}
               withBackBtn={backBtn}
               customBackBtn={customBackBtn && customBackBtn}

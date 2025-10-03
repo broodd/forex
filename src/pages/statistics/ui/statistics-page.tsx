@@ -1,21 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Row, Typography } from 'antd'
-import { PageLayout } from '~/layouts'
-import { EditTableModal, MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
-import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
-import CustomTable from '~/modules/dashboard/components/table/table'
-import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
+import { Button, Col, Dropdown, Input, Row, Tabs, Typography } from 'antd'
 import { useEffect, useState } from 'react'
+import { PageLayout } from '~/layouts'
+import { DownOutlined } from '@ant-design/icons'
+import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
+import { EditTableModal, MetricBox } from '~/modules/dashboard/components/metric-card'
 import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
 import { EditTrafficMapModal } from '~/modules/dashboard/components/metric-card/edit-map-modal'
 import { EditMetricModal } from '~/modules/dashboard/components/metric-card/edit-metric-modal'
+import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
+import CustomTable from '~/modules/dashboard/components/table/table'
+import { Dayjs, dayjs } from '~/shared/providers'
 import { FilterIcon } from '~/shared/ui/icon'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
-import cls from './dashboard-page.module.scss'
-import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
-import classNames from 'classnames'
-import { Dayjs, dayjs } from '~/shared/providers'
+import cls from '../../dashboard-page/ui/dashboard-page.module.scss'
+import { HouseIcon } from '~/shared/ui/icon/ui/house-icon'
 
 const { Text } = Typography
 
@@ -330,20 +331,7 @@ const countyColumns = [
   { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
 ]
 
-const exportColumns = [
-  { title: 'Issued By', dataIndex: 'issuedBy', key: 'issuedBy' },
-  { title: 'Issue Date', dataIndex: 'issueDate', key: 'issueDate' },
-  { title: 'Source', dataIndex: 'source', key: 'source' },
-]
-
-// Columns for the Insights table (for display, not for modal editing)
-const insightsColumns = [
-  { title: 'Day', dataIndex: 'day', key: 'day' },
-  { title: 'Value', dataIndex: 'value', key: 'value' },
-  { title: 'Percentage', dataIndex: 'percentage', key: 'percentage' },
-]
-
-export const DEFAULT_DASHBOARD_STATE = {
+const DEFAULT_DASHBOARD_STATE = {
   v: '2',
   metricsData: {
     traffic: {
@@ -471,10 +459,10 @@ export const DEFAULT_DASHBOARD_STATE = {
       {
         label: 'FTDs',
         data: [0, 0, 0, 0, 0, 0, 0, 0], // Data points for FTDs (appears flat at 0)
-        borderColor: '#ffffff', // White color from the image
+        borderColor: '#ff4147', // White color from the image
         backgroundColor: 'rgba(255, 255, 255, 0.1)', // Very light white fill
-        pointBackgroundColor: '#ffffff',
-        pointBorderColor: '#ffffff',
+        pointBackgroundColor: '#ff4147',
+        pointBorderColor: '#ff4147',
         pointRadius: 4,
         tension: 0.4,
       },
@@ -486,7 +474,7 @@ export const DEFAULT_DASHBOARD_STATE = {
   ],
   currentTheme: THEME_PALETTES[0],
   dateRangeText: `${formatDate(today)} - ${formatDate(today)}`,
-  periodMenuActive: 0,
+  periodMenuActive: 2,
   dayLeads: '40',
   dayFTDs: '0',
   metricsToday: {
@@ -505,32 +493,25 @@ export const DEFAULT_DASHBOARD_STATE = {
   },
 }
 
-const DashboardPage = () => {
+const StatisticsPage = () => {
   // Unified state for all dashboard data
   const [dashboardState, setDashboardState] = useState(DEFAULT_DASHBOARD_STATE)
 
   // States for modal visibility and current editing items (these don't need to be persisted)
   const [isEditMetricModalVisible, setIsEditMetricModalVisible] = useState(false)
-  const [currentEditingMetricType, setCurrentEditingMetricType] = useState(null)
-  const [currentEditingMetricName, setCurrentEditingMetricName] = useState(null)
-  const [initialFormValues, setInitialFormValues] = useState({})
+  const [currentEditingMetricType] = useState(null)
+  const [currentEditingMetricName] = useState(null)
+  const [initialFormValues] = useState({})
 
   const [isEditTableModalVisible, setIsEditTableModalVisible] = useState(false)
-  const [currentEditingTableType, setCurrentEditingTableType] = useState(null)
-  const [initialTableModalData, setInitialTableModalData] = useState([])
+  const [currentEditingTableType] = useState(null)
+  const [initialTableModalData] = useState([])
 
   const [isEditChartModalVisible, setIsEditChartModalVisible] = useState(false)
   const [isEditTrafficMapModalVisible, setIsEditTrafficMapModal] = useState(false)
 
   // Loading state for initial dashboard data load
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
-
-  const handleChangePeriod = (index: number) => {
-    setIsLoading(true)
-    updateDashboardState({ dateRangeText: periodMenu[index].date, periodMenuActive: index })
-    calcMetciByPeriodAndUpdate(index)
-    setTimeout(() => setIsLoading(false), randomFromTo(300, 1100))
-  }
 
   const setFullLoading = () => {
     setIsLoading(true)
@@ -541,8 +522,8 @@ const DashboardPage = () => {
   useEffect(() => {
     try {
       setIsLoading(true)
-      const savedState = localStorage.getItem('fullDashboardState')
-      const version = localStorage.getItem('version')
+      const savedState = localStorage.getItem('fullDashboardState-stats')
+      const version = localStorage.getItem('version-stats')
       if (savedState && DEFAULT_DASHBOARD_STATE.v == version) {
         const parsedState = JSON.parse(savedState)
 
@@ -573,20 +554,13 @@ const DashboardPage = () => {
   const updateDashboardState = (newStateUpdates: any) => {
     setDashboardState((prevState) => {
       const updatedState = { ...prevState, ...newStateUpdates }
-      localStorage.setItem('fullDashboardState', JSON.stringify(updatedState))
-      localStorage.setItem('version', DEFAULT_DASHBOARD_STATE.v)
+      localStorage.setItem('fullDashboardState-stats', JSON.stringify(updatedState))
+      localStorage.setItem('version-stats', DEFAULT_DASHBOARD_STATE.v)
       return updatedState
     })
   }
 
   // --- Metric Edit Modal Handlers ---
-  const handleMetricCardTitleClick = (metricType: any, metricName: any) => {
-    setCurrentEditingMetricType(metricType)
-    setCurrentEditingMetricName(metricName)
-
-    setInitialFormValues((dashboardState as any).metricsData[metricType][metricName])
-    setIsEditMetricModalVisible(true)
-  }
 
   const handleMetricModalSave = (newValues: any) => {
     if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
@@ -616,15 +590,6 @@ const DashboardPage = () => {
   }
 
   // --- Table Edit Modal Handlers ---
-  const handleTableTitleClick = (tableType: any) => {
-    setCurrentEditingTableType(tableType)
-    if (tableType === 'affiliates') {
-      setInitialTableModalData((dashboardState as any).affiliatesTableData)
-    } else if (tableType === 'insights') {
-      setInitialTableModalData((dashboardState as any).insightsTableData)
-    }
-    setIsEditTableModalVisible(true)
-  }
   const handleTableModalSave = (newData: any) => {
     if (currentEditingTableType === 'affiliates') {
       updateDashboardState({ affiliatesTableData: newData })
@@ -650,9 +615,6 @@ const DashboardPage = () => {
   }
 
   // --- Traffic Map Modal Handlers ---
-  const handleTrafficMapTitleClick = () => {
-    setIsEditTrafficMapModal(true)
-  }
   const handleTrafficMapModalSave = (newData: any) => {
     updateDashboardState({ trafficMapData: newData })
     calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive)
@@ -729,7 +691,7 @@ const DashboardPage = () => {
       const calcGraficArrow = (t: any, y: any) => {
         const tparsed = parseFloat(t)
         const yparsed = parseFloat(y)
-        return Math.round(((tparsed - yparsed) / yparsed) * 100) || 0
+        return Math.round(((tparsed - yparsed) / yparsed) * 100)
       }
 
       const updatedState = {
@@ -942,326 +904,161 @@ const DashboardPage = () => {
 
   return (
     <PageLayout
+      className={cls.stats}
+      headerClassName={cls.staty}
       header={{
-        title: 'Dashboard',
+        title: 'Statistics',
       }}
     >
       <div className={cls.wrapper}>
-        {/* <pre style={{ background: 'white' }}>{JSON.stringify(dashboardState, null, 2)}</pre> */}
-        <Row>
-          <Col lg={9} className={cls.filters}>
-            <FilterIcon className={cls.filterIcon} />
-            <Text
-              onClick={() => {
-                updateDashboardState(DEFAULT_DASHBOARD_STATE)
-                calcMetciByPeriodAndUpdate(
-                  DEFAULT_DASHBOARD_STATE.periodMenuActive,
-                  DEFAULT_DASHBOARD_STATE.dayLeads,
-                )
-              }}
+        <MetricBox title=''>
+          <Col span={24} style={{ paddingLeft: 15, paddingRight: 15 }}>
+            <Tabs
+              className={cls.tabi}
+              type='editable-card'
+              defaultActiveKey='1'
+              items={[
+                {
+                  key: '1',
+                  label: 'Main View',
+                  icon: <HouseIcon />,
+                },
+              ]}
+            />
+          </Col>
+
+          <Col span={24}>
+            <Row
+              justify='space-between'
+              style={{ paddingLeft: 15, paddingRight: 15, paddingTop: 15 }}
             >
-              Filter
-            </Text>
-            <Text className={cls.filtersDate}>{dashboardState.dateRangeText}</Text>
-            <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
-          </Col>
-
-          <Col className={cls.periodFilter}>
-            {periodMenu.map((item, index) => (
-              <Text
-                className={classNames(
-                  cls.periodItem,
-                  index === dashboardState.periodMenuActive && cls.active,
-                )}
-                key={index}
-                onClick={() => handleChangePeriod(index)}
-              >
-                {item.title}
-              </Text>
-            ))}
-          </Col>
-        </Row>
-
-        <Row>
-          <Col span={11} lg={11} md={11} className={cls.leftSide}>
-            <MetricBox title='Traffic'>
-              <MetricCard
-                title='Impressions'
-                isLoading={isLoading}
-                value={dashboardState.metricsData.traffic.impressions.value}
-                today={dashboardState.metricsToday.impressions}
-                yesterday={dashboardState.metricsYersterday.impressions}
-                percentage={dashboardState.metricsData.traffic.impressions.percentage}
-                trendLine={dashboardState.metricsData.traffic.impressions.trendLine}
-                showToday={dashboardState.metricsData.traffic.impressions.showToday}
-                // onTitleClick={() => handleMetricCardTitleClick('traffic', 'impressions')}
-              />
-
-              {/* Clicks Card */}
-              <MetricCard
-                title='Clicks'
-                isLoading={isLoading}
-                value={dashboardState.metricsData.traffic.clicks.value}
-                today={dashboardState.metricsToday.clicks}
-                yesterday={dashboardState.metricsYersterday.clicks}
-                percentage={dashboardState.metricsData.traffic.clicks.percentage}
-                trendLine={dashboardState.metricsData.traffic.clicks.trendLine}
-                showToday={dashboardState.metricsData.traffic.clicks.showToday}
-                // onTitleClick={() => handleMetricCardTitleClick('traffic', 'clicks')}
-              />
-
-              {/* CTL Card */}
-              <MetricCard
-                title='CTL'
-                isLoading={isLoading}
-                value={dashboardState.metricsData.traffic.ctl.value + '%'}
-                today={dashboardState.metricsToday.ctl}
-                yesterday={dashboardState.metricsYersterday.ctl}
-                percentage={dashboardState.metricsData.traffic.ctl.percentage}
-                trendLine={dashboardState.metricsData.traffic.ctl.trendLine}
-                showToday={dashboardState.metricsData.traffic.ctl.showToday}
-                // onTitleClick={() => handleMetricCardTitleClick('traffic', 'ctl')}
-              />
-            </MetricBox>
-          </Col>
-
-          <Col span={13} lg={13} md={13} className={cls.rightSide}>
-            <Row>
-              <Col span={12}>
-                <MetricBox title='Finance' className={cls.rightSideRowInner}>
-                  <MetricCard
-                    isLoading={isLoading}
-                    span={24}
-                    title='Payout'
-                    value={dashboardState.metricsData.finance.payout.value}
-                    today={dashboardState.metricsData.finance.payout.today}
-                    yesterday={
-                      parseFloat(dashboardState.metricsData.finance.payout.value) *
-                      dashboardState.metricsData.finance.payout.yesterday
-                    }
-                    percentage={dashboardState.metricsData.finance.payout.percentage}
-                    trendLine={dashboardState.metricsData.finance.payout.trendLine}
-                    showToday={dashboardState.metricsData.finance.payout.showToday}
-                    onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
-                  />
-                </MetricBox>
-              </Col>
-              <Col span={12}>
-                <MetricBox title='Balance' className={cls.rightSideRowInner}>
-                  <MetricCard
-                    isLoading={isLoading}
-                    span={24}
-                    title='Total balance'
-                    value={dashboardState.metricsData.balance.total.value}
-                    today={dashboardState.metricsData.balance.total.today}
-                    yesterday={
-                      parseFloat(dashboardState.metricsData.balance.total.value) *
-                      dashboardState.metricsData.balance.total.yesterday
-                    }
-                    percentage={dashboardState.metricsData.balance.total.percentage}
-                    trendLine={dashboardState.metricsData.balance.total.trendLine}
-                    showToday={dashboardState.metricsData.balance.total.showToday}
-                    onTitleClick={() => handleMetricCardTitleClick('balance', 'total')}
-                  />
-                </MetricBox>
-              </Col>
-            </Row>
-          </Col>
-
-          {/* <Col span={13} lg={13} md={13} className={cls.rightSide}> */}
-          {/* <MetricBox title='Finance' className={cls.rightSideRowInner}> */}
-          {/* <MetricCard
-                isLoading={isLoading}
-                title='Revenue'
-                value={dashboardState.metricsData.finance.revenue.value}
-                today={dashboardState.metricsData.finance.revenue.today}
-                yesterday={
-                  parseFloat(dashboardState.metricsData.finance.revenue.value) *
-                  dashboardState.metricsData.finance.revenue.yesterday
-                }
-                percentage={dashboardState.metricsData.finance.revenue.percentage}
-                trendLine={dashboardState.metricsData.finance.revenue.trendLine}
-                showToday={dashboardState.metricsData.finance.revenue.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('finance', 'revenue')}
-              />
-              <MetricCard
-                isLoading={isLoading}
-                title='Payout'
-                value={dashboardState.metricsData.finance.payout.value}
-                today={dashboardState.metricsData.finance.payout.today}
-                yesterday={
-                  parseFloat(dashboardState.metricsData.finance.payout.value) *
-                  dashboardState.metricsData.finance.payout.yesterday
-                }
-                percentage={dashboardState.metricsData.finance.payout.percentage}
-                trendLine={dashboardState.metricsData.finance.payout.trendLine}
-                showToday={dashboardState.metricsData.finance.payout.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
-              />
-              <MetricCard
-                isLoading={isLoading}
-                title='Net Profit'
-                value={dashboardState.metricsData.finance.net.value}
-                today={dashboardState.metricsData.finance.net.today}
-                yesterday={
-                  parseFloat(dashboardState.metricsData.finance.net.value) *
-                  dashboardState.metricsData.finance.net.yesterday
-                }
-                percentage={dashboardState.metricsData.finance.net.percentage}
-                trendLine={dashboardState.metricsData.finance.net.trendLine}
-                showToday={dashboardState.metricsData.finance.net.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('finance', 'net')}
-              /> */}
-          {/* </MetricBox> */}
-          {/* </Col> */}
-        </Row>
-
-        <Row>
-          <Col span={11} lg={11} md={11} className={cls.leftSide}>
-            <MetricBox title='Conversion'>
-              <MetricCard
-                title='Q-Leads'
-                isLoading={isLoading}
-                value={dashboardState.metricsData.conversion.leads.value}
-                today={dashboardState.metricsToday.leads}
-                yesterday={dashboardState.metricsYersterday.leads}
-                percentage={dashboardState.metricsData.conversion.leads.percentage}
-                trendLine={dashboardState.metricsData.conversion.leads.trendLine}
-                showToday={dashboardState.metricsData.conversion.leads.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('conversion', 'leads')}
-              />
-
-              <MetricCard
-                title='Q-FTDs'
-                isLoading={isLoading}
-                value={dashboardState.metricsData.conversion.ftds.value}
-                // today={dashboardState.metricsData.conversion.ftds.today}
-                // yesterday={dashboardState.metricsData.conversion.ftds.yesterday}
-                today={dashboardState.metricsToday.ftds}
-                yesterday={dashboardState.metricsYersterday.ftds}
-                percentage={dashboardState.metricsData.conversion.ftds.percentage}
-                trendLine={dashboardState.metricsData.conversion.ftds.trendLine}
-                showToday={dashboardState.metricsData.conversion.ftds.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('conversion', 'ftds')}
-              />
-
-              <MetricCard
-                title='CR'
-                isLoading={isLoading}
-                value={dashboardState.metricsData.conversion.cr.value + '%'}
-                today={dashboardState.metricsData.conversion.cr.today}
-                yesterday={dashboardState.metricsData.conversion.cr.yesterday}
-                percentage={dashboardState.metricsData.conversion.cr.percentage}
-                trendLine={dashboardState.metricsData.conversion.cr.trendLine}
-                showToday={dashboardState.metricsData.conversion.cr.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('conversion', 'cr')}
-              />
-            </MetricBox>
-
-            <MetricBox
-              title='Top 10 Affiliates'
-              isLoading={isLoading}
-              loadingTable={5}
-              className={classNames(cls.flexContentStart, cls.top10)}
-              dropDownTitle='Country'
-              // onTitleClick={() => handleTableTitleClick('affiliates')}
-            >
-              <CustomTable
-                title={`Showing ${dashboardState.trafficMapData.length} Items`}
-                columns={countyColumns}
-                data={dashboardState.trafficMapData.map((item) => {
-                  return {
-                    ...item,
-                    impressions: dashboardState.metricsData.traffic.impressions.value,
-                    leads: dashboardState.metricsData.conversion.leads.value,
-                    ftds: dashboardState.metricsData.conversion.ftds.value,
-                    cr: dashboardState.metricsData.conversion.cr.value,
-                    clicks: dashboardState.metricsData.traffic.clicks.value,
-                    name: `(${item.code}) ${item.name}`,
-                  }
-                })}
-              />
-            </MetricBox>
-          </Col>
-
-          {/* Right Section: Finance, Balance, Statistics Chart */}
-          <Col span={13} lg={13} md={13}>
-            <Row>
-              <Col span={24} className={cls.dFlex}>
-                <MetricBox
-                  className={classNames(cls.flex1, cls.exportBlock, cls.flexContentStart)}
-                  title='Export'
-                  loadingTable={5}
-                  isLoading={isLoading}
-                  dropDownTitle='View all Exports'
+              <Col lg={12} className={cls.filters}>
+                <FilterIcon className={cls.filterIcon} />
+                <Text
+                  onClick={() => {
+                    updateDashboardState(DEFAULT_DASHBOARD_STATE)
+                    calcMetciByPeriodAndUpdate(
+                      DEFAULT_DASHBOARD_STATE.periodMenuActive,
+                      DEFAULT_DASHBOARD_STATE.dayLeads,
+                    )
+                  }}
                 >
-                  <CustomTable title='' columns={exportColumns} data={[]} />
-                  <Col span={24}>
-                    <Row justify='center'>
-                      <Col span={5}>
-                        <img src='../../../../public/no_data_dark_updated.webp' />
-                      </Col>
-                    </Row>
-                  </Col>
-                </MetricBox>
+                  Filter
+                </Text>
+                <Text className={cls.filtersDate}>{dashboardState.dateRangeText}</Text>
+                <Text className={cls.filtersDate}>levels (1)</Text>
+                <Text className={cls.filtersDate}>country (1)</Text>
+                <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
+              </Col>
+              <Col className={cls.filterSearchWrap}>
+                <Dropdown
+                  menu={{
+                    items: [
+                      { key: '1', label: 'Option 1' },
+                      { key: '2', label: 'Option 2' },
+                      { key: '3', label: 'Option 3' },
+                    ],
+                  }}
+                  trigger={['click']}
+                >
+                  <Button
+                    type='link'
+                    style={{ color: 'white', display: 'flex', alignItems: 'center' }}
+                  >
+                    Name
+                    <DownOutlined style={{ marginLeft: 5 }} />
+                  </Button>
+                </Dropdown>
+                <Input placeholder='Search by Name...'></Input>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} style={{ padding: 15 }}>
+                <div className={cls.quote}>Performance Graph</div>
               </Col>
             </Row>
 
-            <Row>
+            <Row onClick={handleChartTitleClick}>
               <Col span={24} className={cls.dFlex}>
                 <MetricBox
                   className={cls.flex1}
-                  title='Statistics'
+                  title=''
                   isLoading={isLoading}
-                  dropDownTitle='3 selected'
                   onTitleClick={handleChartTitleClick}
                 >
-                  <StatisticsChart chartData={dashboardState.chartData} />
+                  <StatisticsChart
+                    chartData={dashboardState.chartData}
+                    options={{
+                      plugins: {
+                        legend: {
+                          display: true,
+                          position: 'bottom',
+                          align: 'center',
+                          labels: {
+                            color: 'white', // Legend text color
+                            font: {
+                              size: 11,
+                            },
+                            usePointStyle: true, // Use circular points for legend items
+                            boxHeight: 5,
+                            boxWidth: 3, // Size of the color box
+                            padding: 30, // Padding between legend items
+                          },
+                        },
+                        tooltip: {
+                          mode: 'index',
+                          intersect: false,
+                          backgroundColor: 'rgba(0,0,0,0.7)', // Dark tooltip background
+                          titleColor: 'white',
+                          bodyColor: 'white',
+                          borderColor: '#4a4a4a',
+                          borderWidth: 1,
+                          callbacks: {
+                            label: function (context) {
+                              // context.dataset.label gives "Impressions", "Leads", "FTDs"
+                              // context.parsed.y gives the data value (e.g., 18, 0, 2)
+                              return `${context.dataset.label?.split(' ')[0]}: ${context.parsed.y}` // This will show "Impressions: 18", "Leads: 0", etc.
+                            },
+                          },
+                        },
+                        title: {
+                          display: false, // We'll use Ant Design Typography for the title
+                        },
+                      },
+                    }}
+                  />
                 </MetricBox>
               </Col>
             </Row>
 
-            <Row>
-              <Col span={12} className={cls.dFlex}>
+            <Row onClick={() => setIsEditTrafficMapModal(true)}>
+              <Col span={24} className={cls.dFlex}>
                 <MetricBox
-                  className={cls.flex1}
-                  title='Traffic Map'
+                  title=''
+                  loadingTable={3}
                   isLoading={isLoading}
-                  dropDownTitle='Impressions'
-                  onTitleClick={handleTrafficMapTitleClick}
+                  className={cls.flexContentStart}
                 >
-                  <TrafficMap
-                    // mapData={dashboardState.trafficMapData}
-                    mapData={dashboardState.trafficMapData.map((item) => {
+                  <CustomTable
+                    title={`Showing ${dashboardState.trafficMapData.length} Items`}
+                    columns={countyColumns}
+                    data={dashboardState.trafficMapData.map((item) => {
                       return {
                         ...item,
-                        value: dashboardState.metricsData.traffic.impressions.value,
-                        percentage: dashboardState.metricsData.traffic.ctl.value + '%',
+                        impressions: dashboardState.metricsData.traffic.impressions.value,
+                        leads: dashboardState.metricsData.conversion.leads.value,
+                        ftds: dashboardState.metricsData.conversion.ftds.value,
+                        cr: dashboardState.metricsData.conversion.cr.value,
+                        clicks: dashboardState.metricsData.traffic.clicks.value,
+                        name: `(${item.code}) ${item.name}`,
                       }
                     })}
                   />
                 </MetricBox>
               </Col>
-
-              <Col span={12} className={cls.dFlex}>
-                <MetricBox
-                  title='Insights'
-                  isLoading={isLoading}
-                  loadingTable={3}
-                  className={cls.flexContentStart}
-                  dropDownTitle='Impressions'
-                  onTitleClick={() => handleTableTitleClick('insights')}
-                >
-                  <CustomTable
-                    title={`Showing ${dashboardState.insightsTableData.length} Items`}
-                    columns={insightsColumns}
-                    data={dashboardState.insightsTableData}
-                  />
-                </MetricBox>
-              </Col>
             </Row>
           </Col>
-        </Row>
+        </MetricBox>
       </div>
       <EditMetricModal
         visible={isEditMetricModalVisible}
@@ -1293,4 +1090,4 @@ const DashboardPage = () => {
   )
 }
 
-export default DashboardPage
+export default StatisticsPage

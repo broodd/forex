@@ -2,6 +2,7 @@ export enum ERoutes {
   ROOT = 'ROOT',
   SIGN_IN = 'SIGN_IN',
   DASHBOARD = 'DASHBOARD',
+  STATISTICS = 'STATISTICS',
 }
 export interface IOneRouteConfig {
   route: string
@@ -26,5 +27,10 @@ export const ROUTES: TRoutesConfig = {
     route: 'dashboard',
     getPath: () => '/dashboard',
     testRegExp: /^\/dashboard$/,
+  },
+  [ERoutes.STATISTICS]: {
+    route: 'statistics',
+    getPath: () => '/statistics',
+    testRegExp: /^\/statistics$/,
   },
 }

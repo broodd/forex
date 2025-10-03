@@ -67,7 +67,7 @@ export const MetricCard: FC<IMetricCardProps> = ({
             {showToday && (
               <div className={cls.details}>
                 <div>Today: {today}</div>
-                <div>Yesterday: {parseFloat(yesterday as string).toFixed(0)}</div>
+                <div>Yesterday: {yesterday}</div>
               </div>
             )}
           </div>
@@ -140,7 +140,7 @@ export const MetricBox = ({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: 20,
+                // marginBottom: 20,
               }}
             >
               <Dropdown overlay={dropdownMenu} trigger={['click']}>

@@ -1,7 +1,7 @@
 @mixin custom-scroll($size: small) {
   $scroll-width: 3px;
-  $scroll-color: #939393;
-  $border-color: #e5e5e5;
+  $scroll-color: #4b505c;
+  $border-color: transparent;
 
   @if $size == small {
     $scroll-width: 3px;
@@ -9,14 +9,6 @@
     $scroll-width: 8px;
   } @else if $size == middle {
     $scroll-width: 6px;
-  }
-
-  @if $size == small {
-    $scroll-color: #939393;
-  } @else if $size == large {
-    $scroll-color: #515151;
-  } @else if $size == middle {
-    $scroll-color: #6a6a6a;
   }
 
   scrollbar-width: thin;
@@ -27,9 +19,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    border-left: 1px solid $border-color;
     background-color: $scroll-color;
-    border-radius: 8px;
     background-clip: content-box;
   }
 

@@ -1,3 +1,9 @@
+@use '/src/app/styles/mixins' as mixins;
+
+html {
+  @include mixins.custom-scroll(small);
+}
+
 .wrapper {
   padding: 14px;
 }
@@ -45,6 +51,10 @@
 :global {
   .ant-typography {
     color: white;
+  }
+
+  .ant-table-placeholder {
+    display: none;
   }
 }
 
@@ -95,5 +105,91 @@
       background-color: #151622;
       color: var(--brand-100);
     }
+  }
+}
+
+.exportBlock {
+  padding-bottom: 30px;
+
+  .dropdown div {
+    margin-bottom: 0 !important;
+  }
+}
+
+.top10 {
+  table {
+    padding-bottom: 30px;
+  }
+}
+
+//
+
+.staty h2 {
+  color: var(--menu-color) !important;
+  font-weight: 700 !important;
+  font-size: 1.9rem !important;
+  padding-left: 15px;
+}
+
+.tabi {
+  width: 100%;
+
+  :global {
+    .ant-tabs-nav::before {
+      border-color: #1c1d25;
+    }
+
+    .ant-tabs-nav-add {
+      border: 0 !important;
+      color: white !important;
+    }
+
+    .ant-tabs-tab {
+      background-color: transparent !important;
+      border: 0 !important;
+      padding: 0 10px !important;
+
+      &.ant-tabs-tab-active {
+        border-bottom: 1px solid var(--brand-100) !important;
+      }
+    }
+
+    .ant-tabs-tab-btn {
+      color: var(--brand-100) !important;
+    }
+
+    .ant-tabs-tab-remove {
+      display: none;
+    }
+  }
+}
+
+.quote {
+  color: var(--brand-100);
+  font-weight: 700;
+  padding: 10px 15px;
+  background-color: #151622;
+}
+
+.filterSearchWrap {
+  display: flex;
+  align-items: center;
+
+  button {
+    background: #1c1d25;
+    border-radius: 0;
+
+    span:last-child {
+      padding-left: 40px;
+    }
+  }
+
+  input {
+    background-color: #151622 !important;
+    border: 0;
+    padding: 0 50px 0 20px;
+    border-radius: 0;
+    max-width: 250px;
+    height: 40px;
   }
 }

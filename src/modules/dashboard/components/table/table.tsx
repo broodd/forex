@@ -24,6 +24,7 @@ const CustomTable = ({
         style={{ backgroundColor: '#1E1E1E' }}
         className={cls.customTable}
         scroll={{ x: 'max-content' }}
+        locale={{ emptyText: '' }}
       />
     </Col>
   )
