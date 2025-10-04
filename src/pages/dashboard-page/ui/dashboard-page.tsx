@@ -729,7 +729,9 @@ const DashboardPage = () => {
       const calcGraficArrow = (t: any, y: any) => {
         const tparsed = parseFloat(t)
         const yparsed = parseFloat(y)
-        return Math.round(((tparsed - yparsed) / yparsed) * 100) || 0
+        const result = Math.round(((tparsed - yparsed) / yparsed) * 100) || 0
+        if (result === Infinity) return 0
+        return result
       }
 
       const updatedState = {
@@ -1199,7 +1201,7 @@ const DashboardPage = () => {
                   <Col span={24}>
                     <Row justify='center'>
                       <Col span={5}>
-                        <img src='../../../../public/no_data_dark_updated.webp' />
+                        <img src='no_data_dark_updated.webp' />
                       </Col>
                     </Row>
                   </Col>

@@ -1,22 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { DownOutlined } from '@ant-design/icons'
 import { Button, Col, Dropdown, Input, Row, Tabs, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import { PageLayout } from '~/layouts'
-import { DownOutlined } from '@ant-design/icons'
 import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
-import { EditTableModal, MetricBox } from '~/modules/dashboard/components/metric-card'
+import { EditStatsTableModal, MetricBox } from '~/modules/dashboard/components/metric-card'
 import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
-import { EditTrafficMapModal } from '~/modules/dashboard/components/metric-card/edit-map-modal'
-import { EditMetricModal } from '~/modules/dashboard/components/metric-card/edit-metric-modal'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
 import CustomTable from '~/modules/dashboard/components/table/table'
 import { Dayjs, dayjs } from '~/shared/providers'
 import { FilterIcon } from '~/shared/ui/icon'
+import { HouseIcon } from '~/shared/ui/icon/ui/house-icon'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 import cls from '../../dashboard-page/ui/dashboard-page.module.scss'
-import { HouseIcon } from '~/shared/ui/icon/ui/house-icon'
 
 const { Text } = Typography
 
@@ -322,17 +320,45 @@ const periodMenu = [
 // Columns for the Affiliates table (for display, not for modal editing)
 const countyColumns = [
   { title: 'Name', dataIndex: 'name', key: 'name' },
+  { title: 'ID', dataIndex: 'id', key: 'id' },
   { title: 'Impressions', dataIndex: 'impressions', key: 'impressions' },
-  { title: 'Total Leads', dataIndex: 'totalLeads', key: 'totalLeads' },
-  { title: 'Q-Leads', dataIndex: 'leads', key: 'leads' },
-  { title: 'Total FTDs', dataIndex: 'total_ftds', key: 'total_ftds' },
-  { title: 'FTDs', dataIndex: 'ftds', key: 'ftds' },
-  { title: 'Conversion Rate', dataIndex: 'cr', key: 'cr' },
   { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
+  { title: 'CTR', dataIndex: 'ctr', key: 'ctr' },
+  { title: 'Leads', dataIndex: 'leads', key: 'leads' },
+  { title: 'CTL', dataIndex: 'ctl', key: 'ctl' },
+  { title: 'FTDS', dataIndex: 'ftds', key: 'ftds' },
+  { title: 'C2FTD', dataIndex: 'c2ftd', key: 'c2ftd' },
+  { title: 'CR', dataIndex: 'cr', key: 'cr' },
+  { title: 'Total Payout', dataIndex: 'total', key: 'total' },
+  { title: 'Soft Failures', dataIndex: 'softFail', key: 'softFail' },
+  { title: 'Hard Failures', dataIndex: 'hardFail', key: 'hardFail' },
+  { title: 'Unassigned', dataIndex: 'unassigned', key: 'unassigned' },
+  { title: 'Payout', dataIndex: 'payout', key: 'payout' },
+  { title: 'dynamicLevel', dataIndex: 'dynamicLevel', key: 'dynamicLevel' },
 ]
 
 const DEFAULT_DASHBOARD_STATE = {
   v: '2',
+  statsTableData: [
+    {
+      name: '2958058',
+      id: '2958058',
+      impressions: '1457',
+      clicks: '1196',
+      ctr: '82.09%',
+      leads: '1120',
+      ctl: '99.55%',
+      ftds: '0',
+      c2ftd: '23',
+      cr: '0%',
+      total: '$0',
+      softFail: '225',
+      hardFail: '0',
+      unassigned: '36',
+      payout: '$0',
+      dynamicLevel: '',
+    },
+  ],
   metricsData: {
     traffic: {
       impressions: {
@@ -498,17 +524,8 @@ const StatisticsPage = () => {
   const [dashboardState, setDashboardState] = useState(DEFAULT_DASHBOARD_STATE)
 
   // States for modal visibility and current editing items (these don't need to be persisted)
-  const [isEditMetricModalVisible, setIsEditMetricModalVisible] = useState(false)
-  const [currentEditingMetricType] = useState(null)
-  const [currentEditingMetricName] = useState(null)
-  const [initialFormValues] = useState({})
-
   const [isEditTableModalVisible, setIsEditTableModalVisible] = useState(false)
-  const [currentEditingTableType] = useState(null)
-  const [initialTableModalData] = useState([])
-
   const [isEditChartModalVisible, setIsEditChartModalVisible] = useState(false)
-  const [isEditTrafficMapModalVisible, setIsEditTrafficMapModal] = useState(false)
 
   // Loading state for initial dashboard data load
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
@@ -559,43 +576,9 @@ const StatisticsPage = () => {
       return updatedState
     })
   }
-
-  // --- Metric Edit Modal Handlers ---
-
-  const handleMetricModalSave = (newValues: any) => {
-    if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
-      const data = periodMenu[dashboardState.periodMenuActive]
-      const dayLeads = (newValues.value / (data.leadKoef * data.leadRand)).toFixed(3)
-      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive, dayLeads)
-    } else if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'ftds') {
-      const data = periodMenu[dashboardState.periodMenuActive]
-      const dayFTDs = (newValues.value / data.leadKoef).toFixed(3)
-      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive, undefined, dayFTDs)
-    } else {
-      updateDashboardState({
-        metricsData: {
-          ...dashboardState.metricsData,
-          [currentEditingMetricType as any]: {
-            ...(dashboardState as any).metricsData[currentEditingMetricType as any],
-            [currentEditingMetricName as any]: newValues,
-          },
-        },
-      })
-      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive)
-    }
-    setIsEditMetricModalVisible(false)
-  }
-  const handleMetricModalCancel = () => {
-    setIsEditMetricModalVisible(false)
-  }
-
   // --- Table Edit Modal Handlers ---
   const handleTableModalSave = (newData: any) => {
-    if (currentEditingTableType === 'affiliates') {
-      updateDashboardState({ affiliatesTableData: newData })
-    } else if (currentEditingTableType === 'insights') {
-      updateDashboardState({ insightsTableData: newData })
-    }
+    updateDashboardState({ statsTableData: newData })
     setIsEditTableModalVisible(false)
   }
   const handleTableModalCancel = () => {
@@ -612,16 +595,6 @@ const StatisticsPage = () => {
   }
   const handleChartModalCancel = () => {
     setIsEditChartModalVisible(false)
-  }
-
-  // --- Traffic Map Modal Handlers ---
-  const handleTrafficMapModalSave = (newData: any) => {
-    updateDashboardState({ trafficMapData: newData })
-    calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive)
-    setIsEditTrafficMapModal(false)
-  }
-  const handleTrafficMapModalCancel = () => {
-    setIsEditTrafficMapModal(false)
   }
 
   /**
@@ -892,7 +865,7 @@ const StatisticsPage = () => {
         })),
       }
 
-      localStorage.setItem('fullDashboardState', JSON.stringify(updatedState))
+      localStorage.setItem('fullDashboardState-stats', JSON.stringify(updatedState))
 
       return updatedState
     })
@@ -1031,7 +1004,7 @@ const StatisticsPage = () => {
               </Col>
             </Row>
 
-            <Row onClick={() => setIsEditTrafficMapModal(true)}>
+            <Row onClick={() => setIsEditTableModalVisible(true)}>
               <Col span={24} className={cls.dFlex}>
                 <MetricBox
                   title=''
@@ -1040,19 +1013,9 @@ const StatisticsPage = () => {
                   className={cls.flexContentStart}
                 >
                   <CustomTable
-                    title={`Showing ${dashboardState.trafficMapData.length} Items`}
+                    title={`Showing ${dashboardState.statsTableData.length} Items`}
                     columns={countyColumns}
-                    data={dashboardState.trafficMapData.map((item) => {
-                      return {
-                        ...item,
-                        impressions: dashboardState.metricsData.traffic.impressions.value,
-                        leads: dashboardState.metricsData.conversion.leads.value,
-                        ftds: dashboardState.metricsData.conversion.ftds.value,
-                        cr: dashboardState.metricsData.conversion.cr.value,
-                        clicks: dashboardState.metricsData.traffic.clicks.value,
-                        name: `(${item.code}) ${item.name}`,
-                      }
-                    })}
+                    data={dashboardState.statsTableData}
                   />
                 </MetricBox>
               </Col>
@@ -1060,31 +1023,17 @@ const StatisticsPage = () => {
           </Col>
         </MetricBox>
       </div>
-      <EditMetricModal
-        visible={isEditMetricModalVisible}
-        onCancel={handleMetricModalCancel}
-        onSave={handleMetricModalSave}
-        initialValues={initialFormValues}
-      />
-      {/* The Edit Table Modal */}
-      <EditTableModal
+      <EditStatsTableModal
         visible={isEditTableModalVisible}
         onCancel={handleTableModalCancel}
         onSave={handleTableModalSave}
-        initialTableData={initialTableModalData}
-        tableType={currentEditingTableType} // Pass type to differentiate columns
+        initialTableData={dashboardState.statsTableData}
       />
       <EditChartModal
         visible={isEditChartModalVisible}
         onCancel={handleChartModalCancel}
         onSave={handleChartModalSave}
-        initialChartData={dashboardState.chartData} // Pass the chartData in Chart.js format
-      />
-      <EditTrafficMapModal
-        visible={isEditTrafficMapModalVisible}
-        onCancel={handleTrafficMapModalCancel}
-        onSave={handleTrafficMapModalSave}
-        initialTrafficMapData={dashboardState.trafficMapData}
+        initialChartData={dashboardState.chartData}
       />
     </PageLayout>
   )

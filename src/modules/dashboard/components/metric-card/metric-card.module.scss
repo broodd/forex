@@ -144,3 +144,15 @@
     }
   }
 }
+
+.hardTable {
+  input {
+    min-width: 200px;
+  }
+
+  :global {
+    .ant-table-cell {
+      min-width: 200px;
+    }
+  }
+}
