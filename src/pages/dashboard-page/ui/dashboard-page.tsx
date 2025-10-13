@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Row, Typography } from 'antd'
+import { Col, Row, Typography, Modal } from 'antd'
 import { PageLayout } from '~/layouts'
 import { EditTableModal, MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
@@ -16,6 +16,7 @@ import cls from './dashboard-page.module.scss'
 import { THEME_PALETTES } from '~/lib/constants/theme-pallets'
 import classNames from 'classnames'
 import { Dayjs, dayjs } from '~/shared/providers'
+import EditDateModal from '~/modules/dashboard/components/metric-card/edit-date-modal'
 
 const { Text } = Typography
 
@@ -212,7 +213,7 @@ function convertTwoDigitNumber(num: number): number {
   return parseFloat(resultStr)
 }
 
-const today = dayjs()
+export const today = dayjs()
 
 const generalWorkGap = getHourlyGaps(9, 18, today.hour() + 1)
 const countryWorkGap = {
@@ -223,7 +224,7 @@ const countryWorkGap = {
 const periodMenu = [
   {
     title: 'Today',
-    date: `${formatDate(today)} - ${formatDate(today)}`,
+    date: [today, today],
     startGap: generalWorkGap.passedNonWorkHours,
     labels: generalWorkGap.passedWorkHours[0],
     endGap: generalWorkGap.remainingHours,
@@ -232,7 +233,7 @@ const periodMenu = [
   },
   {
     title: 'Yesterday',
-    date: `${formatDate(today.subtract(1, 'day'))} - ${formatDate(today.subtract(1, 'day'))}`,
+    date: [today.subtract(1, 'day'), today.subtract(1, 'day')],
     startGap: generalWorkGap.passedNonWorkHours,
     labels: generalWorkGap.passedWorkHours[0],
     endGap: generalWorkGap.remainingHours,
@@ -241,7 +242,7 @@ const periodMenu = [
   },
   {
     title: 'Last 7 Days',
-    date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today)}`,
+    date: [today.subtract(6, 'day'), today],
     startGap: [],
     endGap: [],
     labels: getArray(today.diff(today.subtract(6, 'day'), 'day') + 1).map((item) => {
@@ -252,7 +253,7 @@ const periodMenu = [
   },
   {
     title: 'This Week',
-    date: `${formatDate(today.startOf('week'))} - ${formatDate(today.endOf('week').add(1, 'day'))}`,
+    date: [today.startOf('week'), today.endOf('week').add(1, 'day')],
     startGap: [],
     endGap: getArray(today.endOf('week').add(1, 'day').diff(today, 'day')).map((item) => {
       return today
@@ -272,7 +273,7 @@ const periodMenu = [
   },
   {
     title: 'This Month',
-    date: `${formatDate(today.startOf('month'))} - ${formatDate(today.endOf('month'))}`,
+    date: [today.startOf('month'), today.endOf('month')],
     startGap: [],
     endGap: getArray(today.endOf('month').diff(today, 'day')).map((item) => {
       return today.add(item + 1, 'day').format('DD MMM')
@@ -293,7 +294,7 @@ const periodMenu = [
   },
   {
     title: 'Last Month',
-    date: `${formatDate(today.subtract(1, 'month').startOf('month'))} - ${formatDate(today.subtract(1, 'month').endOf('month'))}`,
+    date: [today.subtract(1, 'month').startOf('month'), today.subtract(1, 'month').endOf('month')],
     startGap: [],
     endGap: [],
     labels: getArray(
@@ -309,7 +310,7 @@ const periodMenu = [
   },
   {
     title: 'Custom',
-    date: `${formatDate(today.subtract(6, 'day'))} - ${formatDate(today.endOf('week'))}`,
+    date: [today.subtract(6, 'day'), today],
     startGap: [],
     endGap: [],
     labels: [],
@@ -344,7 +345,7 @@ const insightsColumns = [
 ]
 
 export const DEFAULT_DASHBOARD_STATE = {
-  v: '2',
+  v: '4',
   metricsData: {
     traffic: {
       impressions: {
@@ -486,6 +487,7 @@ export const DEFAULT_DASHBOARD_STATE = {
   ],
   currentTheme: THEME_PALETTES[0],
   dateRangeText: `${formatDate(today)} - ${formatDate(today)}`,
+  customDateRange: periodMenu[6].date,
   periodMenuActive: 0,
   dayLeads: '40',
   dayFTDs: '0',
@@ -522,13 +524,46 @@ const DashboardPage = () => {
   const [isEditChartModalVisible, setIsEditChartModalVisible] = useState(false)
   const [isEditTrafficMapModalVisible, setIsEditTrafficMapModal] = useState(false)
 
+  const [isDateModalVisible, setIsDateModalVisible] = useState(false)
+
   // Loading state for initial dashboard data load
   const [isLoading, setIsLoading] = useState<boolean | null>(null)
 
-  const handleChangePeriod = (index: number) => {
+  const handleChangePeriod = (index: number, dateRange?: Dayjs[]) => {
     setIsLoading(true)
-    updateDashboardState({ dateRangeText: periodMenu[index].date, periodMenuActive: index })
-    calcMetciByPeriodAndUpdate(index)
+    let dateRangeText, period
+    dateRange = dateRange ? dateRange : dashboardState.customDateRange
+
+    if (index == 6 && dateRange) {
+      dateRangeText = `${formatDate(dateRange[0])} - ${formatDate(dateRange[1])}`
+      period = {
+        title: 'Custom',
+        startGap: [],
+        endGap: [],
+        labels: getArray(dateRange[1].diff(dateRange[0], 'day') + 1).map((item) => {
+          return dateRange[0].add(item, 'day').format('DD MMM')
+        }),
+        leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
+        leadKoef: dateRange[1].diff(dateRange[0], 'day'),
+      }
+    } else {
+      dateRangeText = `${formatDate(periodMenu[index].date[0])} - ${formatDate(periodMenu[index].date[1])}`
+      period = periodMenu[index]
+    }
+
+    updateDashboardState(
+      Object.assign(
+        {
+          dateRangeText,
+          periodMenuActive: index,
+        },
+        dateRange && {
+          customDateRange: dateRange,
+        },
+      ),
+    )
+
+    calcMetciByPeriodAndUpdate(period)
     setTimeout(() => setIsLoading(false), randomFromTo(300, 1100))
   }
 
@@ -667,25 +702,25 @@ const DashboardPage = () => {
    * Algoritms
    */
 
-  const getLeadsByPeriod = (value: string, period?: number): string | number => {
-    const data = periodMenu[period ?? dashboardState.periodMenuActive]
+  const getLeadsByPeriod = (value: string, period?: any): string | number => {
+    const data = period ? period : periodMenu[dashboardState.periodMenuActive]
     return Math.ceil(parseFloat((parseFloat(value) * data.leadKoef * data.leadRand).toFixed(1)))
   }
 
-  const getFTDsByPeriod = (value: string, period?: number): string | number => {
-    const data = periodMenu[period ?? dashboardState.periodMenuActive]
+  const getFTDsByPeriod = (value: string, period?: any): string | number => {
+    const data = period ? period : periodMenu[dashboardState.periodMenuActive]
     return Math.ceil(parseFloat((parseFloat(value) * (data.ftdsKoef || data.leadKoef)).toFixed(1)))
   }
 
-  const calcMetciByPeriod = (period: number, inputLeads?: string, inputFTDs?: string) => {
+  const calcMetciByPeriod = (period: any, inputLeads?: string, inputFTDs?: string) => {
     const dayLeads = parseFloat(inputLeads ? inputLeads : dashboardState.dayLeads)
     const periodLeads = parseFloat(getLeadsByPeriod(dayLeads.toString(), period).toString())
 
     const dayFTDs = parseFloat(inputFTDs ? inputFTDs : dashboardState.dayFTDs)
     const periodFTDs = parseFloat(getFTDsByPeriod(dayFTDs.toString(), period).toString())
 
-    const impressions = Math.ceil(periodLeads * 1.22)
-    const clicks = Math.ceil(periodLeads * 1.35)
+    const clicks = Math.ceil(periodLeads * 1.3)
+    const impressions = Math.ceil(clicks * 1.3)
     const ctl = ((impressions / clicks) * 100).toFixed(0)
 
     return {
@@ -700,15 +735,15 @@ const DashboardPage = () => {
   }
 
   const calcMetciByPeriodAndUpdate = (
-    period: number,
+    period: any,
     inputLeads?: string | undefined,
     inputFTDs?: string | undefined,
   ) => {
     const res = calcMetciByPeriod(period, inputLeads, inputFTDs)
 
-    let labels = periodMenu[period].labels
-    let startGap: any[] = periodMenu[period].startGap
-    let endGap: any[] = periodMenu[period].endGap
+    let labels = period.labels
+    let startGap: any[] = period.startGap
+    let endGap: any[] = period.endGap
 
     const startGapZero = startGap.map(() => 0)
     const endGapZero = endGap.map(() => 0)
@@ -949,7 +984,6 @@ const DashboardPage = () => {
       }}
     >
       <div className={cls.wrapper}>
-        {/* <pre style={{ background: 'white' }}>{JSON.stringify(dashboardState, null, 2)}</pre> */}
         <Row>
           <Col lg={9} className={cls.filters}>
             <FilterIcon className={cls.filterIcon} />
@@ -964,7 +998,12 @@ const DashboardPage = () => {
             >
               Filter
             </Text>
-            <Text className={cls.filtersDate}>{dashboardState.dateRangeText}</Text>
+            <Text onClick={() => setIsDateModalVisible(true)} className={cls.filtersDate}>
+              {dashboardState.dateRangeText}
+            </Text>
+            <Text className={cls.filtersDate}>
+              country ({dashboardState.trafficMapData.length})
+            </Text>
             <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
           </Col>
 
@@ -1166,7 +1205,7 @@ const DashboardPage = () => {
               loadingTable={5}
               className={classNames(cls.flexContentStart, cls.top10)}
               dropDownTitle='Country'
-              // onTitleClick={() => handleTableTitleClick('affiliates')}
+              onTitleClick={() => handleTableTitleClick('affiliates')}
             >
               <CustomTable
                 title={`Showing ${dashboardState.trafficMapData.length} Items`}
@@ -1265,6 +1304,18 @@ const DashboardPage = () => {
           </Col>
         </Row>
       </div>
+
+      <EditDateModal
+        visible={isDateModalVisible}
+        onCancel={() => setIsDateModalVisible(false)}
+        onSave={(dates) => {
+          // updateDashboardState({ customDateRange: dates })
+          handleChangePeriod(6, dates)
+          setIsDateModalVisible(false)
+        }}
+        initialRange={dashboardState.customDateRange}
+      />
+
       <EditMetricModal
         visible={isEditMetricModalVisible}
         onCancel={handleMetricModalCancel}

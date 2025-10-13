@@ -101,6 +101,8 @@ const TrafficMap = ({
           backgroundColor='white'
           textColor='black'
           arrowColor='transparent'
+          padding='0 2px'
+          // disableInternalStyle={true}
         >
           {tooltipContent}
         </ReactTooltip>

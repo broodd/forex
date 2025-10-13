@@ -27,14 +27,18 @@ interface ISidebarProps {
 export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
   const { t } = useTranslation()
 
+  const handleThemeSettingsClick = () => {
+    setIsColorThemeModalVisible(true)
+  }
+
   const menuItemsTop = [
     {
       label: t('SIDEBAR.LEADS'),
       key: 'leads',
       icon: (
-        <Link to={ROUTES[ERoutes.DASHBOARD].getPath()}>
+        <div onClick={handleThemeSettingsClick}>
           <LeadsIcon style={{ fontSize: 28 }} />
-        </Link>
+        </div>
       ),
     },
     {
@@ -86,10 +90,6 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false)
   const [currentTheme, setCurrentTheme] = useState(THEME_PALETTES[0]) // Will store the active theme object
   const [currentMenuColor, setCurrentMenuColor] = useState(THEME_PALETTES[0].menu)
-
-  const handleThemeSettingsClick = () => {
-    setIsColorThemeModalVisible(true)
-  }
 
   const handleApplyColorTheme = (themeObject: any) => {
     setCurrentTheme(themeObject)
@@ -156,12 +156,14 @@ export const Sidebar: FC<ISidebarProps> = ({ className, collapsed }) => {
 
   return (
     <div className={classNames(cls.wrapper, [className])}>
-      <div className={cls.logoWrapper} onClick={handleThemeSettingsClick}>
-        {collapsed ? (
-          <LogoIcon style={{ fontSize: 42 }} className={cls.logo} />
-        ) : (
-          <LogoIcon style={{ fontSize: 70 }} className={cls.logo} />
-        )}
+      <div className={cls.logoWrapper}>
+        <Link to={ROUTES[ERoutes.DASHBOARD].getPath()}>
+          {collapsed ? (
+            <LogoIcon style={{ fontSize: 42 }} className={cls.logo} />
+          ) : (
+            <LogoIcon style={{ fontSize: 70 }} className={cls.logo} />
+          )}
+        </Link>
       </div>
 
       <div className={cls.menuItems}>

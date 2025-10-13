@@ -1,3 +1,17 @@
+body {
+  :global {
+    #map-tooltip::before,
+    #map-tooltip::after {
+      content: none !important;
+      display: none;
+    }
+
+    #map-tooltip {
+      font-size: 11px;
+    }
+  }
+}
+
 .trafficCard {
   padding: 0;
 }
