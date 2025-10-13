@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Row, Typography, Modal } from 'antd'
+import { Col, Row, Typography } from 'antd'
 import { PageLayout } from '~/layouts'
 import { EditTableModal, MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
@@ -30,6 +30,55 @@ const formatDate = (date: Dayjs): string => {
 
 function randomFromTo(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+/**
+ * Розподіляє загальну суму між елементами масиву,
+ * де кожен елемент випадково відхиляється від середнього на ± maxDeviationPercent.
+ * @param {number} total - Загальна сума (наприклад, crTotal або leadTotal).
+ * @param {number} length - Кількість елементів у масиві (arraylength).
+ * @param {number} [maxDeviationPercent=10] - Максимальний відсоток відхилення.
+ * @returns {number[]} - Масив чисел, сума яких дорівнює total.
+ */
+function distributeWithRandomness(total: number, length: number, maxDeviationPercent = 10) {
+  if (length <= 0) return []
+  if (total === 0) return new Array(length).fill(0)
+  if (length === 1) return new Array(length).fill(total)
+
+  // 1. Обчислюємо середнє значення
+  const average = total / length
+  let remainingTotal = total
+  const result = []
+
+  for (let i = 0; i < length; i++) {
+    // 2. Обчислюємо максимальне і мінімальне значення для рандомізації
+    const deviation = maxDeviationPercent / 100 // 0.1
+    const min = average * (1 - deviation)
+    const max = average * (1 + deviation)
+
+    let randomValue
+
+    if (i < length - 1) {
+      // 3. Генеруємо випадкове значення
+      // Використовуємо Math.random() * (max - min) + min
+      randomValue = Math.random() * (max - min) + min
+
+      // Обмежуємо, щоб не перевищити залишок, особливо для останніх елементів
+      randomValue = Math.min(randomValue, remainingTotal)
+
+      // Округлюємо до цілого числа (якщо це лічильники)
+      randomValue = Math.round(randomValue)
+
+      result.push(randomValue)
+      remainingTotal -= randomValue
+    } else {
+      // 4. Останній елемент отримує весь залишок, щоб сума точно зійшлася
+      randomValue = Math.max(0, remainingTotal) // Гарантуємо, що значення >= 0
+      result.push(randomValue)
+    }
+  }
+
+  return result
 }
 
 function getHourlyGaps(
@@ -391,7 +440,7 @@ export const DEFAULT_DASHBOARD_STATE = {
         showToday: true,
       },
       cr: {
-        value: '0%',
+        value: '0',
         percentage: randomFromTo(5, 20).toString(),
         today: '0%',
         yesterday: '0%',
@@ -485,6 +534,7 @@ export const DEFAULT_DASHBOARD_STATE = {
     { key: '1', day: 'Monday', value: 18, percentage: '0%' },
     { key: '2', day: 'Wednesday', value: 12, percentage: '0%' },
   ],
+  affiliates: [],
   currentTheme: THEME_PALETTES[0],
   dateRangeText: `${formatDate(today)} - ${formatDate(today)}`,
   customDateRange: periodMenu[6].date,
@@ -533,6 +583,7 @@ const DashboardPage = () => {
     setIsLoading(true)
     let dateRangeText, period
     dateRange = dateRange ? dateRange : dashboardState.customDateRange
+    dateRange = dateRange.map((d) => dayjs(d))
 
     if (index == 6 && dateRange) {
       dateRangeText = `${formatDate(dateRange[0])} - ${formatDate(dateRange[1])}`
@@ -583,7 +634,7 @@ const DashboardPage = () => {
 
         setDashboardState(parsedState)
         calcMetciByPeriodAndUpdate(
-          parsedState.periodMenuActive,
+          periodMenu[parsedState.periodMenuActive],
           parsedState.dayLeads,
           parsedState.dayFTDs,
         )
@@ -591,7 +642,7 @@ const DashboardPage = () => {
         console.log('--- SET DEFAULT')
         updateDashboardState(DEFAULT_DASHBOARD_STATE)
         calcMetciByPeriodAndUpdate(
-          DEFAULT_DASHBOARD_STATE.periodMenuActive,
+          periodMenu[DEFAULT_DASHBOARD_STATE.periodMenuActive],
           DEFAULT_DASHBOARD_STATE.dayLeads,
           DEFAULT_DASHBOARD_STATE.dayFTDs,
         )
@@ -623,15 +674,36 @@ const DashboardPage = () => {
     setIsEditMetricModalVisible(true)
   }
 
+  const calcAffilliatesWithRandom = (state: any) => {
+    const crValues = distributeWithRandomness(
+      +state.metricsData.conversion.cr.value,
+      state.trafficMapData.length,
+    )
+    const leadValues = distributeWithRandomness(
+      +state.metricsData.conversion.leads.value,
+      state.trafficMapData.length,
+    )
+
+    return state.trafficMapData.map((item: any, index: number) => ({
+      ...item,
+      impressions: state.metricsData.traffic.impressions.value,
+      leads: leadValues[index],
+      ftds: state.metricsData.conversion.ftds.value,
+      cr: crValues[index],
+      clicks: state.metricsData.traffic.clicks.value,
+      name: `(${item.code}) ${item.name}`,
+    }))
+  }
+
   const handleMetricModalSave = (newValues: any) => {
     if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
       const data = periodMenu[dashboardState.periodMenuActive]
       const dayLeads = (newValues.value / (data.leadKoef * data.leadRand)).toFixed(3)
-      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive, dayLeads)
+      calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive], dayLeads)
     } else if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'ftds') {
       const data = periodMenu[dashboardState.periodMenuActive]
       const dayFTDs = (newValues.value / data.leadKoef).toFixed(3)
-      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive, undefined, dayFTDs)
+      calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive], undefined, dayFTDs)
     } else {
       updateDashboardState({
         metricsData: {
@@ -642,7 +714,7 @@ const DashboardPage = () => {
           },
         },
       })
-      calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive)
+      calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive])
     }
     setIsEditMetricModalVisible(false)
   }
@@ -690,7 +762,7 @@ const DashboardPage = () => {
   }
   const handleTrafficMapModalSave = (newData: any) => {
     updateDashboardState({ trafficMapData: newData })
-    calcMetciByPeriodAndUpdate(dashboardState.periodMenuActive)
+    calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive])
     setIsEditTrafficMapModal(false)
   }
   const handleTrafficMapModalCancel = () => {
@@ -967,6 +1039,8 @@ const DashboardPage = () => {
         })),
       }
 
+      updatedState.affiliates = calcAffilliatesWithRandom(updatedState)
+
       localStorage.setItem('fullDashboardState', JSON.stringify(updatedState))
 
       return updatedState
@@ -991,7 +1065,7 @@ const DashboardPage = () => {
               onClick={() => {
                 updateDashboardState(DEFAULT_DASHBOARD_STATE)
                 calcMetciByPeriodAndUpdate(
-                  DEFAULT_DASHBOARD_STATE.periodMenuActive,
+                  periodMenu[DEFAULT_DASHBOARD_STATE.periodMenuActive],
                   DEFAULT_DASHBOARD_STATE.dayLeads,
                 )
               }}
@@ -1210,17 +1284,18 @@ const DashboardPage = () => {
               <CustomTable
                 title={`Showing ${dashboardState.trafficMapData.length} Items`}
                 columns={countyColumns}
-                data={dashboardState.trafficMapData.map((item) => {
-                  return {
-                    ...item,
-                    impressions: dashboardState.metricsData.traffic.impressions.value,
-                    leads: dashboardState.metricsData.conversion.leads.value,
-                    ftds: dashboardState.metricsData.conversion.ftds.value,
-                    cr: dashboardState.metricsData.conversion.cr.value,
-                    clicks: dashboardState.metricsData.traffic.clicks.value,
-                    name: `(${item.code}) ${item.name}`,
-                  }
-                })}
+                data={dashboardState.affiliates}
+                // data={dashboardState.trafficMapData.map((item) => {
+                //   return {
+                //     ...item,
+                //     impressions: dashboardState.metricsData.traffic.impressions.value,
+                //     leads: dashboardState.metricsData.conversion.leads.value,
+                //     ftds: dashboardState.metricsData.conversion.ftds.value,
+                //     cr: dashboardState.metricsData.conversion.cr.value,
+                //     clicks: dashboardState.metricsData.traffic.clicks.value,
+                //     name: `(${item.code}) ${item.name}`,
+                //   }
+                // })}
               />
             </MetricBox>
           </Col>
