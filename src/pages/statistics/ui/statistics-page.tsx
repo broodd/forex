@@ -320,21 +320,21 @@ const periodMenu = [
 // Columns for the Affiliates table (for display, not for modal editing)
 const countyColumns = [
   { title: 'Name', dataIndex: 'name', key: 'name' },
-  { title: 'ID', dataIndex: 'id', key: 'id' },
-  { title: 'Impressions', dataIndex: 'impressions', key: 'impressions' },
-  { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
-  { title: 'CTR', dataIndex: 'ctr', key: 'ctr' },
+  // { title: 'Impressions', dataIndex: 'impressions', key: 'impressions' },
+  // { title: 'Clicks', dataIndex: 'clicks', key: 'clicks' },
+  // { title: 'CTR', dataIndex: 'ctr', key: 'ctr' },
   { title: 'Leads', dataIndex: 'leads', key: 'leads' },
-  { title: 'CTL', dataIndex: 'ctl', key: 'ctl' },
+  // { title: 'CTL', dataIndex: 'ctl', key: 'ctl' },
   { title: 'FTDS', dataIndex: 'ftds', key: 'ftds' },
-  { title: 'C2FTD', dataIndex: 'c2ftd', key: 'c2ftd' },
+  // { title: 'C2FTD', dataIndex: 'c2ftd', key: 'c2ftd' },
   { title: 'CR', dataIndex: 'cr', key: 'cr' },
-  { title: 'Total Payout', dataIndex: 'total', key: 'total' },
-  { title: 'Soft Failures', dataIndex: 'softFail', key: 'softFail' },
-  { title: 'Hard Failures', dataIndex: 'hardFail', key: 'hardFail' },
-  { title: 'Unassigned', dataIndex: 'unassigned', key: 'unassigned' },
-  { title: 'Payout', dataIndex: 'payout', key: 'payout' },
-  { title: 'dynamicLevel', dataIndex: 'dynamicLevel', key: 'dynamicLevel' },
+  { title: '', dataIndex: 'noon', key: 'noon' },
+  // { title: 'Total Payout', dataIndex: 'total', key: 'total' },
+  // { title: 'Soft Failures', dataIndex: 'softFail', key: 'softFail' },
+  // { title: 'Hard Failures', dataIndex: 'hardFail', key: 'hardFail' },
+  // { title: 'Unassigned', dataIndex: 'unassigned', key: 'unassigned' },
+  // { title: 'Payout', dataIndex: 'payout', key: 'payout' },
+  // { title: 'dynamicLevel', dataIndex: 'dynamicLevel', key: 'dynamicLevel' },
 ]
 
 const DEFAULT_DASHBOARD_STATE = {
@@ -920,7 +920,7 @@ const StatisticsPage = () => {
                 </Text>
                 <Text className={cls.filtersDate}>{dashboardState.dateRangeText}</Text>
                 <Text className={cls.filtersDate}>levels (1)</Text>
-                <Text className={cls.filtersDate}>country (1)</Text>
+                <Text className={cls.filtersDate}>countries (1)</Text>
                 <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
               </Col>
               <Col className={cls.filterSearchWrap}>

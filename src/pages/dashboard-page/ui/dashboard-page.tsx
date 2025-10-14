@@ -221,6 +221,63 @@ function distributeRandomlyWithBias(x: number, n: number, biasPower = 1) {
   return result
 }
 
+/**
+ * Розділяє загальне значення x на n частин так, щоб
+ * кожна частина була приблизно рівномірною, з похибкою, що задається.
+ *
+ * @param {number} x Загальне значення для розподілу.
+ * @param {number} n Кількість частин.
+ * @param {number} maxErrorPercentage Максимальна відносна похибка (наприклад, 0.1 для 10%).
+ * @returns {number[]} Масив n частин, сума яких дорівнює x.
+ */
+function distributeWithControlledError(x: number, n: number, maxErrorPercentage = 0.1): number[] {
+  if (!n || x <= 0) return []
+  if (n === 1) return [x]
+
+  const result: number[] = []
+  const baseValue = x / n
+  const maxError = baseValue * maxErrorPercentage
+
+  let remainingSum = x
+
+  for (let i = 0; i < n - 1; i++) {
+    const minVal = Math.max(0, baseValue - maxError)
+    // Обмеження, щоб забезпечити, що залишок може бути розподілений між елементами, що залишилися
+    const maxVal = Math.min(remainingSum - (n - 1 - i) * minVal, baseValue + maxError)
+
+    let nextValue
+    if (minVal > maxVal) {
+      nextValue = Math.min(remainingSum, baseValue)
+    } else {
+      // uniformRandom: Генерує випадкове число в діапазоні [min, max]
+      nextValue = minVal + Math.random() * (maxVal - minVal)
+    }
+
+    result.push(nextValue)
+    remainingSum -= nextValue
+  }
+
+  // Останнє значення - це залишок
+  result.push(remainingSum)
+
+  // Округлити всі значення до найближчого цілого.
+  // Якщо вам потрібна більша точність (наприклад, 2 знаки після коми),
+  // використовуйте: v => parseFloat(v.toFixed(2))
+  const roundedResult = result.map((v) => Math.round(v))
+
+  // Перевірка суми після округлення (дуже важливо!)
+  // Округлення може змінити суму, тому потрібно скоригувати останній елемент.
+  const sumAfterRounding = roundedResult.reduce((sum, val) => sum + val, 0)
+  const difference = x - sumAfterRounding
+
+  // Додаємо або віднімаємо різницю до останнього елемента
+  if (roundedResult.length > 0) {
+    roundedResult[roundedResult.length - 1] += difference
+  }
+
+  return roundedResult
+}
+
 // function distributeRandomly(x: number, n: number): number[] {
 //   // Створюємо n-1 випадкових точок розрізу (роздільників)
 //   // Ці точки будуть знаходитись у діапазоні від 0 до x
@@ -272,6 +329,7 @@ const countryWorkGap = {
 
 const periodMenu = [
   {
+    inx: 0,
     title: 'Today',
     date: [today, today],
     startGap: generalWorkGap.passedNonWorkHours,
@@ -281,6 +339,7 @@ const periodMenu = [
     leadKoef: 1,
   },
   {
+    inx: 1,
     title: 'Yesterday',
     date: [today.subtract(1, 'day'), today.subtract(1, 'day')],
     startGap: generalWorkGap.passedNonWorkHours,
@@ -290,6 +349,7 @@ const periodMenu = [
     leadKoef: 1,
   },
   {
+    inx: 2,
     title: 'Last 7 Days',
     date: [today.subtract(6, 'day'), today],
     startGap: [],
@@ -301,6 +361,7 @@ const periodMenu = [
     leadKoef: 7,
   },
   {
+    inx: 3,
     title: 'This Week',
     date: [today.startOf('week'), today.endOf('week').add(1, 'day')],
     startGap: [],
@@ -321,6 +382,7 @@ const periodMenu = [
     ftdsKoef: today.day(),
   },
   {
+    inx: 4,
     title: 'This Month',
     date: [today.startOf('month'), today.endOf('month')],
     startGap: [],
@@ -342,6 +404,7 @@ const periodMenu = [
     leadKoef: today.date(),
   },
   {
+    inx: 5,
     title: 'Last Month',
     date: [today.subtract(1, 'month').startOf('month'), today.subtract(1, 'month').endOf('month')],
     startGap: [],
@@ -358,6 +421,7 @@ const periodMenu = [
     leadKoef: today.subtract(1, 'month').daysInMonth(),
   },
   {
+    inx: 6,
     title: 'Custom',
     date: [today.subtract(6, 'day'), today],
     startGap: [],
@@ -588,6 +652,7 @@ const DashboardPage = () => {
     if (index == 6 && dateRange) {
       dateRangeText = `${formatDate(dateRange[0])} - ${formatDate(dateRange[1])}`
       period = {
+        inx: 6,
         title: 'Custom',
         startGap: [],
         endGap: [],
@@ -675,24 +740,37 @@ const DashboardPage = () => {
   }
 
   const calcAffilliatesWithRandom = (state: any) => {
-    const crValues = distributeWithRandomness(
-      +state.metricsData.conversion.cr.value,
+    const impressionsValues = distributeWithRandomness(
+      +state.metricsData.traffic.impressions.value,
       state.trafficMapData.length,
     )
     const leadValues = distributeWithRandomness(
       +state.metricsData.conversion.leads.value,
       state.trafficMapData.length,
     )
+    const clicksValues = distributeWithRandomness(
+      +state.metricsData.conversion.cr.value,
+      state.trafficMapData.length,
+    )
+    const ftdsValues = distributeWithRandomness(
+      +state.metricsData.conversion.ftds.value,
+      state.trafficMapData.length,
+    )
 
-    return state.trafficMapData.map((item: any, index: number) => ({
-      ...item,
-      impressions: state.metricsData.traffic.impressions.value,
-      leads: leadValues[index],
-      ftds: state.metricsData.conversion.ftds.value,
-      cr: crValues[index],
-      clicks: state.metricsData.traffic.clicks.value,
-      name: `(${item.code}) ${item.name}`,
-    }))
+    return state.trafficMapData.map((item: any, index: number) => {
+      const leads = leadValues[index]
+      const ftds = ftdsValues[index]
+
+      return {
+        ...item,
+        impressions: impressionsValues[index],
+        ftds,
+        leads,
+        clicks: clicksValues[index],
+        cr: !ftds || !leads ? 0 : Math.round((ftds / leads) * 100) + '%',
+        name: `(${item.code}) ${item.name}`,
+      }
+    })
   }
 
   const handleMetricModalSave = (newValues: any) => {
@@ -812,6 +890,7 @@ const DashboardPage = () => {
     inputFTDs?: string | undefined,
   ) => {
     const res = calcMetciByPeriod(period, inputLeads, inputFTDs)
+    const periodInx = period.inx
 
     let labels = period.labels
     let startGap: any[] = period.startGap
@@ -830,8 +909,8 @@ const DashboardPage = () => {
       const ftds = res.periodFTDs
       const cr = !ftds ? 0 : ((ftds / res.periodLeads) * 100).toFixed(2)
 
-      const metricsToday = calcMetciByPeriod(0, res.dayLeads as any)
-      const metricsYersterday = calcMetciByPeriod(1, res.dayLeads as any)
+      const metricsToday = calcMetciByPeriod(periodMenu[0], res.dayLeads as any)
+      const metricsYersterday = calcMetciByPeriod(periodMenu[1], res.dayLeads as any)
 
       const calcGraficArrow = (t: any, y: any) => {
         const tparsed = parseFloat(t)
@@ -898,9 +977,9 @@ const DashboardPage = () => {
 
       const country = prevState.trafficMapData[0]
       const code = country?.code
-      if (code && code in countryWorkGap && (period == 0 || period == 1)) {
+      if (code && code in countryWorkGap && (periodInx == 0 || periodInx == 1)) {
         const { start, end } = countryWorkGap[code as keyof typeof countryWorkGap]
-        const generalWorkGap = getHourlyGaps(start, end, period === 1 ? 23 : today.hour())
+        const generalWorkGap = getHourlyGaps(start, end, periodInx === 1 ? 23 : today.hour())
 
         if (start < end) {
           startGap = generalWorkGap.passedNonWorkHours
@@ -920,7 +999,7 @@ const DashboardPage = () => {
               endGapZero,
             ),
             startGapZero.concat(
-              distributeRandomlyWithBias(
+              distributeWithControlledError(
                 res.periodFTDs,
                 labels.length,
                 labels.length * convertTwoDigitNumber(randomFromTo(-30, 30)),
@@ -950,9 +1029,9 @@ const DashboardPage = () => {
               distributeRandomlyWithBias(res.periodLeads / 2, labels2?.length),
               endGapZero,
             ),
-            distributeRandomlyWithBias(res.periodFTDs / 2, labels.length, labels.length).concat(
+            distributeWithControlledError(res.periodFTDs / 2, labels.length, labels.length).concat(
               startGapZero,
-              distributeRandomlyWithBias(
+              distributeWithControlledError(
                 res.periodFTDs / 2,
                 labels2?.length,
                 labels2?.length * convertTwoDigitNumber(randomFromTo(-30, 30)),
@@ -964,7 +1043,7 @@ const DashboardPage = () => {
           labelsConcated = labels.concat(startGap, labels2, endGap)
         }
       } else {
-        if (period == 3 || period == 4 || period == 2) {
+        if (periodInx == 2 || periodInx == 3 || periodInx == 4) {
           datasets = [
             startGapZero.concat(
               distributeRandomlyWithBias(
@@ -993,7 +1072,7 @@ const DashboardPage = () => {
               endGapZero,
             ),
             startGapZero.concat(
-              distributeRandomlyWithBias(
+              distributeWithControlledError(
                 res.periodFTDs -
                   parseFloat(dashboardState.metricsYersterday.ftds) -
                   parseFloat(dashboardState.metricsToday.ftds),
@@ -1017,10 +1096,10 @@ const DashboardPage = () => {
               endGapZero,
             ),
             startGapZero.concat(
-              distributeRandomlyWithBias(
+              distributeWithControlledError(
                 res.periodFTDs,
                 labels.length,
-                labels.length * convertTwoDigitNumber(randomFromTo(-30, 30)),
+                // labels.length * convertTwoDigitNumber(randomFromTo(-30, 30)),
               ),
               endGapZero,
             ),
@@ -1076,7 +1155,7 @@ const DashboardPage = () => {
               {dashboardState.dateRangeText}
             </Text>
             <Text className={cls.filtersDate}>
-              country ({dashboardState.trafficMapData.length})
+              Countries ({dashboardState.trafficMapData.length})
             </Text>
             <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
           </Col>
