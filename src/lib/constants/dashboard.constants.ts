@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from 'dayjs'
+import { dayjs, Dayjs } from '~/shared/providers'
 import { THEME_PALETTES } from './theme-pallets'
 
 export const getArray = (length: number, start = 0): number[] => {
@@ -280,7 +280,8 @@ export function convertTwoDigitNumber(num: number): number {
   return parseFloat(resultStr)
 }
 
-export const today = dayjs()
+export const today = dayjs().add(0, 'day')
+export const yesterday = today.add(-1, 'day')
 
 export const generalWorkGap = getHourlyGaps(9, 18, today.hour() + 1)
 export const countryWorkGap = {
@@ -546,6 +547,7 @@ export const DEFAULT_DASHBOARD_STATE = {
     clicks: '0',
     ctl: '0',
     ftds: '0',
+    cr: '0',
   },
   metricsYersterday: {
     leads: '40',
@@ -553,5 +555,6 @@ export const DEFAULT_DASHBOARD_STATE = {
     clicks: '0',
     ctl: '0',
     ftds: '0',
+    cr: '0',
   },
 }

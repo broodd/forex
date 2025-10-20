@@ -20,6 +20,7 @@ import {
   periodMenu,
   randomFromTo,
   today,
+  yesterday,
 } from '~/lib/constants/dashboard.constants'
 import { MetricBox } from '~/modules/dashboard/components/metric-card'
 import StatisticsChart from '~/modules/dashboard/components/statistics-chart/statistics-card'
@@ -67,18 +68,37 @@ const StatisticsPage = () => {
       dateRangeText = `${formatDate(dateRange[0])} - ${formatDate(dateRange[1])}`
       period = {
         inx: 6,
-        title: 'Custom',
-        startGap: [],
-        endGap: [],
+        date: dateRange,
+        title: 'Customy',
+        startGap: [] as string[],
+        endGap: [] as string[],
         labels: getArray(dateRange[1].diff(dateRange[0], 'day') + 1).map((item) => {
           return dateRange[0].add(item, 'day').format('DD MMM')
         }),
-        leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
-        leadKoef: dateRange[1].diff(dateRange[0], 'day'),
+        leadRand: 1,
+        leadKoef: dateRange[1].diff(dateRange[0], 'day') + 1,
+      }
+
+      if (today.isSameOrAfter(period.date[0]) && today.isSameOrBefore(period.date[1])) {
+        const includeYersterday = yesterday.isSameOrAfter(period.date[0]) ? 1 : 0
+        const startGapCount = today.diff(period.date[0], 'day') - includeYersterday
+        const endGapCount = period.date[1].diff(today, 'day') + 1
+
+        period.startGap = getArray(startGapCount).map((item) => {
+          return dateRange[0].add(item, 'day').format('DD MMM')
+        })
+
+        period.labels = [today.format('DD MMM')]
+        if (includeYersterday) period.labels.unshift(yesterday.format('DD MMM'))
+
+        period.endGap = getArray(endGapCount).map((item) => {
+          return today.add(item + 1, 'day').format('DD MMM')
+        })
       }
     } else {
       dateRangeText = `${formatDate(periodMenu[index].date[0])} - ${formatDate(periodMenu[index].date[1])}`
       period = periodMenu[index]
+      period.inx = index
     }
 
     updateDashboardState(
@@ -201,7 +221,8 @@ const StatisticsPage = () => {
 
     const clicks = Math.ceil(periodLeads * 1.3)
     const impressions = Math.ceil(clicks * 1.3)
-    const ctl = ((impressions / clicks) * 100).toFixed(0)
+    const ctl = !clicks || !impressions ? 0 : ((impressions / clicks) * 100).toFixed(0)
+    const cr = !periodFTDs ? 0 : ((periodFTDs / periodLeads) * 100).toFixed(2)
 
     return {
       dayLeads,
@@ -211,6 +232,7 @@ const StatisticsPage = () => {
       impressions,
       clicks,
       ctl,
+      cr,
     }
   }
 
@@ -287,6 +309,7 @@ const StatisticsPage = () => {
             },
             cr: {
               ...prevMetrics.conversion.cr,
+              percentage: calcGraficArrow(metricsToday.cr, metricsYersterday.cr),
               value: cr,
             },
           },
@@ -416,8 +439,84 @@ const StatisticsPage = () => {
               endGapZero,
             ),
           ]
+        } else if (
+          periodInx === 6 &&
+          today.isSameOrAfter(period.date[0]) &&
+          today.isSameOrBefore(period.date[1])
+        ) {
+          const includeYersterday = yesterday.isSameOrAfter(period.date[0]) ? 1 : 0
+
+          if (includeYersterday) {
+            datasets = [
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.impressions -
+                    parseFloat(dashboardState.metricsYersterday.impressions) -
+                    parseFloat(dashboardState.metricsToday.impressions),
+                  labels.length - 2,
+                ),
+                [
+                  parseFloat(dashboardState.metricsYersterday.impressions),
+                  parseFloat(dashboardState.metricsToday.impressions),
+                ],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.periodLeads -
+                    parseFloat(dashboardState.metricsYersterday.leads) -
+                    parseFloat(dashboardState.metricsToday.leads),
+                  labels.length - 2,
+                ),
+                [
+                  parseFloat(dashboardState.metricsYersterday.leads),
+                  parseFloat(dashboardState.metricsToday.leads),
+                ],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeWithControlledError(
+                  res.periodFTDs -
+                    parseFloat(dashboardState.metricsYersterday.ftds) -
+                    parseFloat(dashboardState.metricsToday.ftds),
+                  labels.length - 2,
+                ),
+                [
+                  parseFloat(dashboardState.metricsYersterday.ftds),
+                  parseFloat(dashboardState.metricsToday.ftds),
+                ],
+                endGapZero,
+              ),
+            ]
+          } else {
+            datasets = [
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.impressions - parseFloat(dashboardState.metricsToday.impressions),
+                  labels.length - 1,
+                ),
+                [parseFloat(dashboardState.metricsToday.impressions)],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.periodLeads - parseFloat(dashboardState.metricsToday.leads),
+                  labels.length - 1,
+                ),
+                [parseFloat(dashboardState.metricsToday.leads)],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeWithControlledError(
+                  res.periodFTDs - parseFloat(dashboardState.metricsToday.ftds),
+                  labels.length - 1,
+                ),
+                [parseFloat(dashboardState.metricsToday.ftds)],
+                endGapZero,
+              ),
+            ]
+          }
         } else {
-          console.log('--- here', { labels, res, period })
           datasets = [
             startGapZero.concat(
               distributeRandomlyWithBias(res.impressions, labels.length),

@@ -16,6 +16,7 @@ import {
   periodMenu,
   randomFromTo,
   today,
+  yesterday,
 } from '~/lib/constants/dashboard.constants'
 import { EditTableModal, MetricBox, MetricCard } from '~/modules/dashboard/components/metric-card'
 import EditChartModal from '~/modules/dashboard/components/metric-card/edit-chart-modal'
@@ -85,26 +86,40 @@ const DashboardPage = () => {
     dateRange = dateRange.map((d) => dayjs(d))
 
     if (index == 6 && dateRange) {
-      console.log('--- ', {
-        lab: getArray(dateRange[1].diff(dateRange[0], 'day') + 1).map((item) => {
-          return dateRange[0].add(item, 'day').format('DD MMM')
-        }),
-      })
       dateRangeText = `${formatDate(dateRange[0])} - ${formatDate(dateRange[1])}`
       period = {
         inx: 6,
-        title: 'Custom',
-        startGap: [],
-        endGap: [],
+        date: dateRange,
+        title: 'Customy',
+        startGap: [] as string[],
+        endGap: [] as string[],
         labels: getArray(dateRange[1].diff(dateRange[0], 'day') + 1).map((item) => {
           return dateRange[0].add(item, 'day').format('DD MMM')
         }),
-        leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
-        leadKoef: dateRange[1].diff(dateRange[0], 'day'),
+        leadRand: 1,
+        leadKoef: dateRange[1].diff(dateRange[0], 'day') + 1,
+      }
+
+      if (today.isSameOrAfter(period.date[0]) && today.isSameOrBefore(period.date[1])) {
+        const includeYersterday = yesterday.isSameOrAfter(period.date[0]) ? 1 : 0
+        const startGapCount = today.diff(period.date[0], 'day') - includeYersterday
+        const endGapCount = period.date[1].diff(today, 'day') + 1
+
+        period.startGap = getArray(startGapCount).map((item) => {
+          return dateRange[0].add(item, 'day').format('DD MMM')
+        })
+
+        period.labels = [today.format('DD MMM')]
+        if (includeYersterday) period.labels.unshift(yesterday.format('DD MMM'))
+
+        period.endGap = getArray(endGapCount).map((item) => {
+          return today.add(item + 1, 'day').format('DD MMM')
+        })
       }
     } else {
       dateRangeText = `${formatDate(periodMenu[index].date[0])} - ${formatDate(periodMenu[index].date[1])}`
       period = periodMenu[index]
+      period.inx = index
     }
 
     updateDashboardState(
@@ -124,7 +139,6 @@ const DashboardPage = () => {
 
   const handleChangePeriod = (index: number, dateRange?: Dayjs[]) => {
     setIsLoading(true)
-
     const { period } = checkIsCustomPeriod(index, dateRange)
 
     calcMetciByPeriodAndUpdate(period)
@@ -222,13 +236,15 @@ const DashboardPage = () => {
   }
 
   const handleMetricModalSave = (newValues: any) => {
+    let period: any = periodMenu[dashboardState.periodMenuActive]
+    if (dashboardState.periodMenuActive == 6)
+      period = checkIsCustomPeriod(6, dashboardState.customDateRange).period
+
     if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
-      const data = periodMenu[dashboardState.periodMenuActive]
-      const dayLeads = (newValues.value / (data.leadKoef * data.leadRand)).toFixed(3)
-      calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive], dayLeads)
+      const dayLeads = (newValues.value / (period.leadKoef * period.leadRand)).toFixed(3)
+      calcMetciByPeriodAndUpdate(period, dayLeads)
     } else if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'ftds') {
-      const data = periodMenu[dashboardState.periodMenuActive]
-      const dayFTDs = (newValues.value / data.leadKoef).toFixed(3)
+      const dayFTDs = (newValues.value / period.leadKoef).toFixed(3)
       calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive], undefined, dayFTDs)
     } else {
       updateDashboardState({
@@ -319,7 +335,8 @@ const DashboardPage = () => {
 
     const clicks = Math.ceil(periodLeads * 1.3)
     const impressions = Math.ceil(clicks * 1.3)
-    const ctl = ((impressions / clicks) * 100).toFixed(0)
+    const ctl = !clicks || !impressions ? 0 : ((impressions / clicks) * 100).toFixed(0)
+    const cr = !periodFTDs ? 0 : ((periodFTDs / periodLeads) * 100).toFixed(2)
 
     return {
       dayLeads,
@@ -329,6 +346,7 @@ const DashboardPage = () => {
       impressions,
       clicks,
       ctl,
+      cr,
     }
   }
 
@@ -339,7 +357,6 @@ const DashboardPage = () => {
   ) => {
     const res = calcMetciByPeriod(period, inputLeads, inputFTDs)
     const periodInx = period.inx
-    console.log('--- periodInx', periodInx)
 
     let labels = period.labels
     let startGap: any[] = period.startGap
@@ -405,6 +422,7 @@ const DashboardPage = () => {
             },
             cr: {
               ...prevMetrics.conversion.cr,
+              percentage: calcGraficArrow(metricsToday.cr, metricsYersterday.cr),
               value: cr,
             },
           },
@@ -534,8 +552,84 @@ const DashboardPage = () => {
               endGapZero,
             ),
           ]
+        } else if (
+          periodInx === 6 &&
+          today.isSameOrAfter(period.date[0]) &&
+          today.isSameOrBefore(period.date[1])
+        ) {
+          const includeYersterday = yesterday.isSameOrAfter(period.date[0]) ? 1 : 0
+
+          if (includeYersterday) {
+            datasets = [
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.impressions -
+                    parseFloat(dashboardState.metricsYersterday.impressions) -
+                    parseFloat(dashboardState.metricsToday.impressions),
+                  labels.length - 2,
+                ),
+                [
+                  parseFloat(dashboardState.metricsYersterday.impressions),
+                  parseFloat(dashboardState.metricsToday.impressions),
+                ],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.periodLeads -
+                    parseFloat(dashboardState.metricsYersterday.leads) -
+                    parseFloat(dashboardState.metricsToday.leads),
+                  labels.length - 2,
+                ),
+                [
+                  parseFloat(dashboardState.metricsYersterday.leads),
+                  parseFloat(dashboardState.metricsToday.leads),
+                ],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeWithControlledError(
+                  res.periodFTDs -
+                    parseFloat(dashboardState.metricsYersterday.ftds) -
+                    parseFloat(dashboardState.metricsToday.ftds),
+                  labels.length - 2,
+                ),
+                [
+                  parseFloat(dashboardState.metricsYersterday.ftds),
+                  parseFloat(dashboardState.metricsToday.ftds),
+                ],
+                endGapZero,
+              ),
+            ]
+          } else {
+            datasets = [
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.impressions - parseFloat(dashboardState.metricsToday.impressions),
+                  labels.length - 1,
+                ),
+                [parseFloat(dashboardState.metricsToday.impressions)],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeRandomlyWithBias(
+                  res.periodLeads - parseFloat(dashboardState.metricsToday.leads),
+                  labels.length - 1,
+                ),
+                [parseFloat(dashboardState.metricsToday.leads)],
+                endGapZero,
+              ),
+              startGapZero.concat(
+                distributeWithControlledError(
+                  res.periodFTDs - parseFloat(dashboardState.metricsToday.ftds),
+                  labels.length - 1,
+                ),
+                [parseFloat(dashboardState.metricsToday.ftds)],
+                endGapZero,
+              ),
+            ]
+          }
         } else {
-          console.log('--- here', { labels, res, period })
           datasets = [
             startGapZero.concat(
               distributeRandomlyWithBias(res.impressions, labels.length),
@@ -711,53 +805,6 @@ const DashboardPage = () => {
               </Col>
             </Row>
           </Col>
-
-          {/* <Col span={13} lg={13} md={13} className={cls.rightSide}> */}
-          {/* <MetricBox title='Finance' className={cls.rightSideRowInner}> */}
-          {/* <MetricCard
-                isLoading={isLoading}
-                title='Revenue'
-                value={dashboardState.metricsData.finance.revenue.value}
-                today={dashboardState.metricsData.finance.revenue.today}
-                yesterday={
-                  parseFloat(dashboardState.metricsData.finance.revenue.value) *
-                  dashboardState.metricsData.finance.revenue.yesterday
-                }
-                percentage={dashboardState.metricsData.finance.revenue.percentage}
-                trendLine={dashboardState.metricsData.finance.revenue.trendLine}
-                showToday={dashboardState.metricsData.finance.revenue.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('finance', 'revenue')}
-              />
-              <MetricCard
-                isLoading={isLoading}
-                title='Payout'
-                value={dashboardState.metricsData.finance.payout.value}
-                today={dashboardState.metricsData.finance.payout.today}
-                yesterday={
-                  parseFloat(dashboardState.metricsData.finance.payout.value) *
-                  dashboardState.metricsData.finance.payout.yesterday
-                }
-                percentage={dashboardState.metricsData.finance.payout.percentage}
-                trendLine={dashboardState.metricsData.finance.payout.trendLine}
-                showToday={dashboardState.metricsData.finance.payout.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('finance', 'payout')}
-              />
-              <MetricCard
-                isLoading={isLoading}
-                title='Net Profit'
-                value={dashboardState.metricsData.finance.net.value}
-                today={dashboardState.metricsData.finance.net.today}
-                yesterday={
-                  parseFloat(dashboardState.metricsData.finance.net.value) *
-                  dashboardState.metricsData.finance.net.yesterday
-                }
-                percentage={dashboardState.metricsData.finance.net.percentage}
-                trendLine={dashboardState.metricsData.finance.net.trendLine}
-                showToday={dashboardState.metricsData.finance.net.showToday}
-                onTitleClick={() => handleMetricCardTitleClick('finance', 'net')}
-              /> */}
-          {/* </MetricBox> */}
-          {/* </Col> */}
         </Row>
 
         <Row>
@@ -793,8 +840,8 @@ const DashboardPage = () => {
                 title='CR'
                 isLoading={isLoading}
                 value={dashboardState.metricsData.conversion.cr.value + '%'}
-                today={dashboardState.metricsData.conversion.cr.today}
-                yesterday={dashboardState.metricsData.conversion.cr.yesterday}
+                today={dashboardState.metricsToday.cr + '%'}
+                yesterday={dashboardState.metricsYersterday.cr + '%'}
                 percentage={dashboardState.metricsData.conversion.cr.percentage}
                 trendLine={dashboardState.metricsData.conversion.cr.trendLine}
                 showToday={dashboardState.metricsData.conversion.cr.showToday}
