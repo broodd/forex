@@ -211,7 +211,7 @@ const DashboardPage = () => {
       state.trafficMapData.length,
     )
     const clicksValues = distributeWithRandomness(
-      +state.metricsData.conversion.cr.value,
+      +state.metricsData.traffic.clicks.value,
       state.trafficMapData.length,
     )
     const ftdsValues = distributeWithRandomness(
@@ -230,7 +230,7 @@ const DashboardPage = () => {
         leads,
         clicks: clicksValues[index],
         cr: !ftds || !leads ? 0 : Math.round((ftds / leads) * 100) + '%',
-        name: `(${item.code}) ${item.name}`,
+        name: `${item.name} (${item.code})`,
       }
     })
   }

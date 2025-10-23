@@ -26,11 +26,11 @@ export const Header: FC<IHeaderProps> = ({
     <div className={classNames(cls.wrapper, [className])}>
       <div className={cls.content}>
         <div className={cls.headingContent}>
-          <div className={cls.headingAttention}>
+          {/* <div className={cls.headingAttention}>
             <span className={cls.feedback}>Share your feedback</span>
             or switch back here. Heads up! V2 will reach
             <b>end of life on Oct 1st, 2025.</b>
-          </div>
+          </div> */}
           {title && (
             <Heading
               className={headerClassName}
