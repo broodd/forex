@@ -221,7 +221,7 @@ const StatisticsPage = () => {
 
     const clicks = Math.ceil(periodLeads * 1.3)
     const impressions = Math.ceil(clicks * 1.3)
-    const ctl = !clicks || !impressions ? 0 : ((impressions / clicks) * 100).toFixed(0)
+    const ctl = !clicks || !periodLeads ? 0 : ((periodLeads / clicks) * 100).toFixed(0)
     const cr = !periodFTDs ? 0 : ((periodFTDs / periodLeads) * 100).toFixed(2)
 
     return {
