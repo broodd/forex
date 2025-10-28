@@ -97,6 +97,7 @@ const DashboardPage = () => {
           return dateRange[0].add(item, 'day').format('DD MMM')
         }),
         leadRand: 1,
+        clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
         leadKoef: dateRange[1].diff(dateRange[0], 'day') + 1,
       }
 
@@ -229,8 +230,8 @@ const DashboardPage = () => {
         ftds,
         leads,
         clicks: clicksValues[index],
-        cr: !ftds || !leads ? 0 : Math.round((ftds / leads) * 100) + '%',
-        name: `(${item.code}) ${item.name}`,
+        cr: !ftds || !leads ? 0 : ((ftds / leads) * 100).toFixed(2) + '%',
+        name: `${item.code} (${item.name})`,
       }
     })
   }
@@ -333,9 +334,9 @@ const DashboardPage = () => {
     const dayFTDs = parseFloat(inputFTDs ? inputFTDs : dashboardState.dayFTDs)
     const periodFTDs = parseFloat(getFTDsByPeriod(dayFTDs.toString(), period).toString())
 
-    const clicks = Math.ceil(periodLeads * 1.3)
+    const clicks = Math.ceil(periodLeads * period.clickRand)
     const impressions = Math.ceil(clicks * 1.3)
-    const ctl = !clicks || !periodLeads ? 0 : ((periodLeads / clicks) * 100).toFixed(0)
+    const ctl = !clicks || !periodLeads ? 0 : ((periodLeads / clicks) * 100).toFixed(2)
     const cr = !periodFTDs ? 0 : ((periodFTDs / periodLeads) * 100).toFixed(2)
 
     return {
@@ -753,8 +754,8 @@ const DashboardPage = () => {
                 title='CTL'
                 isLoading={isLoading}
                 value={dashboardState.metricsData.traffic.ctl.value + '%'}
-                today={dashboardState.metricsToday.ctl}
-                yesterday={dashboardState.metricsYersterday.ctl}
+                today={dashboardState.metricsToday.ctl + '%'}
+                yesterday={dashboardState.metricsYersterday.ctl + '%'}
                 percentage={dashboardState.metricsData.traffic.ctl.percentage}
                 trendLine={dashboardState.metricsData.traffic.ctl.trendLine}
                 showToday={dashboardState.metricsData.traffic.ctl.showToday}
@@ -850,7 +851,7 @@ const DashboardPage = () => {
             </MetricBox>
 
             <MetricBox
-              title='Top 10 Affiliates'
+              title='Top 10 Countries'
               isLoading={isLoading}
               loadingTable={5}
               className={classNames(cls.flexContentStart, cls.top10)}

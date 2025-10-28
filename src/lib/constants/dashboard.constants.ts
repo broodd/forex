@@ -297,6 +297,7 @@ export const periodMenu = [
     startGap: generalWorkGap.passedNonWorkHours,
     labels: generalWorkGap.passedWorkHours[0],
     endGap: generalWorkGap.remainingHours,
+    clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
     leadRand: 1,
     leadKoef: 1,
   },
@@ -307,6 +308,7 @@ export const periodMenu = [
     startGap: generalWorkGap.passedNonWorkHours,
     labels: generalWorkGap.passedWorkHours[0],
     endGap: generalWorkGap.remainingHours,
+    clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: 1,
   },
@@ -319,6 +321,7 @@ export const periodMenu = [
     labels: getArray(today.diff(today.subtract(6, 'day'), 'day') + 1).map((item) => {
       return today.subtract(6, 'day').add(item, 'day').format('DD MMM')
     }),
+    clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: 7,
   },
@@ -339,6 +342,7 @@ export const periodMenu = [
         .add(item + 1, 'day')
         .format('DD MMM')
     }),
+    clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.day() + 1,
     ftdsKoef: today.day(),
@@ -362,6 +366,7 @@ export const periodMenu = [
     labels: getArray(today.diff(today.startOf('month'), 'day') + 1).map((item) => {
       return today.startOf('month').add(item, 'day').format('DD MMM')
     }),
+    clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.date(),
   },
@@ -379,6 +384,7 @@ export const periodMenu = [
     ).map((item) => {
       return today.subtract(1, 'month').startOf('month').add(item, 'day').format('DD MMM')
     }),
+    clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
     leadRand: convertTwoDigitNumber(randomFromTo(-30, 30)),
     leadKoef: today.subtract(1, 'month').daysInMonth(),
   },
@@ -389,12 +395,14 @@ export const periodMenu = [
     startGap: [],
     endGap: [],
     labels: [],
+    clickRand: convertTwoDigitNumber(randomFromTo(28, 36)),
     leadRand: 1,
     leadKoef: 1,
   },
 ]
+console.log('--- ', periodMenu)
 export const DEFAULT_DASHBOARD_STATE = {
-  v: '4',
+  v: '4.1',
   metricsData: {
     traffic: {
       impressions: {
@@ -487,12 +495,12 @@ export const DEFAULT_DASHBOARD_STATE = {
   },
   trafficMapData: [
     {
-      name: 'Spain',
-      code: 'ES',
-      value: 116,
-      percentage: '88.5%',
-      coordinates: [-3.7038, 40.4168],
-      color: 'red',
+      name: 'Canada',
+      value: 0,
+      percentage: '0%',
+      color: '#b66d6d',
+      coordinates: [-75.6972, 45.4215],
+      code: 'CA',
     },
   ],
   chartData: {

@@ -192,7 +192,7 @@ const StatisticsPage = () => {
         leads,
         clicks: clicksValues[index],
         cr: !ftds || !leads ? 0 : Math.round((ftds / leads) * 100) + '%',
-        name: `(${item.code}) ${item.name}`,
+        name: `${item.code} (${item.name})`,
       }
     })
   }
