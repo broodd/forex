@@ -437,6 +437,7 @@ export const DEFAULT_DASHBOARD_STATE = {
         yesterday: '0',
         trendLine: true,
         showToday: true,
+        calcByFormula: true,
       },
       ftds: {
         value: '0',
@@ -445,6 +446,7 @@ export const DEFAULT_DASHBOARD_STATE = {
         yesterday: '0',
         trendLine: true, // No trend line shown in the image for FTDs
         showToday: true,
+        calcByFormula: true,
       },
       cr: {
         value: '0',
@@ -453,6 +455,7 @@ export const DEFAULT_DASHBOARD_STATE = {
         yesterday: '0%',
         trendLine: true, // No trend line shown in the image for CR
         showToday: true,
+        calcByFormula: true,
       },
     },
     finance: {
