@@ -243,10 +243,12 @@ const DashboardPage = () => {
 
     if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads') {
       const dayLeads = (newValues.value / (period.leadKoef * period.leadRand)).toFixed(3)
-      calcMetciByPeriodAndUpdate(period, dayLeads)
+      calcMetciByPeriodAndUpdate(period, dayLeads, undefined, newValues)
     } else if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'ftds') {
       const dayFTDs = (newValues.value / period.leadKoef).toFixed(3)
-      calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive], undefined, dayFTDs)
+      calcMetciByPeriodAndUpdate(period, undefined, dayFTDs, newValues)
+    } else if (currentEditingMetricType == 'conversion' && currentEditingMetricName == 'cr') {
+      calcMetciByPeriodAndUpdate(period, undefined, undefined, newValues)
     } else {
       updateDashboardState({
         metricsData: {
@@ -257,7 +259,7 @@ const DashboardPage = () => {
           },
         },
       })
-      calcMetciByPeriodAndUpdate(periodMenu[dashboardState.periodMenuActive])
+      calcMetciByPeriodAndUpdate(period)
     }
     setIsEditMetricModalVisible(false)
   }
@@ -355,9 +357,12 @@ const DashboardPage = () => {
     period: any,
     inputLeads?: string | undefined,
     inputFTDs?: string | undefined,
+    newValues?: any,
   ) => {
     const res = calcMetciByPeriod(period, inputLeads, inputFTDs)
     const periodInx = period.inx
+
+    console.log('--- ', { period, inputLeads, inputFTDs, newValues, res })
 
     let labels = period.labels
     let startGap: any[] = period.startGap
@@ -413,17 +418,36 @@ const DashboardPage = () => {
             ...prevMetrics.conversion,
             leads: {
               ...prevMetrics.conversion.leads,
-              percentage: calcGraficArrow(metricsToday.periodLeads, metricsYersterday.periodLeads),
-              value: res.periodLeads,
+              percentage:
+                currentEditingMetricType == 'conversion' && currentEditingMetricName == 'leads'
+                  ? newValues.percentage
+                  : calcGraficArrow(metricsToday.periodLeads, metricsYersterday.periodLeads),
+              value:
+                currentEditingMetricType == 'conversion' &&
+                currentEditingMetricName == 'leads' &&
+                prevMetrics.conversion.leads == newValues.value
+                  ? prevMetrics.conversion.leads
+                  : res.periodLeads,
             },
             ftds: {
               ...prevMetrics.conversion.ftds,
-              percentage: calcGraficArrow(metricsToday.dayFTDs, metricsYersterday.dayFTDs),
-              value: res.periodFTDs,
+              percentage:
+                currentEditingMetricType == 'conversion' && currentEditingMetricName == 'ftds'
+                  ? newValues.percentage
+                  : calcGraficArrow(metricsToday.dayFTDs, metricsYersterday.dayFTDs),
+              value:
+                currentEditingMetricType == 'conversion' &&
+                currentEditingMetricName == 'ftds' &&
+                prevMetrics.conversion.leads == newValues.value
+                  ? prevMetrics.conversion.ftds
+                  : res.periodFTDs,
             },
             cr: {
               ...prevMetrics.conversion.cr,
-              percentage: calcGraficArrow(metricsToday.cr, metricsYersterday.cr),
+              percentage:
+                currentEditingMetricType == 'conversion' && currentEditingMetricName == 'cr'
+                  ? newValues.percentage
+                  : calcGraficArrow(metricsToday.cr, metricsYersterday.cr),
               value: cr,
             },
           },

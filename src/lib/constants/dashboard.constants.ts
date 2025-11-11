@@ -400,7 +400,6 @@ export const periodMenu = [
     leadKoef: 1,
   },
 ]
-console.log('--- ', periodMenu)
 export const DEFAULT_DASHBOARD_STATE = {
   v: '4.1',
   metricsData: {
