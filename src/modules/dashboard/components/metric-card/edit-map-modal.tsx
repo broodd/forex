@@ -33,6 +33,12 @@ const ALL_COUNTRIES = [
   { name: 'Bulgaria', code: 'BG', color: '#8884d8', coordinates: [23.3218, 42.6977] },
   { name: 'Canada', code: 'CA', color: '#82ca9d', coordinates: [-75.6972, 45.4215] },
   { name: 'China', code: 'CN', color: '#82ca9d', coordinates: [116.4074, 39.9042] },
+
+  { name: 'Chile', code: 'CL', color: '#326b3d', coordinates: [-71.0574941, -36.739055] },
+  { name: 'Mexico', code: 'MX', color: '#e87000', coordinates: [-99.12766, 19.42847] },
+  { name: 'Peru', code: 'PE', color: '#e800b6', coordinates: [-77.023666572, -12.039333176] },
+  { name: 'Singapore', code: 'SG', color: '#e11010', coordinates: [103.8454093, 1.3146631] },
+
   { name: 'Croatia', code: 'HR', color: 'orange', coordinates: [15.9819, 45.815] },
   { name: 'Cyprus', code: 'CY', color: '#ff7300', coordinates: [33.362, 35.1754] },
   { name: 'Czech Republic', code: 'CZ', color: 'green', coordinates: [14.4378, 50.0755] },
