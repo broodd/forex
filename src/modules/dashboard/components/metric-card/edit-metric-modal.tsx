@@ -84,15 +84,16 @@ export const EditMetricModal = ({
 
         <Form.Item
           name='calcByFormula'
-          label={<span style={{ color: 'white' }}>Percentage Change: calc by formula?</span>}
+          label={<span style={{ color: 'white' }}>Рахувати по формулі?</span>}
           valuePropName='checked' // Essential for Switch component
           style={{ marginBottom: 0 }}
         >
           <Switch />
         </Form.Item>
+        <br />
         <Form.Item
           name='percentage'
-          label={<span style={{ color: 'white' }}>Percentage Change</span>}
+          label={<span style={{ color: 'white' }}>Percentage</span>}
           rules={[{ required: true, message: 'Please input the percentage!' }]}
         >
           <Input style={{ backgroundColor: '#4a4a4a', borderColor: '#6a6a6a', color: 'white' }} />

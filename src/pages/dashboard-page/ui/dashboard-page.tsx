@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Col, Row, Typography } from 'antd'
+import { Button, Col, Row, Typography } from 'antd'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 import { PageLayout } from '~/layouts'
@@ -389,12 +389,10 @@ const DashboardPage = () => {
       const calcGraficArrow = (t: any, y: any) => {
         const tparsed = parseFloat(t)
         const yparsed = parseFloat(y)
-        const result = Math.round(((tparsed - yparsed) / yparsed) * 100) || 0
+        const result = +(((tparsed - yparsed) / yparsed) * 100).toFixed(2) || 0
         if (result === Infinity) return 0
         return result
       }
-
-      console.log('--- afterio', { co: prevMetrics.conversion, newValues })
 
       const updatedState = {
         ...prevState,
@@ -425,17 +423,12 @@ const DashboardPage = () => {
               percentage:
                 currentEditingMetricType == 'conversion' &&
                 currentEditingMetricName == 'leads' &&
-                !newValues?.calcByFormula
+                newValues &&
+                !newValues.calcByFormula
                   ? newValues?.percentage
                   : prevMetrics.conversion.leads.calcByFormula
                     ? calcGraficArrow(metricsToday.periodLeads, metricsYersterday.periodLeads)
                     : prevMetrics.conversion.leads.percentage,
-
-              // currentEditingMetricType == 'conversion' &&
-              // currentEditingMetricName == 'leads' &&
-              // !newValues?.calcByFormula
-              //   ? newValues.percentage
-              //   : calcGraficArrow(metricsToday.periodLeads, metricsYersterday.periodLeads),
               value:
                 currentEditingMetricType == 'conversion' &&
                 currentEditingMetricName == 'leads' &&
@@ -448,14 +441,12 @@ const DashboardPage = () => {
               percentage:
                 currentEditingMetricType == 'conversion' &&
                 currentEditingMetricName == 'ftds' &&
-                !newValues?.calcByFormula
+                newValues &&
+                !newValues.calcByFormula
                   ? newValues?.percentage
                   : prevMetrics.conversion.ftds.calcByFormula
                     ? calcGraficArrow(metricsToday.dayFTDs, metricsYersterday.dayFTDs)
                     : prevMetrics.conversion.ftds.percentage,
-              // currentEditingMetricType == 'conversion' && currentEditingMetricName == 'ftds'
-              //   ? newValues.percentage
-              //   : calcGraficArrow(metricsToday.dayFTDs, metricsYersterday.dayFTDs),
               value:
                 currentEditingMetricType == 'conversion' &&
                 currentEditingMetricName == 'ftds' &&
@@ -468,15 +459,12 @@ const DashboardPage = () => {
               percentage:
                 currentEditingMetricType == 'conversion' &&
                 currentEditingMetricName == 'cr' &&
-                !newValues?.calcByFormula
+                newValues &&
+                !newValues.calcByFormula
                   ? newValues?.percentage
                   : prevMetrics.conversion.cr.calcByFormula
                     ? calcGraficArrow(metricsToday.cr, metricsYersterday.cr)
                     : prevMetrics.conversion.cr.percentage,
-
-              // currentEditingMetricType == 'conversion' && currentEditingMetricName == 'cr'
-              //   ? newValues?.percentage
-              //   : calcGraficArrow(metricsToday.cr, metricsYersterday.cr),
               value: cr,
             },
           },
@@ -485,15 +473,52 @@ const DashboardPage = () => {
         dayFTDs: res.dayFTDs,
       }
 
+      console.log('--- newValues', {
+        prev: prevMetrics.conversion.ftds,
+        a: metricsYersterday.periodFTDs,
+      })
+
       updatedState.metricsToday = {
         ...metricsToday,
-        leads: metricsToday.periodLeads,
-        ftds: metricsToday.periodFTDs,
+        leads:
+          currentEditingMetricType == 'conversion' &&
+          currentEditingMetricName == 'leads' &&
+          !newValues?.calcByFormula
+            ? newValues?.today
+            : prevMetrics.conversion.leads.calcByFormula
+              ? metricsToday.periodLeads
+              : prevMetrics.conversion.leads.today,
+        ftds:
+          currentEditingMetricType == 'conversion' &&
+          currentEditingMetricName == 'ftds' &&
+          !newValues?.calcByFormula
+            ? newValues?.today
+            : prevMetrics.conversion.ftds.calcByFormula
+              ? metricsToday.periodFTDs
+              : prevMetrics.conversion.ftds.today,
       }
       updatedState.metricsYersterday = {
         ...metricsYersterday,
-        leads: metricsYersterday.periodLeads,
-        ftds: metricsYersterday.periodFTDs,
+        leads:
+          currentEditingMetricType == 'conversion' &&
+          currentEditingMetricName == 'leads' &&
+          newValues &&
+          !newValues.calcByFormula
+            ? newValues?.yesterday
+            : prevMetrics.conversion.leads.calcByFormula
+              ? metricsYersterday.periodLeads
+              : prevMetrics.conversion.leads.yesterday,
+        ftds:
+          currentEditingMetricType == 'conversion' &&
+          currentEditingMetricName == 'ftds' &&
+          newValues &&
+          !newValues.calcByFormula
+            ? newValues?.yesterday
+            : prevMetrics.conversion.ftds.calcByFormula
+              ? metricsYersterday.periodFTDs
+              : prevMetrics.conversion.ftds.yesterday,
+        // leads: metricsYersterday.periodLeads,
+        // ftds: metricsYersterday.periodFTDs,
       }
 
       const country = prevState.trafficMapData[0]
@@ -736,7 +761,7 @@ const DashboardPage = () => {
     >
       <div className={cls.wrapper}>
         <Row>
-          <Col lg={9} className={cls.filters}>
+          <Col lg={10} className={cls.filters}>
             <FilterIcon className={cls.filterIcon} />
             <Text
               onClick={() => {
@@ -753,9 +778,15 @@ const DashboardPage = () => {
               {dashboardState.dateRangeText}
             </Text>
             <Text className={cls.filtersDate}>
-              Countries ({dashboardState.trafficMapData.length})
+              Countries (+{dashboardState.trafficMapData.length})
             </Text>
-            <RefreshIcon className={cls.refhreshIcon} onClick={setFullLoading} />
+            <Button
+              className={cls.refreshButton}
+              onClick={setFullLoading}
+              icon={<RefreshIcon className={cls.refreshIcon} />}
+            >
+              Get Data
+            </Button>
           </Col>
 
           <Col className={cls.periodFilter}>
@@ -880,8 +911,6 @@ const DashboardPage = () => {
                 title='Q-FTDs'
                 isLoading={isLoading}
                 value={dashboardState.metricsData.conversion.ftds.value}
-                // today={dashboardState.metricsData.conversion.ftds.today}
-                // yesterday={dashboardState.metricsData.conversion.ftds.yesterday}
                 today={dashboardState.metricsToday.ftds}
                 yesterday={dashboardState.metricsYersterday.ftds}
                 percentage={dashboardState.metricsData.conversion.ftds.percentage}
