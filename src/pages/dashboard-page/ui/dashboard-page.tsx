@@ -28,6 +28,7 @@ import CustomTable from '~/modules/dashboard/components/table/table'
 import TrafficMap from '~/modules/dashboard/components/traffic-map/traffic-map'
 import { Dayjs, dayjs } from '~/shared/providers'
 import { FilterIcon } from '~/shared/ui/icon'
+import { FilterClearIcon } from '~/shared/ui/icon/ui/filter-clear'
 import { RefreshIcon } from '~/shared/ui/icon/ui/refresh-icon'
 import cls from './dashboard-page.module.scss'
 
@@ -777,9 +778,8 @@ const DashboardPage = () => {
             <Text onClick={() => setIsDateModalVisible(true)} className={cls.filtersDate}>
               {dashboardState.dateRangeText}
             </Text>
-            <Text className={cls.filtersDate}>
-              Countries (+{dashboardState.trafficMapData.length})
-            </Text>
+            <Text className={cls.filtersDate}>+{dashboardState.trafficMapData.length}</Text>
+            <FilterClearIcon className={cls.filterClearIcon} />
             <Button
               className={cls.refreshButton}
               onClick={setFullLoading}
